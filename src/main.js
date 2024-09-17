@@ -9,8 +9,9 @@ import VueTreeNavigation from 'vue-tree-navigation';
 import Vue3Toastify from 'vue3-toastify';
 import moment from "moment";
 
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap";
+import BootstrapVue from 'bootstrap-vue';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
 
 var app = createApp(App)
   .use(Vue3Toastify, {
@@ -21,6 +22,7 @@ var app = createApp(App)
   .use(router)
   .use(store)
   .use(VueAxios, axios)
+  .use(BootstrapVue)
   .provide("moment", moment);
 
 app.axios.defaults.baseURL = "http://127.0.0.1:8000/api/v1/";
