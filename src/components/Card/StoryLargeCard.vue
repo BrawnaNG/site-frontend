@@ -1,34 +1,40 @@
 <template>
-  <b-col cols="12" class="story-large-card p-4 mb-4">
+  <b-col
+    cols="12"
+    class="story-large-card p-4 mb-4"
+  >
     <b-row class="m-0">
-      <b-col cols="8" class="p-0">
+      <b-col
+        cols="8"
+        class="p-0"
+      >
         <div class="story-large-card-title pb-3 px-1">
           <h4 class="m-0">
-            {{StoryCard.slug}}
+            {{ StoryCard.slug }}
           </h4>
         </div>
         <div class="story-large-card-content pb-3 px-1">
           <p class="m-0">
-            {{StoryCard.body}}
+            {{ StoryCard.body }}
           </p>
         </div>
         <div class="story-large-card-footer px-1">
-          {{StoryCard.created_at | moment('MMM YY')}}
+          {{ friendlyDate(StoryCard.created_at) }}
           |
           {{ (StoryCard.categories.length ? StoryCard.categories[0].name : '') }}
         </div>
       </b-col>
       <b-row class="p-0 col-4 m-0 align-items-center text-right">
         <b-col class="p-0">
-            <span class="mr-3 cursor-pointer">
-              <img src="../../assets/image/icon/Delete.svg">
-            </span>
           <span class="mr-3 cursor-pointer">
-              <img src="../../assets/image/icon/Edit.svg">
-            </span>
+            <img src="../../assets/image/icon/Delete.svg">
+          </span>
+          <span class="mr-3 cursor-pointer">
+            <img src="../../assets/image/icon/Edit.svg">
+          </span>
           <span class="cursor-pointer">
-              <img src="../../assets/image/icon/Show.svg">
-            </span>
+            <img src="../../assets/image/icon/Show.svg">
+          </span>
         </b-col>
       </b-row>
     </b-row>
@@ -38,7 +44,12 @@
 <script>
 export default {
   name: "StoryLargeCard",
-  props: ['StoryCard']
+  props: ['StoryCard'],
+  computed: {
+    friendlyDate(value){
+      return moment(value).format('MMM YY')
+    }
+  }
 }
 </script>
 

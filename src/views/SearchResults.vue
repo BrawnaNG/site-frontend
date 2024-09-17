@@ -2,28 +2,52 @@
   <div class="search-result-page">
     <div class="search-result-page-head border-bottom py-4">
       <b-row class="my-0 col-10 mx-auto justify-content-between">
-        <b-col cols="5" class="p-0">
-          <h1 class="m-0 font-weight-bolder"> Results for “Emily” </h1>
+        <b-col
+          cols="5"
+          class="p-0"
+        >
+          <h1 class="m-0 font-weight-bolder">
+            Results for “Emily”
+          </h1>
         </b-col>
         <b-row class="m-0 col-6 border-bottom justify-content-between p-1">
-          <b-col cols="auto" class="pr-0 text-center">
+          <b-col
+            cols="auto"
+            class="pr-0 text-center"
+          >
             <img src="../assets/image/icon/search-normal.svg">
-
           </b-col>
-          <b-col cols="9" class="p-0">
-            <b-form-input @keyup="advanceSearch()"
-                          v-model="searchText"
-                          class="border-0 login-form-input"
-                          placeholder="Search story, author ot tags"/>
+          <b-col
+            cols="9"
+            class="p-0"
+          >
+            <b-form-input
+              v-model="searchText"
+              class="border-0 login-form-input"
+              placeholder="Search story, author ot tags"
+              @keyup="advanceSearch()"
+            />
           </b-col>
-          <b-col cols="1" class="text-right pt-1 px-0">
-            <b-badge @click="clearSearch()" class="px-2 py-1 cursor-pointer" variant="light">clear</b-badge>
+          <b-col
+            cols="1"
+            class="text-right pt-1 px-0"
+          >
+            <b-badge
+              class="px-2 py-1 cursor-pointer"
+              variant="light"
+              @click="clearSearch()"
+            >
+              clear
+            </b-badge>
           </b-col>
         </b-row>
       </b-row>
     </div>
     <div class="search-result-page-content my-4 p-5">
-      <b-col cols="10" class="mx-auto p-0">
+      <b-col
+        cols="10"
+        class="mx-auto p-0"
+      >
         <div class="pb-4 px-3">
           <h3 class="m-0">
             Stories
@@ -31,10 +55,13 @@
         </div>
         <b-row class="search-result-page-content-story col-12 m-0 py-4 px-0">
           <template v-if="storyResults.length">
-            <b-col v-for="index in 6"
-                   :key="`story_${index}`"
-                   cols="4" class="p-3">
-              <story-mini-card/>
+            <b-col
+              v-for="index in 6"
+              :key="`story_${index}`"
+              cols="4"
+              class="p-3"
+            >
+              <story-mini-card />
             </b-col>
           </template>
           <template v-else>
@@ -43,12 +70,14 @@
                 No Stories found.
               </b-row>
             </div>
-
           </template>
         </b-row>
       </b-col>
       <b-row class="col-10 mx-auto my-0">
-        <b-col cols="6" class="pl-0">
+        <b-col
+          cols="6"
+          class="pl-0"
+        >
           <div class="pb-4">
             <h3 class="m-0">
               Authors
@@ -56,15 +85,24 @@
           </div>
           <div class="search-result-page-content-author p-3 border">
             <template v-if="authorResults.length">
-              <b-row v-for="(user, index) in authorResults" :key="`last_user_${index}`"
-                     class="card-user py-3 m-0">
+              <b-row
+                v-for="(user, index) in authorResults"
+                :key="`last_user_${index}`"
+                class="card-user py-3 m-0"
+              >
                 <b-row class="col-9 p-0 m-0">
-                  <b-col cols="auto" class="card-user-avatar p-0">
-                    <b-avatar text="BV" size="2.4rem"></b-avatar>
+                  <b-col
+                    cols="auto"
+                    class="card-user-avatar p-0"
+                  >
+                    <b-avatar
+                      text="BV"
+                      size="2.4rem"
+                    />
                   </b-col>
                   <b-col>
                     <div class="card-user-name font-weight-bold">
-                      {{user.user}}
+                      {{ user.user }}
                     </div>
                     <div class="card-user-email">
                       admin@gmail.com
@@ -72,13 +110,19 @@
                   </b-col>
                 </b-row>
                 <b-row class="col-3 m-0 justify-content-end align-items-center p-0">
-                  <b-col cols="auto" class="card-user-action p-0">
-            <span class="mr-2">
-              32 stories
-            </span>
+                  <b-col
+                    cols="auto"
+                    class="card-user-action p-0"
+                  >
+                    <span class="mr-2">
+                      32 stories
+                    </span>
                     <span class="cursor-pointer">
-              <img src="../assets/image/icon/Show.svg" alt="show">
-            </span>
+                      <img
+                        src="../assets/image/icon/Show.svg"
+                        alt="show"
+                      >
+                    </span>
                   </b-col>
                 </b-row>
               </b-row>
@@ -89,9 +133,11 @@
               </b-row>
             </template>
           </div>
-
         </b-col>
-        <b-col cols="6" class="pr-0">
+        <b-col
+          cols="6"
+          class="pr-0"
+        >
           <div class="pb-4">
             <h3 class="m-0">
               Tags
@@ -99,10 +145,13 @@
           </div>
           <div class="search-result-page-content-tag p-3 border">
             <template v-if="tagResults.length">
-              <b-row v-for="(tag, index) in tagResults" :key="`tag_user_${index}`"
-                     class="card-user py-3 m-0">
+              <b-row
+                v-for="(tag, index) in tagResults"
+                :key="`tag_user_${index}`"
+                class="card-user py-3 m-0"
+              >
                 <div class="card-user-name font-weight-bold">
-                  {{tag.name}}
+                  {{ tag.name }}
                 </div>
               </b-row>
             </template>
@@ -111,7 +160,6 @@
                 No Tags found.
               </b-row>
             </template>
-
           </div>
         </b-col>
       </b-row>
@@ -120,14 +168,10 @@
 </template>
 
 <script>
-import StoryMiniCard from "@/components/Card/StoryMiniCard";
+import StoryMiniCard from "@/components/Card/StoryMiniCard.vue";
 export default {
   name: "SearchResults",
   components: {StoryMiniCard},
-  created() {
-    this.searchText = this.$route.params.searchKey
-    this.advanceSearch()
-  },
   data() {
     return {
       searchText: '',
@@ -137,6 +181,10 @@ export default {
 
     }
   },
+  created() {
+    this.searchText = this.$route.params.searchKey
+    this.advanceSearch()
+  },
   methods: {
     advanceSearch() {
       this.advanceStorySearch()
@@ -145,19 +193,19 @@ export default {
     },
 
     advanceStorySearch() {
-      this.$axios.get(`/story/search/?q=${this.searchText}`).then(res => {
+      this.axios.get(`/story/search/?q=${this.searchText}`).then(res => {
         this.storyResults = res.data
       })
     },
 
     advanceAuthorSearch() {
-      this.$axios.get(`/story/search/?user=${this.searchText}`).then(res => {
+      this.axios.get(`/story/search/?user=${this.searchText}`).then(res => {
         this.authorResults = res.data
       })
     },
 
     advanceTagSearch() {
-      this.$axios.get(`/story/search/?tag==${this.searchText}`).then(res => {
+      this.axios.get(`/story/search/?tag==${this.searchText}`).then(res => {
         this.tagResults = res.data
       })
     },

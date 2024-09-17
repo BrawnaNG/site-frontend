@@ -1,24 +1,32 @@
 <template>
   <div class="story-card px-2 py-4">
-    <b-col cols="12" class="story-card-title pb-3">
+    <b-col
+      cols="12"
+      class="story-card-title pb-3"
+    >
       <h5 class="m-0">
         Climate impact of plastics
       </h5>
     </b-col>
-    <b-col cols="12" class="story-card-content pb-4">
+    <b-col
+      cols="12"
+      class="story-card-content pb-4"
+    >
       <p class="m-0">
         Plastics are frequently criticized for everything from their toxicity to their contributions to ocean pollution,
         but they play an important role in reducing greenhouse gas emissions.
       </p>
     </b-col>
-    <b-col cols="12" class="story-card-footer">
+    <b-col
+      cols="12"
+      class="story-card-footer"
+    >
       <template v-if="cardMode === 'small'">
         Username • Sep 22 | Category
       </template>
-     <template v-else>
-       July 6, 2022
-     </template>
-
+      <template v-else>
+        July 6, 2022
+      </template>
     </b-col>
   </div>
 </template>

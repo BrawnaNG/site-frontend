@@ -1,25 +1,33 @@
-import Vue from 'vue'
-import App from './App.vue'
-import router from './router'
-import store from './store'
+import { createApp } from 'vue';
+import App from './App.vue';
+import router from './router';
+import store from './store';
 
-import './plugin/Axios'
-import './plugin/Bootsrtap'
-import VueMoment from "vue-moment";
+import axios from 'axios';
+import VueAxios from 'vue-axios';
 import VueTreeNavigation from 'vue-tree-navigation';
-import Toasted from 'vue-toasted';
+import Vue3Toastify from 'vue3-toastify';
+import moment from "moment";
 
-Vue.use(Toasted, {
-  theme: "toasted-primary",
-  position: "bottom-right",
-  iconPack: 'fontawesome'
-});
-Vue.use(VueTreeNavigation);
-Vue.use(VueMoment);
-Vue.config.productionTip = false
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap";
 
-new Vue({
-  router,
-  store,
-  render: h => h(App)
-}).$mount('#app')
+var app = createApp(App)
+  .use(Vue3Toastify, {
+    autoClose: 3000,
+    position: "bottom-right"
+  })
+  .use(VueTreeNavigation)
+  .use(router)
+  .use(store)
+  .use(VueAxios, axios)
+  .provide("moment", moment);
+
+app.axios.defaults.baseURL = "http://127.0.0.1:8000/api/v1/";
+let token = localStorage.getItem('csrf-token')
+if (token) {
+  app.axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+}
+
+app.config.productionTip = false;
+app.mount('#app');

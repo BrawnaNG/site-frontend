@@ -1,17 +1,22 @@
 <template>
   <div class="user-list-page">
     <div class="user-list-table py-3 px-4 mb-4">
-      <b-table borderless
-               sort-icon-left
-               :items="userList.data"
-               :fields="userList.fields">
+      <b-table
+        borderless
+        sort-icon-left
+        :items="userList.data"
+        :fields="userList.fields"
+      >
         <template #cell(date_joined)="data">
-          {{data.item.date_joined | moment("DD MMM YYYY, hh:mm a")}}
+          {{ friendlyDate(data.item.date_joined) }}
         </template>
         <template #cell(action)="data">
           <div class="user-list-table-action">
             <span class="mr-3 cursor-pointer">
-              <img @click="showDisabledUserModal(data.item)" src="../../assets/image/icon/Delete.svg">
+              <img
+                src="../../assets/image/icon/Delete.svg"
+                @click="showDisabledUserModal(data.item)"
+              >
             </span>
             <span class="mr-3 cursor-pointer">
               <img src="../../assets/image/icon/Edit.svg">
@@ -25,17 +30,19 @@
         </template>
       </b-table>
     </div>
-<!--    <b-row class="justify-content-center m-0 pt-4">-->
-<!--      <b-pagination v-model="userList.page"-->
-<!--                    class="pagination-custom-style"-->
-<!--                    pills-->
-<!--                    :total-rows="userList.total"></b-pagination>-->
-<!--    </b-row>-->
+    <!--    <b-row class="justify-content-center m-0 pt-4">-->
+    <!--      <b-pagination v-model="userList.page"-->
+    <!--                    class="pagination-custom-style"-->
+    <!--                    pills-->
+    <!--                    :total-rows="userList.total"></b-pagination>-->
+    <!--    </b-row>-->
 
-    <b-modal hide-footer
-             hide-header
-             @click="closeUserDisableDialog"
-             v-model="disabledUserModal.show">
+    <b-modal
+      v-model="disabledUserModal.show"
+      hide-footer
+      hide-header
+      @click="closeUserDisableDialog"
+    >
       <div class="p-4">
         <div class="text-center py-3">
           <h6>
@@ -43,13 +50,20 @@
           </h6>
         </div>
         <b-row class="m-0 px-4 pt-4 justify-content-between">
-          <b-button @click="closeUserDisableDialog()" pill variant="outline-dark"
-                    class="story-default-btn saved-stories-btn px-3 py-2 font-weight-bold">
+          <b-button
+            pill
+            variant="outline-dark"
+            class="story-default-btn saved-stories-btn px-3 py-2 font-weight-bold"
+            @click="closeUserDisableDialog()"
+          >
             No, Thanks
           </b-button>
-          <b-button pill variant="dark"
-                    @click="UserDisabled()"
-                    class="story-default-btn saved-stories-btn px-3 py-2 font-weight-bold">
+          <b-button
+            pill
+            variant="dark"
+            class="story-default-btn saved-stories-btn px-3 py-2 font-weight-bold"
+            @click="UserDisabled()"
+          >
             Yes, disable it
           </b-button>
         </b-row>
@@ -61,9 +75,6 @@
 <script>
 export default {
   name: "UserList",
-  mounted() {
-    this.getAccountList()
-  },
   data() {
     return {
       userList: {
@@ -107,10 +118,18 @@ export default {
       }
     }
   },
+  computed: {
+    friendlyDate(value){
+      return moment(value).format('DD MMM YYYY, hh:mm a')
+    }
+  },
+  mounted() {
+    this.getAccountList()
+  },
   methods: {
 
     getAccountList() {
-      this.$axios.get('/accounts/list/').then((res) =>{
+      this.axios.get('/accounts/list/').then((res) =>{
         this.userList.data = res.data.results
       })
     },
@@ -136,7 +155,7 @@ export default {
 
     UserDisabledSave(email, alias) {
 
-      this.$axios.get(`/accounts/disable-user-admin/${email}`).then( () => {
+      this.axios.get(`/accounts/disable-user-admin/${email}`).then( () => {
         this.$toasted.show(`user ${alias} successfully disabled`, {
           duration: 3000,
           type: 'dark',

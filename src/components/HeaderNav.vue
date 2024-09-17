@@ -2,47 +2,76 @@
   <div class="story-header">
     <b-row class="m-0 justify-content-between align-items-center px-5 h-100">
       <b-col cols="auto p-0">
-        <img v-b-toggle.sidebar-backdrop
-             src="../assets/image/icon/menu.svg" class="story-header-menu" />
+        <img
+          v-b-toggle.sidebar-backdrop
+          src="../assets/image/icon/menu.svg"
+          class="story-header-menu"
+        >
       </b-col>
       <b-col cols="auto p-0">
-        <img src="../assets/image/icon/logo.svg" class="story-header-logo" />
+        <img
+          src="../assets/image/icon/logo.svg"
+          class="story-header-logo"
+        >
       </b-col>
-      <b-col cols="auto" class="p-0">
-        <img @click="searchModal.show = true"
-             src="../assets/image/icon/search-normal.svg" class="story-header-action mr-2" />
+      <b-col
+        cols="auto"
+        class="p-0"
+      >
+        <img
+          src="../assets/image/icon/search-normal.svg"
+          class="story-header-action mr-2"
+          @click="searchModal.show = true"
+        >
 
         <template v-if="logged">
-          <img title="You are logged in" src="../assets/image/icon/profile-circle.svg" class="story-header-action" />
+          <img
+            title="You are logged in"
+            src="../assets/image/icon/profile-circle.svg"
+            class="story-header-action"
+          >
         </template>
         <template v-else>
-          <img @click="loginModal.show = true" src="../assets/image/icon/profile-circle.svg" class="story-header-action" />
+          <img
+            src="../assets/image/icon/profile-circle.svg"
+            class="story-header-action"
+            @click="loginModal.show = true"
+          >
         </template>
       </b-col>
     </b-row>
 
     <b-sidebar
-        id="sidebar-backdrop"
-        title="Menu"
-        sidebar-class="sidebar-menu p-4"
-        variant="dark"
-        backdrop
-        shadow
+      id="sidebar-backdrop"
+      title="Menu"
+      sidebar-class="sidebar-menu p-4"
+      variant="dark"
+      backdrop
+      shadow
     >
       <div class="py-3 px-2">
         <ul>
           <li class="sidebar-menu-item pb-2">
-            <router-link class="sidebar-menu-item-link" :to="{name: 'home'}">
+            <router-link
+              class="sidebar-menu-item-link"
+              :to="{name: 'home'}"
+            >
               Home
             </router-link>
           </li>
           <li class="sidebar-menu-item pb-2">
-            <router-link class="sidebar-menu-item-link" :to="{name: 'dashboard'}">
+            <router-link
+              class="sidebar-menu-item-link"
+              :to="{name: 'dashboard'}"
+            >
               Dashboard
             </router-link>
           </li>
           <li class="sidebar-menu-item pb-2">
-            <router-link class="sidebar-menu-item-link" :to="{name: 'admin'}">
+            <router-link
+              class="sidebar-menu-item-link"
+              :to="{name: 'admin'}"
+            >
               Admin
             </router-link>
           </li>
@@ -50,33 +79,36 @@
       </div>
     </b-sidebar>
 
-    <b-modal hide-footer
-             :title="loginModal.title"
-             v-model="loginModal.show">
-      <login-form @closeLogin="loginModal.show = false"
-                  @changeFormState="changModalTitle"/>
+    <b-modal
+      v-model="loginModal.show"
+      hide-footer
+      :title="loginModal.title"
+    >
+      <login-form
+        @close-login="loginModal.show = false"
+        @change-form-state="changModalTitle"
+      />
     </b-modal>
 
-    <b-modal hide-footer
-             hide-header
-             size="xl"
-             v-model="searchModal.show">
+    <b-modal
+      v-model="searchModal.show"
+      hide-footer
+      hide-header
+      size="xl"
+    >
       <div class="p-2">
-        <multi-search @closeMultiSearchDialog="searchModal.show = false"/>
+        <multi-search @close-multi-search-dialog="searchModal.show = false" />
       </div>
     </b-modal>
   </div>
 </template>
 
 <script>
-import LoginForm from "@/components/LoginForm";
-import MultiSearch from "@/components/MultiSearch";
+import LoginForm from "@/components/LoginForm.vue";
+import MultiSearch from "@/components/MultiSearch.vue";
 export default {
   name: "HeaderNav",
   components: {MultiSearch, LoginForm},
-  created() {
-    this.checkUserLogin()
-  },
   data() {
     return {
       logged: false,
@@ -89,6 +121,14 @@ export default {
       }
     }
   },
+  watch: {
+    'loginModal.show'() {
+      this.checkUserLogin()
+    }
+  },
+  created() {
+    this.checkUserLogin()
+  },
   methods: {
     changModalTitle(mode) {
       this.loginModal.title = (mode === 'login' ? 'Login to the site' : 'Sign up')
@@ -96,11 +136,6 @@ export default {
     checkUserLogin() {
       let token = localStorage.getItem('csrf-token')
       this.logged = (token !== null)
-    }
-  },
-  watch: {
-    'loginModal.show'() {
-      this.checkUserLogin()
     }
   }
 }

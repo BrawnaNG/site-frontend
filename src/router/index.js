@@ -1,20 +1,17 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import Home from '../views/Home'
-import Dashboard from '../views/Dashboard/DashboardPage'
-import Admin from '../views/Admin/AdminPage'
-import UsersAccount from "@/views/Admin/UsersAccount";
-import UserStories from "@/views/Admin/UserStories";
-import CommentsManagement from "@/views/Admin/CommentsManagement";
-import CategoryManagement from "@/views/Admin/CategoryManagement";
-import SavedStories from "@/views/Dashboard/SavedStories";
-import CommentsStory from "@/views/Dashboard/StoriesComment";
-import StoryDrafts from "@/views/Dashboard/StoryDrafts";
-import ShowStory from "@/views/Story/ShowStory";
-import AddEditStory from "@/views/Story/AddEditStory";
-import SearchResults from "@/views/SearchResults";
-
-Vue.use(VueRouter)
+import { createMemoryHistory, createRouter } from 'vue-router';
+import Home from '../views/Home.vue';
+import Dashboard from '../views/Dashboard/DashboardPage.vue';
+import Admin from '../views/Admin/AdminPage.vue';
+import UsersAccount from "@/views/Admin/UsersAccount.vue";
+import UserStories from "@/views/Admin/UserStories.vue";
+import CommentsManagement from "@/views/Admin/CommentsManagement.vue";
+import CategoryManagement from "@/views/Admin/CategoryManagement.vue";
+import SavedStories from "@/views/Dashboard/SavedStories.vue";
+import CommentsStory from "@/views/Dashboard/StoriesComment.vue";
+import StoryDrafts from "@/views/Dashboard/StoryDrafts.vue";
+import ShowStory from "@/views/Story/ShowStory.vue";
+import AddEditStory from "@/views/Story/AddEditStory.vue";
+import SearchResults from "@/views/SearchResults.vue";
 
 const routes = [
   {
@@ -84,8 +81,7 @@ const routes = [
   },
 ]
 
-const router = new VueRouter({
-  routes
-})
-
-export default router
+export default createRouter({
+  history: createMemoryHistory(),
+  routes,
+});
