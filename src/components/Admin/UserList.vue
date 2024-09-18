@@ -8,7 +8,7 @@
         :fields="userList.fields"
       >
         <template #cell(date_joined)="data">
-          {{ friendlyDate(data.item.date_joined) }}
+          {{ moment(data.item.date_joined).format('DD MMM YYYY, hh:mm a') }}
         </template>
         <template #cell(action)="data">
           <div class="user-list-table-action">
@@ -73,8 +73,13 @@
 </template>
 
 <script>
+import { inject } from 'vue';
 export default {
   name: "UserList",
+  setup() {
+      const moment = inject('moment');
+      return { moment };
+    },
   data() {
     return {
       userList: {
@@ -116,11 +121,6 @@ export default {
         show: false,
         data: null
       }
-    }
-  },
-  computed: {
-    friendlyDate(value){
-      return moment(value).format('DD MMM YYYY, hh:mm a')
     }
   },
   mounted() {

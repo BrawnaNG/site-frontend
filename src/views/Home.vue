@@ -20,22 +20,21 @@
           </div>
           <div class="big-card-title pb-3 px-1">
             <h2 class="m-0">
-              Climate impact of plastics
+              Cats are great
             </h2>
           </div>
           <div class="big-card-content pb-4 px-1">
             <p class="m-0">
-              Plastics are frequently criticized for everything from their toxicity to their contributions to ocean pollution,
-              but they play an important role in reducing greenhouse gas emissions.
-              Plastics are frequently criticized for everything from their toxicity to their contributions to ocean pollution,
-              but they play an important role in reducing greenhouse gas emissions.
+              The common house cat is a welcome addition to any family.
             </p>
           </div>
           <div class="big-card-footer pt-3 px-1">
-            Username.Sep 22 | Category
+            Username.Sep 24 | Category
           </div>
         </b-col>
       </b-col>
+
+
       <b-row class="home-content-story-card col-12 m-0 py-4 px-0">
         <b-col
           v-for="index in 6"

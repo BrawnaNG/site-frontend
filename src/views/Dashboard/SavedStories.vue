@@ -114,14 +114,16 @@
 
       <div>
         <template v-if="recentStories.data.length">
-          <b-col
+          <template 
             v-for="storyCard in recentStories.data"
-            :key="`storyCard_${storyCard.id}`"
-            cols="12"
-            class="p-0"
-          >
-            <story-large-card :story-card="storyCard" />
-          </b-col>
+            :key="`storyCard_${storyCard.id}`">
+            <b-col 
+              cols="12" 
+              class="p-0"
+            >
+              <story-large-card :story-card="storyCard" />
+            </b-col>
+          </template>
           <b-row class="justify-content-center m-0 pt-4">
             <b-pagination
               v-model="recentStories.page"

@@ -31,7 +31,7 @@
             class="card-user-action p-0"
           >
             <span class="mr-2">
-              {{ friendlyDate(user.date_joined) }}
+              {{ moment(user.date_joined).from() }}
             </span>
             <span class="cursor-pointer">
               <img
@@ -47,16 +47,16 @@
 </template>
 
 <script>
+import { inject } from 'vue';
 export default {
   name: "LastRegisteredUser",
+  setup() {
+    const moment = inject('moment');
+    return { moment };
+  },
   data() {
     return {
       userList: []
-    }
-  },
-  computed: {
-    friendlyDate(value){
-      return moment(value).from()
     }
   },
   mounted() {

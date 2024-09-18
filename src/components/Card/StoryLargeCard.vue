@@ -10,18 +10,18 @@
       >
         <div class="story-large-card-title pb-3 px-1">
           <h4 class="m-0">
-            {{ StoryCard.slug }}
+            {{ storyCard.slug }}
           </h4>
         </div>
         <div class="story-large-card-content pb-3 px-1">
           <p class="m-0">
-            {{ StoryCard.body }}
+            {{ storyCard.body }}
           </p>
         </div>
         <div class="story-large-card-footer px-1">
-          {{ friendlyDate(StoryCard.created_at) }}
+          {{ moment(storyCard.created_at).format('MMM YY') }}
           |
-          {{ (StoryCard.categories.length ? StoryCard.categories[0].name : '') }}
+          {{ (storyCard.categories.length ? storyCard.categories[0].name : '') }}
         </div>
       </b-col>
       <b-row class="p-0 col-4 m-0 align-items-center text-right">
@@ -42,15 +42,16 @@
 </template>
 
 <script>
+import { inject } from 'vue';
 export default {
   name: "StoryLargeCard",
-  props: ['StoryCard'],
-  computed: {
-    friendlyDate(value){
-      return moment(value).format('MMM YY')
+  props: ['storyCard'],
+  setup() {
+      const moment = inject('moment');
+      return { moment };
     }
   }
-}
+
 </script>
 
 <style scoped lang="scss">
