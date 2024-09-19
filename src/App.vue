@@ -14,17 +14,8 @@ export default {
   components: {SiteFooter, HeaderNav},
   mounted() {
     document.title = 'Stories'
-    this.login()
   },
   methods: {
-    login() {
-      this.axios.post('http://127.0.0.1:8000/api/token/', {
-        username: 'admin',
-        password: 'adminadmin'
-      }).then(res => {
-        localStorage.setItem('csrf-token', res.data.access)
-      })
-    }
   }
 }
 </script>

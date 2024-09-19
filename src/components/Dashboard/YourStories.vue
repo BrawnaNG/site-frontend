@@ -57,7 +57,7 @@ export default {
   methods: {
 
     getRecentStories() {
-      this.axios.get(`/story/list/?page=${this.recentStories.page}`).then(res => {
+      this.axios.get(`/story/mine/?page=${this.recentStories.page}`).then(res => {
         this.recentStories.total = res.data.count
         this.recentStories.data = res.data.results
       })
