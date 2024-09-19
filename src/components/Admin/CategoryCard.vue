@@ -75,8 +75,15 @@
 export default {
   name: "CategoryCard",
   props: {
-    category: [Object, Array]
+    category: {
+      type: Object,
+      default: () =>({
+        name: "",
+        parent: null
+      })
+    }
   },
+  emits: ['showEditCategoryForm'],
   methods:{
     editCategory(name) {
       this.$emit('showEditCategoryForm', name)

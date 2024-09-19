@@ -29,6 +29,7 @@
             title="You are logged in"
             src="../assets/image/icon/profile-circle.svg"
             class="story-header-action"
+            @click="logOut()"
           >
         </template>
         <template v-else>
@@ -136,6 +137,10 @@ export default {
     checkUserLogin() {
       let token = localStorage.getItem('csrf-token')
       this.logged = (token !== null)
+    },
+    logOut(){
+      localStorage.removeItem('csrf-token')
+      this.logged = false
     }
   }
 }

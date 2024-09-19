@@ -10,7 +10,7 @@
       >
         <div class="story-large-card-title pb-3 px-1">
           <h4 class="m-0">
-            {{ storyCard.slug }}
+            {{ storyCard.title }}
           </h4>
         </div>
         <div class="story-large-card-content pb-3 px-1">
@@ -24,19 +24,21 @@
           {{ (storyCard.categories.length ? storyCard.categories[0].name : '') }}
         </div>
       </b-col>
-      <b-row class="p-0 col-4 m-0 align-items-center text-right">
-        <b-col class="p-0">
-          <span class="mr-3 cursor-pointer">
-            <img src="../../assets/image/icon/Delete.svg">
-          </span>
-          <span class="mr-3 cursor-pointer">
-            <img src="../../assets/image/icon/Edit.svg">
-          </span>
-          <span class="cursor-pointer">
-            <img src="../../assets/image/icon/Show.svg">
-          </span>
-        </b-col>
-      </b-row>
+      <template v-if="cardMode === 'edit'">
+        <b-row class="p-0 col-4 m-0 align-items-center text-right">
+          <b-col class="p-0">
+            <span class="mr-3 cursor-pointer">
+              <img src="../../assets/image/icon/Delete.svg">
+            </span>
+            <span class="mr-3 cursor-pointer">
+              <img src="../../assets/image/icon/Edit.svg">
+            </span>
+            <span class="cursor-pointer">
+              <img src="../../assets/image/icon/Show.svg">
+            </span>
+          </b-col>
+        </b-row>
+      </template>
     </b-row>
   </b-col>
 </template>
@@ -45,7 +47,21 @@
 import { inject } from 'vue';
 export default {
   name: "StoryLargeCard",
-  props: ['storyCard'],
+  props: {
+    storyCard: {
+      type: Object,
+      default: () => ({
+            title : "",
+            body: "",
+            created_at: null,
+            categories: []
+        })
+    },
+    cardMode:{
+      type: String,
+      default: 'read'
+    }
+  },
   setup() {
       const moment = inject('moment');
       return { moment };
