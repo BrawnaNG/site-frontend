@@ -170,6 +170,7 @@
 <script>
 export default {
   name: "LoginForm",
+  emits: ['closeLogin','changeFormState'],
   data() {
     return {
       login: {
@@ -195,25 +196,48 @@ export default {
   },
   methods: {
     loginUser() {
-      this.axios.post('http://127.0.0.1:8000/api/token/', {
+      let user = {
         username: this.login.username,
         password: this.login.password
-      }).then(res => {
-        localStorage.setItem('csrf-token', res.data.access)
-        this.$emit('closeLogin')
-      })
+      };
+      this.$store.dispatch("auth/login", user).then(
+        () => {
+          this.$store.dispatch("auth/refreshRole");
+          this.$emit('closeLogin')
+        },
+        (error) => {
+          this.loading = false;
+          this.message =
+            (error.response &&
+              error.response.data &&
+              error.response.data.message) ||
+            error.message ||
+            error.toString();
+        }
+      );
     },
     signUpUser() {
-      this.axios.post('accounts/registration/', {
+      let user = {
         alias: this.signUp.alias,
         username: this.signUp.username,
         email: this.signUp.email,
         password: this.signUp.password
-      }).then(res => {
-        console.log(res);
+      };
+      this.$store.dispatch("auth/register", user).then(
+        (data) => {
         this.view = 'login'
-      })
-    }
+        },
+        (error) => {
+          this.message =
+            (error.response &&
+              error.response.data &&
+              error.response.data.message) ||
+            error.message ||
+            error.toString();
+          this.successful = false;
+          this.loading = false;
+        });
+      }
   }
 }
 </script>

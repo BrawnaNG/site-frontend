@@ -12,76 +12,146 @@ import StoryDrafts from "@/views/Dashboard/StoryDrafts.vue";
 import ShowStory from "@/views/Story/ShowStory.vue";
 import AddEditStory from "@/views/Story/AddEditStory.vue";
 import SearchResults from "@/views/SearchResults.vue";
+import store from "../store";
 
 const routes = [
   {
     path: '/',
     name: 'home',
-    component: Home
+    component: Home,
+    meta: {
+      authRequired: 'false',
+    },
   },
   {
     path: '/search-results/search=:searchKey?',
     name: 'searchResults',
-    component: SearchResults
+    component: SearchResults,
+    meta: {
+      authRequired: 'false',
+    },
   },
   {
     path: '/story/show-story/:id?',
     name: 'story',
-    component: ShowStory
+    component: ShowStory,
+    meta: {
+      authRequired: 'false',
+    },
   },
   {
     path: '/story/add-edit-story/:id?',
     name: 'addEditStory',
-    component: AddEditStory
+    component: AddEditStory,
+    meta: {
+      authRequired: 'true',
+      roles: ['admin','author']
+    },
   },
   {
     path: '/dashboard/your-stories',
     name: 'dashboard',
-    component: Dashboard
+    component: Dashboard,
+    meta: {
+      authRequired: 'true',
+      roles: ['admin','author']
+    },
   },
   {
     path: '/dashboard/saved-stories',
     name: 'savedStories',
-    component: SavedStories
+    component: SavedStories,
+    meta: {
+      authRequired: 'true',
+      roles: ['admin','author']
+    },
   },
   {
     path: '/dashboard/story-comments',
     name: 'commentsStory',
-    component: CommentsStory
+    component: CommentsStory,
+    meta: {
+      authRequired: 'true',
+      roles: ['admin','author']
+    },
   },
   {
     path: '/dashboard/drafts',
     name: 'drafts',
-    component: StoryDrafts
+    component: StoryDrafts,
+    meta: {
+      authRequired: 'true',
+      roles: ['admin','author']
+    },
   },
   {
     path: '/admin/recent-stories',
     name: 'admin',
-    component: Admin
+    component: Admin,
+    meta: {
+      authRequired: 'true',
+      roles: ['admin']
+    },
   },
   {
     path: '/admin/user-account',
     name: 'users',
-    component: UsersAccount
+    component: UsersAccount,
+    meta: {
+      authRequired: 'true',
+      roles: ['admin']
+    },
   },
   {
     path: '/admin/user-account/:username',
     name: 'userStories',
-    component: UserStories
+    component: UserStories,
+    meta: {
+      authRequired: 'true',
+      roles: ['admin']
+    },
   },
   {
     path: '/admin/comments',
     name: 'comments',
-    component: CommentsManagement
+    component: CommentsManagement,
+    meta: {
+      authRequired: 'true',
+      roles: ['admin']
+    },
   },
   {
     path: '/admin/categories',
     name: 'categories',
-    component: CategoryManagement
+    component: CategoryManagement,
+    meta: {
+      authRequired: 'true',
+      roles: ['admin']
+    },
   },
 ]
 
-export default createRouter({
+var router = createRouter({
   history: createMemoryHistory(),
   routes,
 });
+
+router.beforeEach((to, from, next) => {
+
+  if (to.meta.authRequired === 'true'){
+    let role = store.state.auth.role;
+    if (to.meta.roles.includes(role)){
+      return next()
+    }
+    else{
+      router.push({
+        name: 'home'
+      })
+    }
+  }
+  else{
+    return next()
+  }
+});
+
+export default router;

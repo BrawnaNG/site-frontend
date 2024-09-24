@@ -3,15 +3,18 @@ import App from './App.vue';
 import router from './router';
 import store from './store';
 
-import axios from 'axios';
+import api from './services/api';
 import VueAxios from 'vue-axios';
 import VueTreeNavigation from 'vue-tree-navigation';
 import Vue3Toastify from 'vue3-toastify';
 import moment from "moment";
+import setupInterceptors from './services/setupinterceptors';
 
 import BootstrapVue from 'bootstrap-vue';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
+
+setupInterceptors(store);
 
 var app = createApp(App)
   .use(Vue3Toastify, {
@@ -21,15 +24,9 @@ var app = createApp(App)
   .use(VueTreeNavigation)
   .use(router)
   .use(store)
-  .use(VueAxios, axios)
+  .use(VueAxios, api)
   .use(BootstrapVue)
   .provide("moment", moment);
-
-app.axios.defaults.baseURL = "http://127.0.0.1:8000/api/v1/";
-let token = localStorage.getItem('csrf-token')
-if (token) {
-  app.axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-}
 
 app.config.productionTip = false;
 app.mount('#app');

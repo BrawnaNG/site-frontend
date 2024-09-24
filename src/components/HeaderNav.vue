@@ -60,7 +60,10 @@
               Home
             </router-link>
           </li>
-          <li class="sidebar-menu-item pb-2">
+          <li 
+            v-if="role.isAuthor || role.isAdmin"
+            class="sidebar-menu-item pb-2"
+          >
             <router-link
               class="sidebar-menu-item-link"
               :to="{name: 'dashboard'}"
@@ -68,7 +71,10 @@
               Dashboard
             </router-link>
           </li>
-          <li class="sidebar-menu-item pb-2">
+          <li 
+            v-if="role.isAdmin"
+            class="sidebar-menu-item pb-2"
+          >
             <router-link
               class="sidebar-menu-item-link"
               :to="{name: 'admin'}"
@@ -107,12 +113,17 @@
 <script>
 import LoginForm from "@/components/LoginForm.vue";
 import MultiSearch from "@/components/MultiSearch.vue";
+import EventBus from "../common/EventBus";
 export default {
   name: "HeaderNav",
   components: {MultiSearch, LoginForm},
   data() {
     return {
       logged: false,
+      role: {
+        isAuthor: false,
+        isAdmin: false
+      },
       loginModal: {
         show: false,
         title: 'Login to the site'
@@ -127,23 +138,32 @@ export default {
       this.checkUserLogin()
     }
   },
-  created() {
-    this.checkUserLogin()
+  beforeMount() {
+    this.checkUserLogin();
+    this.checkUserRole();
   },
   methods: {
     changModalTitle(mode) {
       this.loginModal.title = (mode === 'login' ? 'Login to the site' : 'Sign up')
     },
     checkUserLogin() {
-      let token = localStorage.getItem('csrf-token')
-      this.logged = (token !== null)
+      this.logged = this.$store.state.auth.status.loggedIn;
+    },
+    async checkUserRole(){
+      let role = this.$store.state.auth.role;
+      if (!role){
+        this.$store.dispatch("auth/refreshRole").then(() => {
+          this.role = this.$store.state.auth.role;
+        });
+      }
     },
     logOut(){
-      localStorage.removeItem('csrf-token')
-      this.logged = false
+      EventBus.dispatch("logout");
+      this.logged = false;
     }
   }
 }
+
 </script>
 
 <style lang="scss">
