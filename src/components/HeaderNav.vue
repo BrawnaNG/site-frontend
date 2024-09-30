@@ -1,112 +1,179 @@
 <template>
   <div class="story-header">
-    <b-row class="m-0 justify-content-between align-items-center px-5 h-100">
-      <b-col cols="auto p-0">
-        <img
-          v-b-toggle.sidebar-backdrop
-          src="../assets/image/icon/menu.svg"
-          class="story-header-menu"
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <a 
+          class="navbar-brand" 
+          href="#"
         >
-      </b-col>
-      <b-col cols="auto p-0">
-        <img
-          src="../assets/image/icon/logo.svg"
-          class="story-header-logo"
-        >
-      </b-col>
-      <b-col
-        cols="auto"
-        class="p-0"
-      >
-        <img
-          src="../assets/image/icon/search-normal.svg"
-          class="story-header-action mr-2"
-          @click="searchModal.show = true"
-        >
-
-        <template v-if="logged">
           <img
-            title="You are logged in"
-            src="../assets/image/icon/profile-circle.svg"
-            class="story-header-action"
-            @click="logOut()"
+            src="../assets/image/icon/logo.svg"
+            class="story-header-logo"
           >
-        </template>
-        <template v-else>
-          <img
-            src="../assets/image/icon/profile-circle.svg"
-            class="story-header-action"
-            @click="loginModal.show = true"
+        </a>
+        <button 
+          class="navbar-toggler" 
+          type="button" 
+          data-bs-toggle="collapse" 
+          data-bs-target="#navbarSupportedContent" 
+          aria-controls="navbarSupportedContent" 
+          aria-expanded="false" 
+          aria-label="Toggle menu"
+        >
+          <img 
+            src="../assets/image/icon/menu.svg" 
+            alt="" 
+            width="30" 
+            height="24" 
+            class="d-inline-block align-text-top"
           >
-        </template>
-      </b-col>
-    </b-row>
-
-    <b-sidebar
-      id="sidebar-backdrop"
-      title="Menu"
-      sidebar-class="sidebar-menu p-4"
-      variant="dark"
-      backdrop
-      shadow
-    >
-      <div class="py-3 px-2">
-        <ul>
-          <li class="sidebar-menu-item pb-2">
-            <router-link
-              class="sidebar-menu-item-link"
-              :to="{name: 'home'}"
+        </button>
+        <div 
+          id="navbarSupportedContent"
+          class="collapse navbar-collapse"
+        >
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0 ml-8">
+            <li class="nav-item">
+              <router-link
+                class="navbar-menu-item-link nav-link active"
+                :to="{name: 'home'}"
+              >
+                Home
+              </router-link>
+            </li>
+            <li 
+              v-if="role.isAuthor || role.isAdmin"
+              class="nav-item"
             >
-              Home
-            </router-link>
-          </li>
-          <li 
-            v-if="role.isAuthor || role.isAdmin"
-            class="sidebar-menu-item pb-2"
-          >
-            <router-link
-              class="sidebar-menu-item-link"
-              :to="{name: 'dashboard'}"
+              <router-link
+                class="navbar-menu-item-link nav-link"
+                :to="{name: 'dashboard'}"
+              >
+                Dashboard
+              </router-link>
+            </li>
+            <li 
+              v-if="role.isAdmin"
+              class="nav-item"
             >
-              Dashboard
-            </router-link>
-          </li>
-          <li 
-            v-if="role.isAdmin"
-            class="sidebar-menu-item pb-2"
-          >
-            <router-link
-              class="sidebar-menu-item-link"
-              :to="{name: 'admin'}"
-            >
-              Admin
-            </router-link>
-          </li>
-        </ul>
+              <router-link
+                class="navbar-menu-item-link nav-link"
+                :to="{name: 'admin'}"
+              >
+                Admin
+              </router-link>
+            </li>
+          </ul>
+          <div class="d-flex">
+            <div class="p-2">
+              <img
+                src="../assets/image/icon/search-normal.svg"
+                class="story-header-action mr-2"
+                @click="searchModal.show = true"
+              >
+            </div>
+            <div class="p-2">
+              <template v-if="loggedIn">
+                <img
+                  title="You are logged in"
+                  src="../assets/image/icon/profile-circle.svg"
+                  class="story-header-action"
+                  @click="logOut()"
+                >
+              </template>
+              <template v-else>
+                <img
+                  src="../assets/image/icon/profile-circle.svg"
+                  class="story-header-action"
+                  data-bs-toggle="modal"
+                  data-bs-target="#loginModal"
+                >
+              </template>
+            </div>
+          </div>
+        </div>
       </div>
-    </b-sidebar>
-
-    <b-modal
-      v-model="loginModal.show"
-      hide-footer
-      :title="loginModal.title"
-    >
-      <login-form
-        @close-login="loginModal.show = false"
-        @change-form-state="changModalTitle"
-      />
-    </b-modal>
-
-    <b-modal
-      v-model="searchModal.show"
-      hide-footer
-      hide-header
-      size="xl"
-    >
-      <div class="p-2">
-        <multi-search @close-multi-search-dialog="searchModal.show = false" />
+    </nav>
+  </div>
+  <div 
+    id="loginModal"
+    class="modal" 
+    tabindex="-1"
+    aria-labelledby="loginModalLabel" 
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 
+            id="loginModalLabel"
+            class="modal-title"
+          >
+            {{ loginModal.title }}
+          </h5>
+          <button 
+            type="button" 
+            class="btn-close" 
+            data-bs-dismiss="modal" 
+            aria-label="Close"
+          />
+        </div>
+        <div class="modal-body">
+          <login-form
+            @change-form-state="changeModalTitle"
+            @close-login="closeLogin"
+          />
+        </div>
+        <div class="modal-footer">
+          <button 
+            id="loginModalClose"
+            type="button"
+            class="btn btn-secondary" 
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
+        </div>
       </div>
-    </b-modal>
+    </div>
+  </div>
+
+  <div 
+    id="searchModal"
+    class="modal fade" 
+    tabindex="-1"
+    aria-labelledby="searchModalLabel" 
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 
+            id="searchModalLabel"
+            class="modal-title"
+          >
+            Search
+          </h5>
+          <button 
+            type="button" 
+            class="btn-close" 
+            data-bs-dismiss="modal" 
+            aria-label="Close"
+          />
+        </div>
+        <div class="modal-body">
+          <multi-search />
+        </div>
+        <div class="modal-footer">
+          <button 
+            type="button"
+            class="btn btn-secondary" 
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -119,11 +186,6 @@ export default {
   components: {MultiSearch, LoginForm},
   data() {
     return {
-      logged: false,
-      role: {
-        isAuthor: false,
-        isAdmin: false
-      },
       loginModal: {
         show: false,
         title: 'Login to the site'
@@ -133,33 +195,36 @@ export default {
       }
     }
   },
+  computed: {
+    role() {
+      return this.$store.state.auth.role;
+    },
+    loggedIn() {
+      return this.$store.state.auth.status.loggedIn;
+    }
+  },
   watch: {
     'loginModal.show'() {
-      this.checkUserLogin()
+      this.checkUser()
     }
   },
   beforeMount() {
-    this.checkUserLogin();
-    this.checkUserRole();
+    this.checkUser();
   },
   methods: {
-    changModalTitle(mode) {
-      this.loginModal.title = (mode === 'login' ? 'Login to the site' : 'Sign up')
+    changeModalTitle(mode) {
+      this.loginModal.title = (mode === 'login' ? 'Login to the site' : 'Sign up');
     },
-    checkUserLogin() {
-      this.logged = this.$store.state.auth.status.loggedIn;
+    closeLogin(){
+      document.getElementById('loginModalClose').click();
     },
-    async checkUserRole(){
-      let role = this.$store.state.auth.role;
-      if (!role){
-        this.$store.dispatch("auth/refreshRole").then(() => {
-          this.role = this.$store.state.auth.role;
-        });
+    async checkUser(){
+      if (this.loggedIn && !this.role.isInit){
+        this.$store.dispatch("auth/refreshRole");
       }
     },
     logOut(){
       EventBus.dispatch("logout");
-      this.logged = false;
     }
   }
 }
@@ -183,7 +248,7 @@ export default {
     cursor: pointer;
   }
 }
-#sidebar-backdrop.sidebar-menu {
+#navbar-backdrop.navbar-menu {
   background-color: black !important;
   color: white !important;
   width: 30vw;
@@ -191,7 +256,7 @@ export default {
     color: white !important;
   }
 
-  a.sidebar-menu-item-link {
+  a.navbar-menu-item-link {
     color: #EFEFEF !important;
     font-size: 1.2em;
     font-family: NotoSerif-Bold;

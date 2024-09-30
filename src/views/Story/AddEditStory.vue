@@ -1,235 +1,104 @@
 <template>
-  <div class="add-edit-story-page">
-    <b-col
-      cols="10"
-      class="saved-stories-head mx-auto py-3"
-    >
-      <b-row class="h-100 m-0">
-        <b-col
-          cols="6"
-          class="px-0"
+  <div class="container-flex add-edit-story-page">
+    <bread-crumbs label="Create Story" />
+    <user-menu />
+    <div class="row my-0 mx-auto py-5">
+      <div class="col-3 pl-0">
+        <!--          <vue-tree-navigation :items="items"  :defaultOpenLevel="defaultOpenLevel"/>-->
+      </div>
+      <div class="col-6 p-0 saved-stories">
+        <span class="saved-stories-upload-file font-weight-bold py-2 cursor-pointer">
+          Upload Document
+        </span>
+      </div>
+      <div class="row pb-5 m-0 justify-content-between">
+        <h6 class="m-0">
+          Are there multiple chapters in your story?
+        </h6>
+        <div class="form-check">
+          <input 
+            id="check-button" 
+            class="form-check-input" 
+            type="checkbox" 
+            value=""
+          >
+        </div>
+      </div>
+      <div class="row saved-stories-title pb-3">
+        <label 
+          for="titleInput"
+          class="form-label"
         >
-          <b-col class="saved-stories-page-head-title px-0">
-            <h4 class="m-0 font-weight-bolder">
-              Dashboard
-            </h4>
-          </b-col>
-          <b-col class="saved-stories-page-head-breadcrumb pt-1 px-0">
-            <b-breadcrumb
-              class="bg-transparent pb-0 px-0 m-0"
-              :items="breadcrumb"
-            />
-          </b-col>
-        </b-col>
-        <b-col
-          cols="6"
-          class="px-0 pt-2 mt-1 text-right"
+          Title
+        </label>
+        <input 
+          id="titleInput"
+          type="text"
+          class="form-control"
         >
-          <b-button
+      </div>
+      <div class="row text-editor-chapter py-2">
+        <VueEditor :editor-toolbar="customToolbar" />
+      </div>
+      <div class="row pt-3 justify-content-between m-0">
+        <div class="col p-0">
+          <button
+            pill
+            variant="outline-dark"
+            class="story-default-btn saved-stories-btn px-2 py-1 mr-2 font-weight-bold"
+          >
+            Cancel
+          </button>
+          <button
+            pill
+            variant="outline-dark"
+            class="story-default-btn saved-stories-btn px-2 py-1 font-weight-bold"
+          >
+            Save to Drafts
+          </button>
+        </div>
+        <div class="col p-0">
+          <button
+            pill
+            variant="outline-dark"
+            class="story-default-btn saved-stories-btn px-2 py-1 mr-2 font-weight-bold"
+          >
+            Next Chapter
+          </button>
+          <button
             pill
             variant="dark"
-            :to="{name: 'addEditStory'}"
-            class="story-default-btn pl-3 pr-2 py-2 font-weight-bold"
+            class="story-default-btn saved-stories-btn px-2 py-1 font-weight-bold"
           >
-            Create Story
-            <img
-              src="../../assets/image/icon/add.svg"
-              class="ml-2"
-              alt="go"
-            >
-          </b-button>
-        </b-col>
-      </b-row>
-    </b-col>
-    <b-col
-      cols="12"
-      class="py-3 menu-bar-wrapper px-0"
-    >
-      <b-row class="col-10 mx-auto my-0">
-        <b-row class="col-10 m-0 px-0">
-          <b-col
-            cols="auto"
-            class="menu-bar-item cursor-pointer text-white text-center mr-3 px-1 pb-2"
-          >
-            <router-link
-              class="pb-2 px-1"
-              :to="{name: 'dashboard'}"
-            >
-              Your Stories
-            </router-link>
-          </b-col>
-          <b-col
-            cols="auto"
-            class="menu-bar-item cursor-pointer text-white text-center mr-3 px-1 pb-2"
-          >
-            <router-link
-              class="pb-2 px-1"
-              :to="{name: 'savedStories'}"
-            >
-              Saved Stories
-            </router-link>
-          </b-col>
-          <b-col
-            cols="auto"
-            class="menu-bar-item cursor-pointer text-white text-center mr-3 px-1 pb-2"
-          >
-            <router-link
-              class="pb-2 px-1"
-              :to="{name: 'commentsStory'}"
-            >
-              Comments
-            </router-link>
-          </b-col>
-          <b-col
-            cols="auto"
-            class="menu-bar-item cursor-pointer text-white text-center mr-3 px-1 pb-2"
-          >
-            <router-link
-              class="pb-2 px-1"
-              :to="{name: 'drafts'}"
-            >
-              Drafts
-            </router-link>
-          </b-col>
-        </b-row>
-        <b-col
-          cols="2"
-          class="text-right p-0"
-        >
-          <span class="text-white">
-            Log out
-          </span>
-        </b-col>
-      </b-row>
-    </b-col>
-    <b-row class="col-10 my-0 mx-auto py-5">
-      <b-col
-        cols="3"
-        class="pl-0"
-      >
-        <!--          <vue-tree-navigation :items="items"  :defaultOpenLevel="defaultOpenLevel"/>-->
-      </b-col>
-      <b-col
-        cols="6"
-        class="p-0 saved-stories"
-      >
-        <b-row class="pb-4 m-0 justify-content-between">
-          <h3 class="m-0 font-weight-bolder pt-1">
-            Saved Stories
-          </h3>
-          <span class="saved-stories-upload-file font-weight-bold py-2 cursor-pointer">
-            Upload Document
-          </span>
-        </b-row>
-        <b-row class="pb-5 m-0 justify-content-between">
-          <h6 class="m-0">
-            Are there multiple chapters in your story?
-          </h6>
-          <span>
-            <b-form-checkbox
-              name="check-button"
-              switch
-            />
-          </span>
-        </b-row>
-        <div class="saved-stories-title pb-3">
-          <label
-            class="pl-2 saved-stories-title-label"
-            for="inputLive"
-          >
-            Title
-          </label>
-          <b-form-input
-            id="inputLive"
-            class="saved-stories-title-input py-3"
-            placeholder="Chapter01:introduction"
-            trim
-          />
+            Publish Story
+          </button>
         </div>
-        <div class="text-editor-chapter py-2">
-          <VueEditor :editor-toolbar="customToolbar" />
-        </div>
-        <b-row class="pt-3 justify-content-between m-0">
-          <b-col
-            cols="auto"
-            class="p-0"
-          >
-            <b-button
-              pill
-              variant="outline-dark"
-              class="story-default-btn saved-stories-btn px-2 py-1 mr-2 font-weight-bold"
-            >
-              Cancel
-            </b-button>
-            <b-button
-              pill
-              variant="outline-dark"
-              class="story-default-btn saved-stories-btn px-2 py-1 font-weight-bold"
-            >
-              Save to Drafts
-            </b-button>
-          </b-col>
-          <b-col
-            cols="auto"
-            class="p-0"
-          >
-            <b-button
-              pill
-              variant="outline-dark"
-              class="story-default-btn saved-stories-btn px-2 py-1 mr-2 font-weight-bold"
-            >
-              Next Chapter
-            </b-button>
-            <b-button
-              pill
-              variant="dark"
-              class="story-default-btn saved-stories-btn px-2 py-1 font-weight-bold"
-            >
-              Publish Story
-            </b-button>
-          </b-col>
-        </b-row>
-      </b-col>
-      <b-col
-        cols="3"
-        class="pr-0 pl-4"
-      >
+      </div>
+      <div class="row pr-0 pl-4">
         <div class="saved-stories-tags pt-2">
           <h6>Tags</h6>
-          <b-form-input
-            class="saved-stories-tags-input mt-4 py-3"
+          <input
+            class="text saved-stories-tags-input mt-4 py-3"
             placeholder="Write and press enter to add"
             trim
-          />
-
+          >
           <div class="saved-stories-tags-badge mt-2 py-2" />
         </div>
-      </b-col>
-    </b-row>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import {VueEditor} from "vue2-editor";
+import BreadCrumbs from "@/components/Dashboard/BreadCrumbs.vue";
+import UserMenu from "@/components/Dashboard/UserMenu.vue";
 
 export default {
   name: "AddEditStory",
-  components: {VueEditor},
+  components: {VueEditor, BreadCrumbs, UserMenu},
   data() {
     return {
-      breadcrumb: [
-        {
-          text: 'Home',
-          href: '/'
-        },
-        {
-          text: 'Dashboard',
-          href: '#/dashboard/your-stories'
-        },
-        {
-          text: 'Saved Stories',
-        }
-      ],
       items: [
         { name: 'Products', children: [
             { name: 'Shoes', path: '#' }

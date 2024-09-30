@@ -10,9 +10,8 @@ import Vue3Toastify from 'vue3-toastify';
 import moment from "moment";
 import setupInterceptors from './services/setupinterceptors';
 
-import BootstrapVue from 'bootstrap-vue';
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap-vue/dist/bootstrap-vue.css';
+import "bootstrap/dist/css/bootstrap.min.css"
+import "bootstrap"
 
 setupInterceptors(store);
 
@@ -25,7 +24,6 @@ var app = createApp(App)
   .use(router)
   .use(store)
   .use(VueAxios, api)
-  .use(BootstrapVue)
   .provide("moment", moment);
 
 app.config.productionTip = false;

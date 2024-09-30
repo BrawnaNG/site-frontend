@@ -7,7 +7,7 @@ const setup = (store) => {
       const token = TokenService.getLocalAccessToken();
       if (token) {
         config.headers["Authorization"] = 'Bearer ' + token;
-        }
+      }
       return config;
     },
     (error) => {
@@ -26,17 +26,18 @@ const setup = (store) => {
         // Access Token was expired
         if (err.response.status === 401 && !originalConfig._retry) {
           originalConfig._retry = true;
-
           try {
-            const rs = await axiosInstance.post("token/refresh/", {
-              refresh: TokenService.getLocalRefreshToken(),
-            });
+            let refreshToken = TokenService.getLocalRefreshToken();
+            if (refreshToken){
+              const rs = await axiosInstance.post("token/refresh/", {
+                refresh: TokenService.getLocalRefreshToken(),
+              });
 
-            const { accessToken } = rs.data;
+              const { accessToken } = rs.data;
 
-            store.dispatch('refreshToken', accessToken);
-            TokenService.updateLocalAccessToken(accessToken);
-
+              store.dispatch('refreshToken', accessToken);
+              TokenService.updateLocalAccessToken(accessToken);
+            }
             return axiosInstance(originalConfig);
           } catch (_error) {
             return Promise.reject(_error);

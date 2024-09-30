@@ -1,46 +1,37 @@
 <template>
-  <b-col
-    cols="12"
-    class="story-large-card p-4 mb-4"
+  <div 
+    class="container-flex story-large-card p-4 mb-4"
+    @click="gotoStory"
   >
-    <b-row class="m-0">
-      <b-col
-        cols="8"
-        class="p-0"
-      >
-        <div class="story-large-card-title pb-3 px-1">
-          <h4 class="m-0">
-            {{ storyCard.title }}
-          </h4>
-        </div>
-        <div class="story-large-card-content pb-3 px-1">
-          <p class="m-0">
-            {{ storyCard.body }}
-          </p>
-        </div>
-        <div class="story-large-card-footer px-1">
-          {{ moment(storyCard.created_at).format('MMM YY') }}
-          |
-          {{ (storyCard.categories.length ? storyCard.categories[0].name : '') }}
-        </div>
-      </b-col>
-      <template v-if="cardMode === 'edit'">
-        <b-row class="p-0 col-4 m-0 align-items-center text-right">
-          <b-col class="p-0">
-            <span class="mr-3 cursor-pointer">
-              <img src="../../assets/image/icon/Delete.svg">
-            </span>
-            <span class="mr-3 cursor-pointer">
-              <img src="../../assets/image/icon/Edit.svg">
-            </span>
-            <span class="cursor-pointer">
-              <img src="../../assets/image/icon/Show.svg">
-            </span>
-          </b-col>
-        </b-row>
-      </template>
-    </b-row>
-  </b-col>
+    <div class="row story-large-card-title pb-3 px-1">
+      <h4 class="m-0">
+        {{ storyCard.title }}
+      </h4>
+    </div>
+    <div class="row story-large-card-content pb-3 px-1">
+      <p class="m-0">
+        {{ storyCard.body }}
+      </p>
+    </div>
+    <div class="story-large-card-footer px-1">
+      {{ moment(storyCard.created_at).format('MMM YY') }}
+      |
+      {{ (storyCard.categories.length ? storyCard.categories[0].name : '') }}
+    </div>
+    <template v-if="cardMode === 'edit'">
+      <div class="row p-0 m-0 align-items-center text-right">
+        <span class="mr-3 cursor-pointer">
+          <img src="../../assets/image/icon/Delete.svg">
+        </span>
+        <span class="mr-3 cursor-pointer">
+          <img src="../../assets/image/icon/Edit.svg">
+        </span>
+        <span class="cursor-pointer">
+          <img src="../../assets/image/icon/Show.svg">
+        </span>
+      </div>
+    </template>
+  </div>
 </template>
 
 <script>
@@ -65,9 +56,13 @@ export default {
   setup() {
       const moment = inject('moment');
       return { moment };
+    },
+  methods: {
+    gotoStory: function() {
+      this.$router.push({name: 'story', params: { id: this.storyCard.id } });
     }
   }
-
+}
 </script>
 
 <style scoped lang="scss">
