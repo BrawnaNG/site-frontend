@@ -34,6 +34,7 @@ const routes = [
   {
     path: '/story/show-story/:id?',
     name: 'story',
+    props: true,
     component: ShowStory,
     meta: {
       authRequired: 'false',
@@ -140,7 +141,10 @@ router.beforeEach((to, from, next) => {
 
   if (to.meta.authRequired === 'true'){
     let role = store.state.auth.role;
-    if (to.meta.roles.includes(role)){
+    if (to.meta.roles.includes('admin') && role.isAdmin){
+      return next()
+    }
+    else if (to.meta.roles.includes('author') && role.isAuthor){
       return next()
     }
     else{

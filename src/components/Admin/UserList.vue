@@ -1,74 +1,80 @@
 <template>
   <div class="user-list-page">
     <div class="user-list-table py-3 px-4 mb-4">
-      <b-table
+      <table
         borderless
         sort-icon-left
         :items="userList.data"
         :fields="userList.fields"
       >
-        <template #cell(date_joined)="data">
-          {{ moment(data.item.date_joined).format('DD MMM YYYY, hh:mm a') }}
-        </template>
-        <template #cell(action)="data">
-          <div class="user-list-table-action">
-            <span class="mr-3 cursor-pointer">
-              <img
-                src="../../assets/image/icon/Delete.svg"
-                @click="showDisabledUserModal(data.item)"
-              >
-            </span>
-            <span class="mr-3 cursor-pointer">
-              <img src="../../assets/image/icon/Edit.svg">
-            </span>
-            <span class="cursor-pointer">
-              <router-link :to="{name: 'userStories', params: {username: data.item.alias}}">
-                <img src="../../assets/image/icon/Show.svg">
-              </router-link>
-            </span>
-          </div>
-        </template>
-      </b-table>
-    </div>
-    <!--    <b-row class="justify-content-center m-0 pt-4">-->
-    <!--      <b-pagination v-model="userList.page"-->
-    <!--                    class="pagination-custom-style"-->
-    <!--                    pills-->
-    <!--                    :total-rows="userList.total"></b-pagination>-->
-    <!--    </b-row>-->
-
-    <b-modal
-      v-model="disabledUserModal.show"
-      hide-footer
-      hide-header
-      @click="closeUserDisableDialog"
-    >
-      <div class="p-4">
-        <div class="text-center py-3">
-          <h6>
-            Are you sure you want to disable this user?
-          </h6>
+        {{ moment(data.item.date_joined).format('DD MMM YYYY, hh:mm a') }}
+        <div class="user-list-table-action">
+          <span class="mr-3 cursor-pointer">
+            <img
+              src="../../assets/image/icon/Delete.svg"
+              @click="showDisabledUserModal(data.item)"
+            >
+          </span>
+          <span class="mr-3 cursor-pointer">
+            <img src="../../assets/image/icon/Edit.svg">
+          </span>
+          <span class="cursor-pointer">
+            <router-link :to="{name: 'userStories', params: {username: data.item.alias}}">
+              <img src="../../assets/image/icon/Show.svg">
+            </router-link>
+          </span>
         </div>
-        <b-row class="m-0 px-4 pt-4 justify-content-between">
-          <b-button
-            pill
-            variant="outline-dark"
-            class="story-default-btn saved-stories-btn px-3 py-2 font-weight-bold"
-            @click="closeUserDisableDialog()"
+      </table>
+    </div>
+  </div>
+
+  <div
+    id="userDisableModal"
+    class="modal"
+    tabindex="-1"
+    aria-labelledby="userDisableModalLabel" 
+    aria-hidden="true"
+    @click="closeUserDisableDialog"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 
+            id="userDisableModalLabel"
+            class="modal-title"
           >
-            No, Thanks
-          </b-button>
-          <b-button
-            pill
-            variant="dark"
-            class="story-default-btn saved-stories-btn px-3 py-2 font-weight-bold"
-            @click="UserDisabled()"
-          >
-            Yes, disable it
-          </b-button>
-        </b-row>
+            Disable User
+          </h5>
+        </div>
+        <div class="modal-body">
+          <div class="container-flex">
+            <div class="row text-center py-3">
+              <h6>
+                Are you sure you want to disable this user?
+              </h6>
+            </div>
+            <div class="row m-0 px-4 pt-4 justify-content-between">
+              <button
+                pill
+                variant="outline-dark"
+                class="story-default-btn saved-stories-btn px-3 py-2 font-weight-bold"
+                @click="closeUserDisableDialog()"
+              >
+                No, Thanks
+              </button>
+              <button
+                pill
+                variant="dark"
+                class="story-default-btn saved-stories-btn px-3 py-2 font-weight-bold"
+                @click="UserDisabled()"
+              >
+                Yes, disable it
+              </button>
+            </div>
+          </div>
+        </div>  
       </div>
-    </b-modal>
+    </div>
   </div>
 </template>
 

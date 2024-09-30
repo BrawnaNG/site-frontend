@@ -1,168 +1,102 @@
 <template>
   <div class="search-result-page">
-    <div class="search-result-page-head border-bottom py-4">
-      <b-row class="my-0 col-10 mx-auto justify-content-between">
-        <b-col
-          cols="5"
-          class="p-0"
-        >
+    <div class="container-flex search-result-page-head border-bottom py-4">
+      <div class="row my-0 col-10 mx-auto justify-content-between">
+        <div class="col-5 p-0">
           <h1 class="m-0 font-weight-bolder">
-            Results for “Emily”
+            Results for {{ searchText }}
           </h1>
-        </b-col>
-        <b-row class="m-0 col-6 border-bottom justify-content-between p-1">
-          <b-col
-            cols="auto"
-            class="pr-0 text-center"
-          >
+        </div>
+        <div class="m-0 col-6 border-bottom justify-content-between p-1">
+          <div class="pr-0 text-center">
             <img src="../assets/image/icon/search-normal.svg">
-          </b-col>
-          <b-col
-            cols="9"
-            class="p-0"
-          >
-            <b-form-input
+          </div>
+          <div class="p-0">
+            <input
               v-model="searchText"
               class="border-0 login-form-input"
               placeholder="Search story, author ot tags"
               @keyup="advanceSearch()"
-            />
-          </b-col>
-          <b-col
-            cols="1"
-            class="text-right pt-1 px-0"
-          >
-            <b-badge
-              class="px-2 py-1 cursor-pointer"
+            >
+          </div>
+          <div class="text-right pt-1 px-0">
+            <span
+              class="badge px-2 py-1 cursor-pointer"
               variant="light"
               @click="clearSearch()"
             >
               clear
-            </b-badge>
-          </b-col>
-        </b-row>
-      </b-row>
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="search-result-page-content my-4 p-5">
-      <b-col
-        cols="10"
-        class="mx-auto p-0"
-      >
-        <div class="pb-4 px-3">
+    <div class="container-flex search-result-page-content my-4 p-5">
+      <div class="row pb-4 px-3">
+        <h3 class="m-0">
+          Stories
+        </h3>
+      </div>
+      <template v-if="storyResults.length">
+        <div
+          v-for="story in storyResults"
+          :key="`story_${story}`"
+          cols="4"
+          class="row p-3"
+        >
+          <story-mini-card 
+            :card-mode="'mini'"
+            :story-card="story"
+          />
+        </div>
+      </template>
+      <template v-else>
+        <div class="row m-0 border w-100 h-100 font-size-8 font-weight-bold text-secondary justify-content-center align-items-center">
+          No Stories found.
+        </div>
+      </template>
+    </div>
+    <div class="container-flex search-result-page-content my-4 p-5">
+      <div class="row col-10 mx-auto my-0">
+        <div class="pb-4">
           <h3 class="m-0">
-            Stories
+            Authors
           </h3>
         </div>
-        <b-row class="search-result-page-content-story col-12 m-0 py-4 px-0">
-          <template v-if="storyResults.length">
-            <b-col
-              v-for="index in 6"
-              :key="`story_${index}`"
-              cols="4"
-              class="p-3"
-            >
-              <story-mini-card />
-            </b-col>
-          </template>
-          <template v-else>
-            <div class="px-3 w-100">
-              <b-row class="m-0 border w-100 h-100 font-size-8 font-weight-bold text-secondary justify-content-center align-items-center">
-                No Stories found.
-              </b-row>
+        <template v-if="authorResults.length">
+          <div
+            v-for="(user, index) in authorResults"
+            :key="`last_user_${index}`"
+            class="row card-user py-3 m-0"
+          >
+            <div class="col-9 p-0 m-0">
+              TODO - AVATAR
             </div>
-          </template>
-        </b-row>
-      </b-col>
-      <b-row class="col-10 mx-auto my-0">
-        <b-col
-          cols="6"
-          class="pl-0"
-        >
-          <div class="pb-4">
-            <h3 class="m-0">
-              Authors
-            </h3>
+            <div class="card-user-name font-weight-bold">
+              {{ user.user }}
+            </div>
+            <div class="card-user-email">
+              {{ user.email }}
+            </div>            
+            <div class="col-3 m-0 justify-content-end align-items-center p-0">
+              <span class="mr-2">
+                TODO - STORy COUNT
+              </span>
+              <span class="cursor-pointer">
+                <img
+                  src="../assets/image/icon/Show.svg"
+                  alt="show"
+                >
+              </span>
+            </div>
           </div>
-          <div class="search-result-page-content-author p-3 border">
-            <template v-if="authorResults.length">
-              <b-row
-                v-for="(user, index) in authorResults"
-                :key="`last_user_${index}`"
-                class="card-user py-3 m-0"
-              >
-                <b-row class="col-9 p-0 m-0">
-                  <b-col
-                    cols="auto"
-                    class="card-user-avatar p-0"
-                  >
-                    <b-avatar
-                      text="BV"
-                      size="2.4rem"
-                    />
-                  </b-col>
-                  <b-col>
-                    <div class="card-user-name font-weight-bold">
-                      {{ user.user }}
-                    </div>
-                    <div class="card-user-email">
-                      admin@gmail.com
-                    </div>
-                  </b-col>
-                </b-row>
-                <b-row class="col-3 m-0 justify-content-end align-items-center p-0">
-                  <b-col
-                    cols="auto"
-                    class="card-user-action p-0"
-                  >
-                    <span class="mr-2">
-                      32 stories
-                    </span>
-                    <span class="cursor-pointer">
-                      <img
-                        src="../assets/image/icon/Show.svg"
-                        alt="show"
-                      >
-                    </span>
-                  </b-col>
-                </b-row>
-              </b-row>
-            </template>
-            <template v-else>
-              <b-row class="m-0 h-100 font-size-8 font-weight-bold text-secondary justify-content-center align-items-center">
-                No Authors found.
-              </b-row>
-            </template>
+        </template>
+        <template v-else>
+          <div class="row m-0 h-100 font-size-8 font-weight-bold text-secondary justify-content-center align-items-center">
+            No Authors found.
           </div>
-        </b-col>
-        <b-col
-          cols="6"
-          class="pr-0"
-        >
-          <div class="pb-4">
-            <h3 class="m-0">
-              Tags
-            </h3>
-          </div>
-          <div class="search-result-page-content-tag p-3 border">
-            <template v-if="tagResults.length">
-              <b-row
-                v-for="(tag, index) in tagResults"
-                :key="`tag_user_${index}`"
-                class="card-user py-3 m-0"
-              >
-                <div class="card-user-name font-weight-bold">
-                  {{ tag.name }}
-                </div>
-              </b-row>
-            </template>
-            <template v-else>
-              <b-row class="m-0 h-100 font-size-8 font-weight-bold text-secondary justify-content-center align-items-center">
-                No Tags found.
-              </b-row>
-            </template>
-          </div>
-        </b-col>
-      </b-row>
+        </template>
+      </div>
     </div>
   </div>
 </template>

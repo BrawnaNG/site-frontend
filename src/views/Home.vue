@@ -1,134 +1,47 @@
 <template>
-  <div class="home-wrapper">
-    <b-col
-      cols="12"
-      class="home-head border"
-    >
-      <div class="pb-6 px-1">
-        <h1 class="m-0 home-head-title">
+  <div class="container-fluid home-wrapper">
+    <div class="row">
+      <div class="col">
+        <h1 class="home-head-title">
           Stories
         </h1>
       </div>
-    </b-col>
-    <b-col
-      cols="10"
-      class="home-content mx-auto py-4 px-2"
-    >
-      <template v-if="featuredStory">
-        <b-col cols="12">
-          <b-col
-            cols="12"
-            class="home-content-big-card p-4"
-          >
-            <div class="big-card-head-title pb-3 px-1">
-              <h6 class="m-0">
-                Featured Story
-              </h6>
-            </div>
-            <story-large-card 
-              :card-mode="read"
-              :story-card="featuredStory"
-            />
-          </b-col>
-        </b-col>
-      </template>
-
-      <b-row class="home-content-story-card col-10 mx-auto my-0 py-4 px-0">
-        <b-col
-          v-for="storyCard in recentStories"
-          :key="`storyCard_${storyCard.id}`"
-          cols="3"
-          class="p-3"
-        >
-          <story-mini-card 
-            :card-mode="mini"
-            :story-card="storyCard"
+    </div>
+    <template v-if="featuredStory">
+      <div class="row">
+        <div class="col big-card-head-title">
+          <h6>
+            Featured Story
+          </h6>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <story-large-card 
+            :card-mode="'read'"
+            :story-card="featuredStory"
           />
-        </b-col>
-      </b-row>
-    </b-col>
-    
-    <!--
-    <b-col
-      cols="12"
-      class="home-section border-bottom mx-auto py-4 px-2"
+        </div> 
+      </div>
+    </template>
+    <div 
+      v-for="(chunk, row) in recent_story_chunks"
+      :key="`recentStoriesRow_${row}`"
+      class="row p-2"
     >
-      <b-row class="col-10 py-2 mx-auto">
-        <b-col
-          cols="6"
-          class="home-section-title px-0"
-        >
-          <h4 class="m-0 font-weight-bold">
-            Title for this section
-          </h4>
-        </b-col>
-        <b-col
-          cols="6"
-          class="px-0 text-right"
-        >
-          <router-link to="/">
-            <h4 class="home-section-view-all m-0 text-dark font-weight-bold ">
-              View All
-            </h4>
-          </router-link>
-        </b-col>
-      </b-row>
-
-    <b-col
-      cols="12"
-      class="home-section border-bottom mx-auto py-4 mt-2 px-2"
-    >
-      <b-row class="col-10 py-2 mx-auto">
-        <b-col
-          cols="6"
-          class="home-section-title px-0"
-        >
-          <h4 class="m-0 font-weight-bold">
-            Title for this section
-          </h4>
-        </b-col>
-        <b-col
-          cols="6"
-          class="px-0 text-right"
-        >
-          <router-link to="/">
-            <h4 class="home-section-view-all m-0 text-dark font-weight-bold ">
-              View All
-            </h4>
-          </router-link>
-        </b-col>
-      </b-row>
-      <b-row class="home-content-story-card col-10 mx-auto my-0 py-4 px-0">
-        <b-col
-          v-for="index in 4"
-          :key="`story_${index}`"
-          cols="3"
-          class="p-3"
-        >
-          <story-mini-card card-mode="mini" />
-        </b-col>
-      </b-row>
-      <b-col
-        cols="12"
-        class="py-4 text-center"
+      <div 
+        v-for="storyCard in chunk"
+        :key="`recentStoryCard_${storyCard.id}`"
+        class="col-4"
       >
-        <b-button
-          pill
-          variant="outline-dark"
-          class="story-default-btn pl-4 pr-2 py-2 font-weight-bold"
-        >
-          Show More
-          <img
-            src="../assets/image/icon/Go.svg"
-            class="ml-2"
-            alt="go"
-          >
-        </b-button>
-      </b-col>
-    </b-col>-->
+        <story-mini-card 
+          :card-mode="'mini'"
+          :story-card="storyCard"
+        />
+      </div>
+    </div>
   </div>
 </template>
-
 <script>
 
 import StoryMiniCard from "@/components/Card/StoryMiniCard.vue";
@@ -139,7 +52,17 @@ export default {
   data() {
     return {
       featuredStory: null,
-      recentStories: []
+      recentStories: [],
+      cols: 3
+    }
+  },
+  computed:{
+    recent_story_chunks () {
+      let chunks = [];
+      for (let i = 0; i < this.recentStories.length; i+=this.cols){
+        chunks.push(this.recentStories.slice(i, i + this.cols));
+      }
+      return chunks;
     }
   },
   mounted() {

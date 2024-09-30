@@ -1,107 +1,29 @@
 <template>
   <div class="categories-page">
-    <b-col
-      cols="10"
-      class="admin-page-head mx-auto py-3"
-    >
-      <b-row class="h-100 m-0">
-        <b-col
-          cols="6"
-          class="px-0"
-        >
-          <b-col class="admin-page-head-title px-0">
+    <div class="container-fluid admin-page-head mx-auto py-3">
+      <div class="row h-100 m-0">
+        <div class="col-6 px-0">
+          <div class="admin-page-head-title px-0">
             <h4 class="m-0 font-weight-bolder">
               Admin
             </h4>
-          </b-col>
-          <b-col class="admin-page-head-breadcrumb pt-1 px-0">
-            <b-breadcrumb
-              class="bg-transparent pb-0 px-0 m-0"
-              :items="breadcrumb"
-            />
-          </b-col>
-        </b-col>
-      </b-row>
-    </b-col>
-    <b-col
-      cols="12"
-      class="py-3 menu-bar-wrapper px-0"
-    >
-      <b-row class="col-10 mx-auto my-0">
-        <b-row class="col-10 m-0 px-0">
-          <b-col
-            cols="auto"
-            class="menu-bar-item cursor-pointer text-white text-center mr-3 pb-2"
-          >
-            <router-link
-              class="pb-2 px-1"
-              :to="{name: 'admin'}"
-            >
-              Recent Stories
-            </router-link>
-          </b-col>
-          <b-col
-            cols="auto"
-            class="menu-bar-item cursor-pointer text-white text-center mr-3 pb-2"
-          >
-            <router-link
-              class="pb-2 px-1"
-              :to="{name: 'users'}"
-            >
-              Users
-            </router-link>
-          </b-col>
-          <b-col
-            cols="auto"
-            class="menu-bar-item cursor-pointer text-white text-center mr-3 pb-2"
-          >
-            <router-link
-              class="pb-2 px-1"
-              :to="{name: 'comments'}"
-            >
-              Comments
-            </router-link>
-          </b-col>
-          <b-col
-            cols="auto"
-            class="menu-bar-item cursor-pointer text-white text-center mr-3 pb-2"
-          >
-            <router-link
-              class="pb-2 px-1"
-              :to="{name: 'categories'}"
-            >
-              Categories
-            </router-link>
-          </b-col>
-        </b-row>
-        <b-col
-          cols="2"
-          class="text-right p-0"
-        >
-          <span class="text-white">
-            Log out
-          </span>
-        </b-col>
-      </b-row>
-    </b-col>
-    <b-col
-      cols="10"
-      class="categories-content mx-auto py-5"
-    >
-      <b-row class="m-0">
-        <b-col
-          cols="6"
-          class="px-0 pb-5"
-        >
+          </div>
+        </div>
+      </div>
+      <div class="row admin-page-head-breadcrumb pt-1 px-0">
+        <admin-bread-crumbs label="Categories" />
+      </div>
+    </div>
+    <admin-menu />
+    <div class="content-flex categories-content mx-auto py-5">
+      <div class="row m-0">
+        <div class="col-6">
           <h2 class="m-0">
             Categories
           </h2>
-        </b-col>
-        <b-col
-          cols="6"
-          class="px-0 pb-5 text-right"
-        >
-          <b-button
+        </div>
+        <div class="col-6 px-0 pb-5 text-right">
+          <button
             pill
             variant="dark"
             class="story-default-btn pl-3 pr-2 py-2 font-weight-bold"
@@ -113,13 +35,10 @@
               class="ml-2"
               alt="go"
             >
-          </b-button>
-        </b-col>
-      </b-row>
-      <b-col
-        cols="12"
-        class="py-4 px-0"
-      >
+          </button>
+        </div>
+      </div>
+      <div class="row py-4 px-0">
         <template v-if="categoryList.length">
           <category-card
             v-for="(category, index) in categoryList"
@@ -128,54 +47,78 @@
             @show-edit-category-form="showEditCategoryForm"
           />
         </template>
-      </b-col>
-    </b-col>
+      </div>
+    </div>
+  </div>
 
-    <b-modal
-      v-model="categoryForm.show"
-      hide-footer
-      :title="`${categoryForm.type} category`"
-    >
-      <div class="px-2 py-4">
-        <div class="p-1 rounded border">
-          <b-form-input
-            v-model="categoryForm.name"
-            class="border-0 login-form-input"
-            placeholder="Category title"
+  <div
+    id="categoryModel"
+    class="modal"
+    tabindex="-1"
+    aria-labelledby="categoryModalLabel" 
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        
+        <div class="modal-header">
+          <h5 
+            id="categoryModalLabel"
+            class="modal-title"
+          >
+            Cetegory
+          </h5>
+          <button 
+            type="button" 
+            class="btn-close" 
+            data-bs-dismiss="modal" 
+            aria-label="Close"
           />
         </div>
-        <div class="pt-4">
-          <template v-if="categoryForm.type === 'Add'">
-            <b-button
-              pill
-              variant="dark"
-              class="story-default-btn saved-stories-btn px-3 py-2 mr-3 font-weight-bold"
-              @click="addCategory()"
+
+        <div class="modal-body">
+          <div class="p-1 rounded border">
+            <input
+              v-model="categoryName"
+              class="border-0 categoryu-form-input"
+              placeholder="Category title"
             >
-              Add Category
-            </b-button>
-          </template>
-          <template v-else>
-            <b-button
-              pill
-              variant="dark"
-              class="story-default-btn saved-stories-btn px-3 py-2 mr-3 font-weight-bold"
-              @click="editCategory()"
-            >
-              Edit Category
-            </b-button>
-          </template>
-          <b-button
-            pill
-            variant="outline-dark"
-            class="story-default-btn saved-stories-btn px-3 py-2  font-weight-bold"
-            @click="closeCategoryFormDialog()"
+          </div>
+          <div class="pt-4">
+            <template v-if="categoryForm.type === 'Add'">
+              <button
+                pill
+                variant="dark"
+                class="story-default-btn saved-stories-btn px-3 py-2 mr-3 font-weight-bold"
+                @click="addCategory()"
+              >
+                Add Category
+              </button>
+            </template>
+            <template v-else>
+              <button
+                pill
+                variant="dark"
+                class="story-default-btn saved-stories-btn px-3 py-2 mr-3 font-weight-bold"
+                @click="editCategory()"
+              >
+                Edit Category
+              </button>
+            </template>
+          </div>
+        </div>  
+        <div class="modal-footer">
+          <button 
+            id="loginModalClose"
+            type="button"
+            class="btn btn-secondary" 
+            data-bs-dismiss="modal"
           >
-            Cancel
-          </b-button>
+            Close
+          </button>
         </div>
-      </div>
-    </b-modal>
+      </div>  
+    </div>
   </div>
 </template>
 
@@ -186,19 +129,6 @@ export default {
   components: {CategoryCard},
   data() {
     return {
-      breadcrumb: [
-        {
-          text: 'Home',
-          href: '/'
-        },
-        {
-          text: 'Admin',
-          href: '#/admin/recent-stories'
-        },
-        {
-          text: 'Categories',
-        }
-      ],
       categoryList: [],
       categoryForm: {
         show: false,

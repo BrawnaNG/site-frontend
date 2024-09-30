@@ -1,161 +1,158 @@
 <template>
-  <div class="p-3">
-    <div
-      v-if="view === 'login'"
-      class="login-form"
-    >
-      <p class="login-form-title m-0 pb-3">
+  <div
+    v-if="view === 'login'"
+    class="login-form container p-3"
+  >
+    <div class="row">
+      <p class="login-form-title m-0 pb-3 p-1">
         Enter your username and password.
       </p>
-      <div class="p-1 rounded border">
-        <b-form-input
+    </div>
+    <div class="row">
+      <div class="rounded border p-1">
+        <input
           v-model="login.username"
-          class="border-0 login-form-input"
-          placeholder="Email or username"
-        />
+          type="text"
+          class="border-0 login-form-input"      
+          placeholder="Enter your username"
+        >
       </div>
-      <b-row class="p-1 m-0 rounded border mt-3">
-        <b-col
-          cols="10"
-          class="px-0"
+    </div>
+    <div class="row mt-3">
+      <div class="col rounded border p-1 col-10">
+        <input
+          v-model="login.password"
+          :type="showPassword ? 'text' : 'password'"
+          class="border-0 login-form-input"
+          placeholder="Enter your password"
         >
-          <b-form-input
-            v-model="login.password"
-            :type="showPassword ? 'text' : 'password'"
-            class="border-0 login-form-input"
-            placeholder="Password"
-          />
-        </b-col>
-        <b-col
-          cols="2"
-          class="text-right pr-2 pt-1"
+      </div>
+      <div class="col text-right col-2 pt-1">
+        <img
+          title="show password"
+          class="cursor-pointer"
+          src="../assets/image/icon/Show.svg"
+          @click="showPassword = !showPassword "
         >
-          <img
-            title="show password"
-            class="cursor-pointer"
-            src="../assets/image/icon/Show.svg"
-            @click="showPassword = !showPassword "
-          >
-        </b-col>
-      </b-row>
-      <b-row class="m-0 px-1 login-form-detail justify-content-between py-3">
-        <div class="remember">
-          <input
-            type="checkbox"
-            class="mr-2"
-          >
-          <span>Remember me.</span>
-        </div>
-        <a class="forgot">Forgot Password?</a>
-      </b-row>
-      <b-button
+      </div>
+    </div>
+    <div class="row">
+      <button
         pill
         variant="dark"
-        class="story-default-btn w-100 py-2 my-3 font-weight-bold"
+        class="story-default-btn font-weight-bold w-50 py-2 my-3 mx-auto"
         @click="loginUser()"
       >
         Login
-      </b-button>
-      <div class="login-form-sub-title text-center">
-        Haven't any account?
+      </button>
+    </div>
+    <div class="row login-form-sub-title text-center">
+      <div class="col c-6">
+        <span>
+          Don't have an account?
+        </span>
+      </div>
+      <div class="col-6">
         <span
           class="cursor-pointer"
-          @click="view = 'signup'"
+          @click="view='signup'"
         >
           Sign up here.
         </span>
       </div>
     </div>
-    <div
-      v-if="view === 'signup'"
-      class="login-form"
-    >
-      <div class="p-1 rounded border">
-        <b-form-input
+  </div>
+
+  <div
+    v-if="view === 'signup'"
+    class="login-form container"
+  >
+    <div class="row">
+      <div class="rounded border p-1">
+        <input
           v-model="signUp.alias"
+          type="text"
           class="border-0 login-form-input"
-          placeholder="Your Name"
-        />
+          placeholder="Enter your display name"
+        >
       </div>
-      <div class="p-1 rounded border mt-3">
-        <b-form-input
+    </div>
+    <div class="row mt-3">
+      <div class="rounded border p-1">
+        <input
           v-model="signUp.username"
+          type="text"        
           class="border-0 login-form-input"
-          placeholder="Username"
-        />
+          placeholder="Enter your username"
+        >
       </div>
-      <div class="p-1 rounded border mt-3">
-        <b-form-input
+    </div>
+    <div class="row mt-3">
+      <div class="rounded border p-1">
+        <input
           v-model="signUp.email"
           class="border-0 login-form-input"
           type="email"
-          placeholder="Email"
-        />
+          placeholder="Enter your email"
+        >
       </div>
-      <b-row class="p-1 m-0 rounded border mt-3">
-        <b-col
-          cols="10"
-          class="px-0"
+    </div>
+    <div class="row mt-3">
+      <div class="col col-10 p-1 rounded border">
+        <input
+          v-model="signUp.password"
+          :type="showPassword ? 'text' : 'password'"
+          class="border-0 login-form-input"
+          placeholder="Enter your password"
         >
-          <b-form-input
-            v-model="signUp.password"
-            :type="showPassword ? 'text' : 'password'"
-            class="border-0 login-form-input"
-            placeholder="Password"
-          />
-        </b-col>
-        <b-col
-          cols="2"
-          class="text-right pr-2 pt-1"
+      </div>
+      <div class="col text-right col-2 pt-1">
+        <img
+          title="show password"
+          class="cursor-pointer"
+          src="../assets/image/icon/Show.svg"
+          @click="showPassword = !showPassword "
         >
-          <img
-            title="show password"
-            class="cursor-pointer"
-            src="../assets/image/icon/Show.svg"
-            @click="showPassword = !showPassword "
-          >
-        </b-col>
-      </b-row>
-      <b-row class="p-1 m-0 rounded border mt-3">
-        <b-col
-          cols="10"
-          class="px-0"
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col rounded border col-10 p-1">
+        <input
+          v-model="signUp.rePassword"
+          :type="showRepeatPassword ? 'text' : 'password'"
+          class="border-0 login-form-input"
+          placeholder="Enter your password again"
         >
-          <b-form-input
-            v-model="signUp.rePassword"
-            :type="showRepeatPassword ? 'text' : 'password'"
-            class="border-0 login-form-input"
-            placeholder="Repeat Password"
-          />
-        </b-col>
-        <b-col
-          cols="2"
-          class="text-right pr-2 pt-1"
+      </div>
+      <div class="col col-2 text-right pr-2 pt-1">
+        <img
+          title="show password"
+          class="cursor-pointer"
+          src="../assets/image/icon/Show.svg"
+          @click="showRepeatPassword = !showRepeatPassword "
         >
-          <img
-            title="show password"
-            class="cursor-pointer"
-            src="../assets/image/icon/Show.svg"
-            @click="showRepeatPassword = !showRepeatPassword "
-          >
-        </b-col>
-      </b-row>
-
-      <div class="login-form-sub-title text-center pt-3">
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="login-form-sub-title text-center">
         <input type="checkbox">
         I have read and I accept the
         <span class="cursor-pointer">terms</span>
         and
         <span class="cursor-pointer">conditions</span>.
       </div>
-      <b-button
+    </div>
+    <div class="row">
+      <button
         pill
         variant="dark"
         class="story-default-btn w-100 py-2 my-3 font-weight-bold"
         @click="signUpUser()"
       >
         Sign up
-      </b-button>
+      </button>
+    </div>
+    <div class="row">
       <div class="login-form-sub-title text-center">
         Are you a member?
         <span
@@ -243,31 +240,34 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.login-form {
-  &-title {
-    font-size: .8em;
+  .cursor-pointer {
+    cursor: pointer;
   }
-  &-input {
-    font-size: .8em;
-    &:focus {
-      outline: unset;
-      box-shadow: unset;
-    }
-
-  }
-  &-detail {
-    span, a {
+  .login-form {
+    &-title {
       font-size: .8em;
-      color: #707070;
     }
+    &-input {
+      font-size: .8em;
+      &:focus {
+        outline: unset;
+        box-shadow: unset;
+      }
 
-  }
-  &-sub-title {
-    font-size: .9em;
-    color: #707070;
-    span {
-      color: black;
     }
-  }
+    &-detail {
+      span, a {
+        font-size: .8em;
+        color: #707070;
+      }
+
+    }
+    &-sub-title {
+      font-size: .9em;
+      color: #707070;
+      span {
+        color: black;
+      }
+    }
 }
 </style>
