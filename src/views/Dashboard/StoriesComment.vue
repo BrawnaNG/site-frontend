@@ -8,7 +8,8 @@
           </h4>
           <bread-crumbs 
             label="Comments"
-            class="px-4" />
+            class="px-4"
+          />
         </div>
         <div class="col-4 px-4 pt-2 mt-1 text-right">
           <add-story class="float-end" />

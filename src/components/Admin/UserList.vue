@@ -7,23 +7,29 @@
         :items="userList.data"
         :fields="userList.fields"
       >
-        {{ moment(data.item.date_joined).format('DD MMM YYYY, hh:mm a') }}
-        <div class="user-list-table-action">
-          <span class="mr-3 cursor-pointer">
-            <img
-              src="../../assets/image/icon/Delete.svg"
-              @click="showDisabledUserModal(data.item)"
-            >
-          </span>
-          <span class="mr-3 cursor-pointer">
-            <img src="../../assets/image/icon/Edit.svg">
-          </span>
-          <span class="cursor-pointer">
-            <router-link :to="{name: 'userStories', params: {username: data.item.alias}}">
-              <img src="../../assets/image/icon/Show.svg">
-            </router-link>
-          </span>
-        </div>
+        <tbody>
+          <tr>
+            <td>
+              {{ moment(data.item.date_joined).format('DD MMM YYYY, hh:mm a') }}
+              <div class="user-list-table-action">
+                <span class="mr-3 cursor-pointer">
+                  <img
+                    src="../../assets/image/icon/Delete.svg"
+                    @click="showDisabledUserModal(data.item)"
+                  >
+                </span>
+                <span class="mr-3 cursor-pointer">
+                  <img src="../../assets/image/icon/Edit.svg">
+                </span>
+                <span class="cursor-pointer">
+                  <router-link :to="{name: 'userStories', params: {username: data.item.alias}}">
+                    <img src="../../assets/image/icon/Show.svg">
+                  </router-link>
+                </span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
       </table>
     </div>
   </div>

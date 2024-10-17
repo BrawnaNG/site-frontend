@@ -17,7 +17,7 @@
       </div>
     </div>
     <user-menu />
-    <div class="row my-0 mx-auto py-5">
+    <div class="row my-0 mx-auto py-5 h-100">
       <div class="col-3 pl-0">
         <!--          <vue-tree-navigation :items="items"  :defaultOpenLevel="defaultOpenLevel"/>-->
       </div>
@@ -62,8 +62,13 @@
               </div>
             </div>
           </div>
-          <div class="row text-editor-chapter py-2">
-            <vue-editor :editor-toolbar="customToolbar" />
+          <div class="row text-editor-chapter py-2 h-75">
+            <QuillEditor 
+              id="qe-editor"
+              v-model="content" 
+              theme="snow" 
+              content-type="html"
+            />
           </div>
           <div class="row pt-3 justify-content-between m-0">
             <div class="col-6 p-0 px-4">
@@ -104,13 +109,15 @@
 </template>
 
 <script>
-import { VueEditor } from "vue2-editor";
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import BreadCrumbs from "@/components/Dashboard/BreadCrumbs.vue";
 import UserMenu from "@/components/Dashboard/UserMenu.vue";
+import AddStory from "@/components/Dashboard/AddStory.vue";
 
 export default {
   name: "AddEditStory",
-  components: {VueEditor, BreadCrumbs, UserMenu},
+  components: {QuillEditor, BreadCrumbs, UserMenu, AddStory},
   data() {
     return {
       items: [
@@ -128,6 +135,7 @@ export default {
         { name: 'Github' },
       ],
       defaultOpenLevel: 1,
+      content: "<h1>Html For Editor</h1>",
       customToolbar: [
         [{ font: [] }],
         [{ header: [false, 1, 2, 3, 4, 5, 6] }],
@@ -144,9 +152,6 @@ export default {
         form: ''
       }
     }
-  },
-  mounted() {
-    this.addStory()
   },
   methods: {
     addStory() {
@@ -165,7 +170,18 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.add-edit-story-page {
+.add-edit-story-page{
+  .text-editor-chapter .ql-container {
+    height: 500px;
+  }
+  :deep(.ql-editor) {
+    height: 250px;
+    max-height: 250px;
+    overflow: auto;
+  }
+  #qe-editor {
+    height: 500px;
+  }
   .saved-stories {
     &-tags {
       &-input {
