@@ -43,6 +43,7 @@ const routes = [
   {
     path: '/story/add-edit-story/:id?',
     name: 'addEditStory',
+    props: true,
     component: AddEditStory,
     meta: {
       authRequired: 'true',

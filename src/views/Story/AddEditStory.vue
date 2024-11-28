@@ -35,6 +35,7 @@
             <div class="col-7">
               <input 
                 id="titleInput"
+                v-model="story.title"
                 type="text"
                 class="form-control"
               >
@@ -54,7 +55,8 @@
             <div class="col-3">
               <div class="form-check">
                 <input 
-                  id="check-button" 
+                  id="check-button"
+                  v-model="story.has_chapters"
                   class="form-check-input" 
                   type="checkbox" 
                   value=""
@@ -65,7 +67,7 @@
           <div class="row text-editor-chapter py-2 h-75">
             <QuillEditor 
               id="qe-editor"
-              v-model="content" 
+              v-model:content="content"
               theme="snow" 
               content-type="html"
             />
@@ -118,22 +120,28 @@ import AddStory from "@/components/Dashboard/AddStory.vue";
 export default {
   name: "AddEditStory",
   components: {QuillEditor, BreadCrumbs, UserMenu, AddStory},
+  props: {
+    id: {
+      type: String,
+      default: null
+    }, 
+  },
   data() {
     return {
-      items: [
-        { name: 'Products', children: [
-            { name: 'Shoes', path: '#' }
-          ]},
-        { name: 'About',
-          path: '#',
-          children: [
+      story:{
+          title : "",
+          user: "",
+          created_at: null,
+          categories: [],
+          tags: [],
+          has_chapters: false,
+          chapters:[
             {
-              name: 'Contact',
-              path: '#',
+              title : "",
+              body: ""
             }
-          ]},
-        { name: 'Github' },
-      ],
+          ]
+      },
       defaultOpenLevel: 1,
       content: "<h1>Html For Editor</h1>",
       customToolbar: [
@@ -146,25 +154,21 @@ export default {
         [{indent: "-1"}, {indent: "+1"}],
         ["blockquote", "code-block"],
         [{ 'script': 'sub'}, { 'script': 'super' }],
-      ],
-      tags: {
-        data:[],
-        form: ''
-      }
+      ]
     }
   },
+  mounted() {
+    this.getStory()
+  },
   methods: {
-    addStory() {
-      this.axios.post('story/add/').then(() => {
-        // console.log(res.data);
+    getStory() {
+      this.axios.get(`/story/detail/${this.id}`).then(res => {
+        this.story = res.data;
+        if (res.data.chapters && res.data.chapters.length > 0){
+          this.content = res.data.chapters[0].body;
+        }
       })
     },
-
-    getTagList() {
-      this.axios.get(`tag/?page=1`).then(res=> {
-        console.log(res.data);
-      })
-    }
   }
 }
 </script>

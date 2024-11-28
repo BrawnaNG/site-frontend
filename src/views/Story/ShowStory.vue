@@ -39,8 +39,19 @@
         </div>
         <div class="col-7">
           <div class="container-fluid">
-            <div class="row pb-4">
-              {{ story.body }}
+            <div 
+              v-if="story.chapters.length > 0 && story.chapters.title"
+              class="row pb-4"
+            >
+              <h3>
+                {{ story.chapters[0].title }}
+              </h3>
+            </div>
+            <div 
+              v-if="story.chapters.length > 0"
+              class="row pb-4"
+            >
+              {{ story.chapters[0].body }}
             </div>
             <div
               v-if="loggedIn" 
@@ -92,6 +103,7 @@
 <script>
 import { inject } from 'vue';
 import CommentsCard from "@/components/Card/CommentsCard.vue";
+import store from '@/store';
 export default {
   name: "ShowStory",
   components: {CommentsCard},
@@ -110,11 +122,11 @@ export default {
       story:{
           title : "",
           user: "",
-          body: "",
           created_at: null,
           categories: [],
           tags: [],
-          comments: []
+          comments: [],
+          chapters: []
         },
       comment_text: "",
     }

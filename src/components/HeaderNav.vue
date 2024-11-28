@@ -92,6 +92,7 @@
       </div>
     </div>
   </div>
+  
   <div 
     id="loginModal"
     class="modal" 

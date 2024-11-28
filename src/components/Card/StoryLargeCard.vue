@@ -1,36 +1,51 @@
 <template>
   <div 
     class="container-flex story-large-card p-4 mb-4"
-    @click="gotoStory"
   >
-    <div class="row story-large-card-title pb-3 px-1">
-      <h4 class="m-0">
-        {{ storyCard.title }}
-      </h4>
+    <div class="row">
+      <div 
+        class="col-sm-9"
+        @click="gotoStory"
+      >
+        <div class="row story-large-card-title pb-3 px-1">
+          <h4 class="m-0">
+            {{ storyCard.title }}
+          </h4>
+        </div>
+        <div
+          v-if="storyCard.brief"
+          class="row story-large-card-content pb-3 px-1"
+        >
+          <p class="m-0">
+            {{ storyCard.brief }}
+          </p>
+        </div>
+      </div>
+
+      <div class="col-sm-3 py-4">
+        <template v-if="cardMode === 'edit'">
+          <span class="mr-3 cursor-pointer">
+            <img src="../../assets/image/icon/Delete.svg">
+          </span>
+          <span 
+            class="mr-3 cursor-pointer"
+            @click="editStory">
+            <img src="../../assets/image/icon/Edit.svg">
+          </span>
+          <span 
+            class="cursor-pointer"
+            @click="gotoStory"
+          >
+            <img src="../../assets/image/icon/Show.svg">
+          </span>
+        </template>
+      </div>
     </div>
-    <div class="row story-large-card-content pb-3 px-1">
-      <p class="m-0">
-        {{ storyCard.body }}
-      </p>
-    </div>
-    <div class="story-large-card-footer px-1">
+    <div class="row story-large-card-footer px-3">
       {{ moment(storyCard.created_at).format('MMM YY') }}
       |
       {{ (storyCard.categories.length ? storyCard.categories[0].name : '') }}
     </div>
-    <template v-if="cardMode === 'edit'">
-      <div class="row p-0 m-0 align-items-center text-right">
-        <span class="mr-3 cursor-pointer">
-          <img src="../../assets/image/icon/Delete.svg">
-        </span>
-        <span class="mr-3 cursor-pointer">
-          <img src="../../assets/image/icon/Edit.svg">
-        </span>
-        <span class="cursor-pointer">
-          <img src="../../assets/image/icon/Show.svg">
-        </span>
-      </div>
-    </template>
   </div>
 </template>
 
@@ -42,10 +57,11 @@ export default {
     storyCard: {
       type: Object,
       default: () => ({
+            id : "",
             title : "",
-            body: "",
+            brief : "",
             created_at: null,
-            categories: []
+            categories: [],
         })
     },
     cardMode:{
@@ -60,6 +76,9 @@ export default {
   methods: {
     gotoStory: function() {
       this.$router.push({name: 'story', params: { id: this.storyCard.id } });
+    },
+    editStory: function() {
+      this.$router.push({name: 'addEditStory', params: { id: this.storyCard.id } });
     }
   }
 }

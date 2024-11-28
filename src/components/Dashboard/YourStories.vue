@@ -2,19 +2,14 @@
   <div class="your-stories container-flex">
     <template v-if="recentStories.data.length">
       <div 
-        v-for="(chunk, row) in recent_story_chunks"
-        :key="`recentStoriesRow_${row}`"
-        class="row p-2"
+        v-for="storyCard in recentStories.data"
+        :key="`recentStoryCard_${storyCard.id}`"
+        class="col-12"
       >
-        <div 
-          v-for="storyCard in chunk"
-          :key="`recentStoryCard_${storyCard.id}`"
-          class="col-4"
-        >
-          <story-large-card
-            :story-card="storyCard"
-          />
-        </div>
+        <story-large-card
+          :story-card="storyCard"
+          :card-mode="'edit'"
+        />
       </div>
       <div class="row">
         TODO PAGINATION
@@ -44,15 +39,6 @@ export default {
         page: 1,
         total: 0
       }
-    }
-  },
-  computed:{
-    recent_story_chunks () {
-      let chunks = [];
-      for (let i = 0; i < this.recentStories.data.length; i+=this.cols){
-        chunks.push(this.recentStories.data.slice(i, i + this.cols));
-      }
-      return chunks;
     }
   },
   watch: {
