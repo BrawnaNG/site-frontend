@@ -81,7 +81,7 @@
           title: this.storytitle
         }).then(res => {
           document.getElementById('storyModalClose').click();
-          this.$router.push({name: 'addEditStory', params: {id: res.id }})
+          this.$router.push({name: 'addEditStory', params: {id: res.data.id }})
         })
       }
     }

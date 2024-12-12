@@ -77,7 +77,10 @@
               <button class="story-default-btn saved-stories-btn px-2 py-1 mr-2 font-weight-bold rounded-pill">
                 Cancel
               </button>
-              <button class="story-default-btn saved-stories-btn px-2 py-1 font-weight-bold rounded-pill">
+              <button 
+                class="story-default-btn saved-stories-btn px-2 py-1 font-weight-bold rounded-pill"
+                @click="saveToDrafts()"
+              >
                 Save to Drafts
               </button>
             </div>
@@ -169,6 +172,15 @@ export default {
         }
       })
     },
+    saveToDrafts() {
+      this.axios.post(`/story/save-story/${this.id}/`,
+        {
+          title: this.story.title,
+          chapter_id: this.story.chapters.length > 0 ? this.story.chapters[0].id : null,
+          body: this.content,
+          is_published: false
+        })
+    }
   }
 }
 </script>

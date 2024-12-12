@@ -36,6 +36,7 @@
           >
             <story-large-card
               :story-card="storyCard"
+              :card-mode='"edit"'
             />
           </div>
         </div>
