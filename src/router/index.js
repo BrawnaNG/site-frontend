@@ -41,7 +41,7 @@ const routes = [
     },
   },
   {
-    path: '/story/add-edit-story/:id?',
+    path: '/story/add-edit-story/:id/:chapterid?',
     name: 'addEditStory',
     props: true,
     component: AddEditStory,

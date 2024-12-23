@@ -46,6 +46,24 @@
               </span>
             </div>
           </div>
+          <div class="row pb-4">
+            <div class="col-2">
+              <label 
+                for="chapterTitleInput"
+                class="form-label"
+              >
+                Chapter title
+              </label>
+            </div>
+            <div class="col-7">
+              <input 
+                id="chapterTitleInput"
+                v-model="chapter.title"
+                type="text"
+                class="form-control"
+              >
+            </div>
+          </div>
           <div class="row pb-4 m-0 justify-content-between">
             <div class="col-9">
               <h6 class="m-0">
@@ -53,21 +71,24 @@
               </h6>
             </div>
             <div class="col-3">
-              <div class="form-check">
-                <input 
-                  id="check-button"
-                  v-model="story.has_chapters"
-                  class="form-check-input" 
-                  type="checkbox" 
-                  value=""
-                >
-              </div>
+              <input 
+                id="chapters-yes"
+                type="radio"
+                v-model="has_chapters"
+                value="true">
+              <label for="chapters-yes">Yes</label>
+              <input 
+                id="chapters-no"
+                type="radio"
+                v-model="has_chapters"
+                value="false">
+              <label for="chapters-yes">No</label>
             </div>
           </div>
           <div class="row text-editor-chapter py-2 h-75">
             <QuillEditor 
               id="qe-editor"
-              v-model:content="content"
+              v-model:content="chapter.body"
               theme="snow" 
               content-type="html"
             />
@@ -85,7 +106,11 @@
               </button>
             </div>
             <div class="col-6 p-0">
-              <button class="story-default-btn saved-stories-btn px-2 py-1 mr-2 font-weight-bold rounded-pill">
+              <button 
+                class="story-default-btn saved-stories-btn px-2 py-1 mr-2 font-weight-bold rounded-pill"
+                v-if="has_chapters === 'true'"
+                @click="nextChapter()"
+              >
                 Next Chapter
               </button>
               <button class="story-default-btn saved-stories-btn px-2 py-1 font-weight-bold rounded-pill">
@@ -127,7 +152,11 @@ export default {
     id: {
       type: String,
       default: null
-    }, 
+    },
+    chapterid: {
+      type: String,
+      default: null
+    }
   },
   data() {
     return {
@@ -145,8 +174,15 @@ export default {
             }
           ]
       },
+      chapter:{
+        title : "",
+        body: '\n'
+      },
+      has_chapters: "false",
+      current_chapter_id: null,
+      current_chapter_index: -1,
       defaultOpenLevel: 1,
-      content: "<h1>Html For Editor</h1>",
+      content: '\n',
       customToolbar: [
         [{ font: [] }],
         [{ header: [false, 1, 2, 3, 4, 5, 6] }],
@@ -161,14 +197,43 @@ export default {
     }
   },
   mounted() {
-    this.getStory()
+    this.getStory();
   },
   methods: {
     getStory() {
       this.axios.get(`/story/detail/${this.id}`).then(res => {
         this.story = res.data;
-        if (res.data.chapters && res.data.chapters.length > 0){
-          this.content = res.data.chapters[0].body;
+        this.has_chapters = this.story.has_chapters ? "true" : "false";
+
+        if (res.data.chapter_ids && res.data.chapter_ids.length > 0){
+          var index = -1;
+          if (this.chapterid){
+            index = res.data.chapter_ids.findIndex( (c) => c.id === this.chapterid);
+          }
+          else if (this.current_chapter_index > -1){
+            index = this.current_chapter_index;
+          }
+
+          if (index == -1){
+            index = 0;
+          }
+
+          this.current_chapter_index = index;
+          if (res.data.chapter_ids.length > index){
+            this.current_chapter_id = res.data.chapter_ids[index].id;
+          }
+          else{
+            this.current_chapter_id = null;
+          }
+
+          if (this.current_chapter_id){
+            this.axios.get(`/story/chapter/${this.current_chapter_id}`).then(res => {
+              this.chapter = res.data;
+            })
+          }
+          else{
+            this.chapter.body = '\n';
+          }
         }
       })
     },
@@ -176,10 +241,26 @@ export default {
       this.axios.post(`/story/save-story/${this.id}/`,
         {
           title: this.story.title,
-          chapter_id: this.story.chapters.length > 0 ? this.story.chapters[0].id : null,
-          body: this.content,
-          is_published: false
+          chapter_id: this.story.current_chapter_id,
+          chapter_title: this.chapter.title,
+          body: this.chapter.body,
+          is_published: false,
+          has_chapters: this.has_chapters === "true"
         })
+    },
+    nextChapter(){
+      this.axios.post(`/story/save-story/${this.id}/`,
+        {
+          title: this.story.title,
+          chapter_id: this.current_chapter_id,
+          chapter_title: this.chapter.title,
+          body: this.content,
+          is_published: this.story.is_published,
+          has_chapters: this.has_chapters === "true"
+        }).then( () => {
+            this.current_chapter_index++;
+            this.getStory();
+        });
     }
   }
 }
