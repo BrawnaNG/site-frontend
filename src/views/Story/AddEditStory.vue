@@ -46,7 +46,10 @@
               </span>
             </div>
           </div>
-          <div class="row pb-4">
+          <div 
+            class="row pb-4"
+            v-if="has_chapters === 'true'"
+          >
             <div class="col-2">
               <label 
                 for="chapterTitleInput"
@@ -169,20 +172,18 @@ export default {
           has_chapters: false,
           chapters:[
             {
-              title : "",
-              body: ""
+              id : ""
             }
           ]
       },
       chapter:{
+        id: null,
+        index: -1,
         title : "",
         body: '\n'
       },
       has_chapters: "false",
-      current_chapter_id: null,
-      current_chapter_index: -1,
       defaultOpenLevel: 1,
-      content: '\n',
       customToolbar: [
         [{ font: [] }],
         [{ header: [false, 1, 2, 3, 4, 5, 6] }],
@@ -210,24 +211,25 @@ export default {
           if (this.chapterid){
             index = res.data.chapter_ids.findIndex( (c) => c.id === this.chapterid);
           }
-          else if (this.current_chapter_index > -1){
-            index = this.current_chapter_index;
+          else if (this.chapter.index > -1){
+            index = this.chapter.index;
           }
 
           if (index == -1){
             index = 0;
           }
 
-          this.current_chapter_index = index;
+          this.chapter.index = index;
           if (res.data.chapter_ids.length > index){
-            this.current_chapter_id = res.data.chapter_ids[index].id;
+            this.chapter.id = res.data.chapter_ids[index].id;
           }
           else{
-            this.current_chapter_id = null;
+            this.chapter.id = null;
+            this.chapter.title = `Chapter ${this.chapter.index}`;
           }
 
-          if (this.current_chapter_id){
-            this.axios.get(`/story/chapter/${this.current_chapter_id}`).then(res => {
+          if (this.chapter.id){
+            this.axios.get(`/story/chapter/${this.chapter.id}`).then(res => {
               this.chapter = res.data;
             })
           }
@@ -238,29 +240,51 @@ export default {
       })
     },
     saveToDrafts() {
-      this.axios.post(`/story/save-story/${this.id}/`,
+      this.saveStory(false)
+    },
+    publishStory() {
+      this.saveStory(true)
+    },
+    saveStory(is_published, callback){
+      this.axios.put(`/story/save-story/${this.id}/`,
         {
           title: this.story.title,
-          chapter_id: this.story.current_chapter_id,
-          chapter_title: this.chapter.title,
-          body: this.chapter.body,
-          is_published: false,
-          has_chapters: this.has_chapters === "true"
-        })
+          is_published: is_published,
+          has_chapters: this.has_chapters === "true",
+          categories: this.story.categories,
+          tags: this.story.tags
+        }).then( () => {
+          if (!this.chapter.id){
+            this.axios.put(`/story/chapter/add/`,
+            {
+              title: this.chapter.title,
+              body: this.chapter.body   
+            }).then( () => {
+              callback();
+            });
+        }
+        else {
+          this.axios.put(`/story/save-chapter/${this.chapter.id}`,
+          {
+            title: this.chapter.title,
+            body: this.chapter.body
+          }).then( () => {
+            callback()
+          });
+        }
+      });
     },
     nextChapter(){
-      this.axios.post(`/story/save-story/${this.id}/`,
-        {
-          title: this.story.title,
-          chapter_id: this.current_chapter_id,
-          chapter_title: this.chapter.title,
-          body: this.content,
-          is_published: this.story.is_published,
-          has_chapters: this.has_chapters === "true"
-        }).then( () => {
-            this.current_chapter_index++;
-            this.getStory();
-        });
+      this.saveStory(this.story.is_published, () => {
+        this.chapter.index++;
+        this.getStory();
+      });
+    },
+    prevChapter(){
+      this.saveStory(this.story.is_published, () => {
+        this.chapter.index--;
+        this.getStory();
+      });
     }
   }
 }
