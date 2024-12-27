@@ -40,11 +40,6 @@
                 class="form-control"
               >
             </div>
-            <div class="col-3">
-              <span>
-                Upload Document
-              </span>
-            </div>
           </div>
           <div 
             class="row pb-4"
@@ -97,10 +92,12 @@
             />
           </div>
           <div class="row pt-3 justify-content-between m-0">
-            <div class="col-6 p-0 px-4">
+            <div class="col-2 p-0 px-4">
               <button class="story-default-btn saved-stories-btn px-2 py-1 mr-2 font-weight-bold rounded-pill">
                 Cancel
               </button>
+            </div>
+            <div class="col-3 p-0 px-4">
               <button 
                 class="story-default-btn saved-stories-btn px-2 py-1 font-weight-bold rounded-pill"
                 @click="saveToDrafts()"
@@ -108,7 +105,16 @@
                 Save to Drafts
               </button>
             </div>
-            <div class="col-6 p-0">
+            <div class="col-2 p-0">
+              <button 
+                class="story-default-btn saved-stories-btn px-2 py-1 mr-2 font-weight-bold rounded-pill"
+                v-if="has_chapters === 'true' && chapter.index > 0"
+                @click="prevChapter()"
+              >
+                Prev Chapter
+              </button>
+            </div>
+            <div class="col-2 p-0">
               <button 
                 class="story-default-btn saved-stories-btn px-2 py-1 mr-2 font-weight-bold rounded-pill"
                 v-if="has_chapters === 'true'"
@@ -116,6 +122,8 @@
               >
                 Next Chapter
               </button>
+            </div>
+            <div class="col-2 p-0"> 
               <button class="story-default-btn saved-stories-btn px-2 py-1 font-weight-bold rounded-pill">
                 Publish Story
               </button>
@@ -222,28 +230,28 @@ export default {
           this.chapter.index = index;
           if (res.data.chapter_ids.length > index){
             this.chapter.id = res.data.chapter_ids[index].id;
-          }
-          else{
-            this.chapter.id = null;
-            this.chapter.title = `Chapter ${this.chapter.index}`;
-          }
-
-          if (this.chapter.id){
             this.axios.get(`/story/chapter/${this.chapter.id}`).then(res => {
-              this.chapter = res.data;
+              this.chapter.body = res.data.body;
+              this.chapter.title = res.data.title;
             })
           }
           else{
+            this.chapter.id = null;
+            this.chapter.title = `Chapter ${this.chapter.index+1}`;
             this.chapter.body = '\n';
           }
         }
       })
     },
     saveToDrafts() {
-      this.saveStory(false)
+      this.saveStory(false, () => {
+        this.getStory();
+      })
     },
     publishStory() {
-      this.saveStory(true)
+      this.saveStory(true, () => {
+        this.getStory();
+      })
     },
     saveStory(is_published, callback){
       this.axios.put(`/story/save-story/${this.id}/`,
@@ -255,7 +263,7 @@ export default {
           tags: this.story.tags
         }).then( () => {
           if (!this.chapter.id){
-            this.axios.put(`/story/chapter/add/`,
+            this.axios.post(`/story/${this.id}/chapter/add/`,
             {
               title: this.chapter.title,
               body: this.chapter.body   
@@ -264,7 +272,7 @@ export default {
             });
         }
         else {
-          this.axios.put(`/story/save-chapter/${this.chapter.id}`,
+          this.axios.put(`/story/save-chapter/${this.chapter.id}/`,
           {
             title: this.chapter.title,
             body: this.chapter.body
