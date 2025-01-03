@@ -84,13 +84,13 @@
             </div>
           </div>
           <div class="row text-editor-chapter py-2 h-75">
-            <QuillEditor 
-              id="qe-editor"
-              v-model:content="chapter.body"
-              theme="snow" 
-              content-type="html"
-            />
-          </div>
+              <QuillEditor 
+                id="qe-editor"
+                v-model:content="chapter.body"
+                theme="snow" 
+                content-type="html"
+              />
+            </div>
           <div class="row pt-3 justify-content-between m-0">
             <div class="col-2 p-0 px-4">
               <button class="story-default-btn saved-stories-btn px-2 py-1 mr-2 font-weight-bold rounded-pill">
@@ -137,11 +137,15 @@
             <h6>Tags</h6>
           </div>
           <div class="row">
-            <input
-              class="text saved-stories-tags-input mt-4 py-3"
-              placeholder="Write and press enter to add"
-              trim
-            >
+            <vue-tags-input
+              v-model="new_tag"
+              :tags="tags"
+              :autocomplete-items="filteredItems"
+              :is-duplicate="isDuplicate"
+              :validation="tag_validation"
+              :placeholder="`Write and press enter to add`"
+              @tags-changed="newTags => tags = newTags"
+            />
           </div>
         </div>
       </div>
@@ -155,10 +159,11 @@ import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import BreadCrumbs from "@/components/Dashboard/BreadCrumbs.vue";
 import UserMenu from "@/components/Dashboard/UserMenu.vue";
 import AddStory from "@/components/Dashboard/AddStory.vue";
+import VueTagsInput from '@sipec/vue3-tags-input';
 
 export default {
   name: "AddEditStory",
-  components: {QuillEditor, BreadCrumbs, UserMenu, AddStory},
+  components: {QuillEditor, BreadCrumbs, UserMenu, AddStory, VueTagsInput},
   props: {
     id: {
       type: String,
@@ -192,6 +197,9 @@ export default {
       },
       has_chapters: "false",
       defaultOpenLevel: 1,
+      new_tag: '',
+      tags: [],
+      autocomplete_tags: [],
       customToolbar: [
         [{ font: [] }],
         [{ header: [false, 1, 2, 3, 4, 5, 6] }],
@@ -202,10 +210,25 @@ export default {
         [{indent: "-1"}, {indent: "+1"}],
         ["blockquote", "code-block"],
         [{ 'script': 'sub'}, { 'script': 'super' }],
-      ]
+      ],
+      tag_validation: [
+        {
+          classes: 'no-special',
+          rule: /^[a-zA-Z\d\s:]/,
+          disableAdd: true
+        },
+      ],
+    }
+  },
+  computed:{
+    filteredItems() {
+      return this.autocomplete_tags.filter(i => {
+        return i.text.toLowerCase().indexOf(this.new_tag.toLowerCase()) !== -1;
+      });
     }
   },
   mounted() {
+    this.getAllTags();
     this.getStory();
   },
   methods: {
@@ -213,6 +236,12 @@ export default {
       this.axios.get(`/story/detail/${this.id}`).then(res => {
         this.story = res.data;
         this.has_chapters = this.story.has_chapters ? "true" : "false";
+        this.tags = this.story.tags.map( (tag) => {
+          return {
+            text: tag.name,
+            id: tag.id
+          }
+        });
 
         if (res.data.chapter_ids && res.data.chapter_ids.length > 0){
           var index = -1;
@@ -243,6 +272,25 @@ export default {
         }
       })
     },
+    getAllTags() {
+      this.axios.get(`/tag/`).then(res => {
+        this.autocomplete_tags = res.data.results.map( (tag) => {
+          return {
+            text: tag.name,
+            id: tag.id
+          }
+        });
+        this.tag_warning = null;
+      });
+    },
+    isDuplicate(tags, tag) {
+      return tags.map(t => t.text.toLowerCase()).indexOf(tag.text.toLowerCase()) !== -1;
+    },
+    ciEquals(a, b) {
+      return typeof a === 'string' && typeof b === 'string'
+          ? a.localeCompare(b, undefined, { sensitivity: 'accent' }) === 0
+          : a === b;
+    },
     saveToDrafts() {
       this.saveStory(false, () => {
         this.getStory();
@@ -260,7 +308,12 @@ export default {
           is_published: is_published,
           has_chapters: this.has_chapters === "true",
           categories: this.story.categories,
-          tags: this.story.tags
+          tags: this.tags.map( (tag) => {
+            return {
+              name: tag.text,
+              id: tag.id
+            }
+          })
         }).then( () => {
           if (!this.chapter.id){
             this.axios.post(`/story/${this.id}/chapter/add/`,

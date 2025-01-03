@@ -30,7 +30,7 @@ class AuthService {
   }
 
   async getRole() {
-    const rs = await api.get("accounts/role/");
+    const rs = await api.get("accounts/role/")
     return rs.data.role;
   }
   
