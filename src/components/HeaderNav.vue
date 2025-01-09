@@ -34,10 +34,12 @@
             class="collapse navbar-collapse"
           >
             <ul class="navbar-nav me-auto mb-2 mb-lg-0 ml-8">
-              <li class="nav-item">
+              <li class="nav-item"
+              >
                 <router-link
                   class="navbar-menu-item-link nav-link active"
                   :to="{name: 'home'}"
+                  @click="collapseNavbar"
                 >
                   Home
                 </router-link>
@@ -49,6 +51,7 @@
                 <router-link
                   class="navbar-menu-item-link nav-link"
                   :to="{name: 'dashboard'}"
+                  @click="collapseNavbar"
                 >
                   Dashboard
                 </router-link>
@@ -60,6 +63,7 @@
                 <router-link
                   class="navbar-menu-item-link nav-link"
                   :to="{name: 'admin'}"
+                  @click="collapseNavbar"
                 >
                   Admin
                 </router-link>
@@ -181,6 +185,7 @@ import LoginForm from "@/components/LoginForm.vue";
 import MultiSearch from "@/components/MultiSearch.vue";
 import EventBus from "../common/EventBus";
 import AuthService from '../services/auth.service';
+import {Collapse} from "bootstrap";
 
 export default {
   name: "HeaderNav",
@@ -221,6 +226,14 @@ export default {
     },
     logOut(){
       EventBus.dispatch("logout");
+    },
+    collapseNavbar() {
+      const navbar = document.querySelector('.navbar-collapse.show');
+        if (navbar) {
+            new Collapse(navbar, {
+                toggle: false,
+            }).hide();
+        }
     }
   }
 }

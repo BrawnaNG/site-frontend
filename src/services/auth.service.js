@@ -61,7 +61,7 @@ class AuthService {
     const token = TokenService.getLocalAccessToken();
     if (token){
       store.dispatch('auth/setRefreshingState', true);
-      const refreshingCall = await axiosInstance.post("token/verify/", {
+      const refreshingCall = axiosInstance.post("token/verify/", {
         token: token
       }).then(
         (_) => {
@@ -88,12 +88,14 @@ class AuthService {
                 return Promise.resolve(access);
               },
               _error =>{
+                store.dispatch('auth/setRefreshingState', false);
                 store.dispatch('auth/setAuthenticationFailed', true);
                 return Promise.reject();
               }
             )
           }
           else{
+            store.dispatch('auth/setRefreshingState', false);
             store.dispatch('auth/setAuthenticationFailed', true);
             return Promise.reject();
           }
@@ -103,6 +105,7 @@ class AuthService {
       return refreshingCall;
     }
     store.dispatch('auth/setAuthenticationFailed', true);
+    store.dispatch('auth/setRefreshingState', false);
     return Promise.reject();
   }
 
@@ -113,10 +116,7 @@ class AuthService {
       password: user.password,
       alias: user.alias
     });
-  }
-
-
-  
+  }  
 }
 
 export default new AuthService();

@@ -19,6 +19,28 @@
     <user-menu />
     <div class="row my-0 mx-auto py-5 h-100">
       <div class="col-3 pl-0">
+        <div 
+          class="container-fluid saved-stories-tags pt-2"
+          v-if="has_chapters === 'true'"
+          >
+          <div class="row">
+            <h6>Chapters</h6>
+          </div>
+          <div class="row">
+            <TreeTable
+              :value="chapters"
+              selectionMode="single"
+              v-model:selectionKeys="selected_chapter"
+              @nodeSelect="onChapterSelect"
+            >
+              <Column 
+                field="title"
+                style="width: 100%">
+              </Column>
+            </TreeTable>
+          </div>
+        </div>
+
         <!--          <vue-tree-navigation :items="items"  :defaultOpenLevel="defaultOpenLevel"/>-->
       </div>
       <div class="col-6">
@@ -43,7 +65,7 @@
           </div>
           <div 
             class="row pb-4"
-            v-if="has_chapters === 'true'"
+            v
           >
             <div class="col-2">
               <label 
@@ -212,8 +234,9 @@ export default {
             }
           ]
       },
-      chapter:{
-        id: null,
+      chapter: 
+      {
+        id: this.chapterid,
         index: -1,
         title : "",
         body: '\n'
@@ -226,6 +249,8 @@ export default {
       all_categories: [],
       selected_categories: {},
       selectedKey: "id",
+      chapters: [],
+      selected_chapter: {},
       customToolbar: [
         [{ font: [] }],
         [{ header: [false, 1, 2, 3, 4, 5, 6] }],
@@ -254,12 +279,13 @@ export default {
     }
   },
   mounted() {
+    this.getAllCategories();
     this.getAllTags();
     this.getStory();
   },
   methods: {
     getStory() {
-      this.axios.get(`/story/detail/${this.id}`).then(res => {
+      this.axios.get(`/story/detail/${this.id}`).then(async (res) => {
         this.story = res.data;
         this.has_chapters = this.story.has_chapters ? "true" : "false";
         this.tags = this.story.tags.map( (tag) => {
@@ -268,31 +294,27 @@ export default {
             id: tag.id
           }
         });
-        this.getAllCategories().then( () => {
           this.selected_categories = this.story.categories.reduce( (cats, cat) => {
             cats[cat.id] = true;
             return cats;
           }, {});
-
-          if (res.data.chapter_ids && res.data.chapter_ids.length > 0){
+          if (this.story.chapters &&this.story.chapters.length > 0){
             var index = -1;
-            if (this.chapterid){
-              index = res.data.chapter_ids.findIndex( (c) => c.id === this.chapterid);
+            if (this.chapter.id){
+              index = this.story.chapters.findIndex( (c) => c.id === this.chapter.id);
             }
             else if (this.chapter.index > -1){
               index = this.chapter.index;
             }
-
             if (index == -1){
               index = 0;
             }
-
             this.chapter.index = index;
-            if (res.data.chapter_ids.length > index){
-              this.chapter.id = res.data.chapter_ids[index].id;
-              this.axios.get(`/story/chapter/${this.chapter.id}`).then(res => {
-                this.chapter.body = res.data.body;
-                this.chapter.title = res.data.title;
+            if (this.story.chapters.length > index){
+              this.chapter.id = this.story.chapters[index].id;
+              await this.axios.get(`/story/chapter/${this.chapter.id}`).then(chap_res => {
+                this.chapter.body = chap_res.data.body;
+                this.chapter.title = chap_res.data.title;
               })
             }
             else{
@@ -301,8 +323,42 @@ export default {
               this.chapter.body = '\n';
             }
           }
-        });
-      })
+          if (this.story.has_chapters){
+            this.chapters = this.story.chapters.map( (chap) => {
+              return {
+                  key: chap.id,
+                  data: this.chapter.id == chap.id ? this.chapter : chap,
+                  selectable: true,
+                  leaf: true
+              }
+            });
+
+            if (!this.chapter.id){
+              this.chapters.push(
+                  {
+                    key: -1,
+                    data: this.chapter,
+                    selectable: true,
+                    leaf: true
+                  }
+                );
+                this.selected_chapter = {};
+                this.selected_chapter[-1] = true;
+            }
+            else{
+              this.selected_chapter = {};
+              this.selected_chapter[this.chapter.id] = true;
+            }
+          }
+        }
+      );
+    },
+    getAllCategories() {
+      this.axios.get(`/category/list/`).then(res =>{
+        var cats = res.data.results.sort(this.sortCategories);
+        var top = cats.filter( (cat) => !cat.parent );
+        this.all_categories = top.map((cat) => this.makeCategory(cats, cat));
+      });
     },
     sortCategories( a, b ){
       if (!a.parent && b.parent){
@@ -328,22 +384,12 @@ export default {
 
       return 0
     },
-    async getAllCategories() {
-      await this.axios.get(`/category/list/`).then(res =>{
-        var cats = res.data.results.sort(this.sortCategories);
-        var top = cats.filter( (cat) => !cat.parent );
-        this.all_categories = top.map((cat) => this.makeCategory(cats, cat));
-        return Promise.resolve();
-      });
-    },
     makeCategory(categories, root){
       var children = categories.filter( (cat) => {
         return cat.parent && cat.parent === root.id;;
       });
       return {
-        key: `${root.id}`,
-        label: root.name,
-        name: name,
+        key: root.id,
         data: root,
         selectable: true,
         leaf: children && children.length > 0 ? false : true,
@@ -416,6 +462,12 @@ export default {
             callback()
           });
         }
+      });
+    },
+    async onChapterSelect(chap){
+      this.saveStory(this.story.is_published, () => {
+        this.chapter.id = chap.key;
+        this.getStory();
       });
     },
     nextChapter(){
