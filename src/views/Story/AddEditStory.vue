@@ -147,6 +147,23 @@
               @tags-changed="newTags => tags = newTags"
             />
           </div>
+          <div class="row pt-2">
+            <h6>Categories</h6>
+          </div>
+          <div class="row">
+            <TreeTable
+              :value="all_categories"
+              selectionMode="multiple"
+              v-model:selectionKeys="selected_categories"
+            >
+              <Column 
+                field="name"
+                expander
+                style="width: 100%">
+              </Column>
+
+            </TreeTable>
+          </div>
         </div>
       </div>
     </div>
@@ -163,7 +180,13 @@ import VueTagsInput from '@sipec/vue3-tags-input';
 
 export default {
   name: "AddEditStory",
-  components: {QuillEditor, BreadCrumbs, UserMenu, AddStory, VueTagsInput},
+  components: {
+    QuillEditor, 
+    BreadCrumbs, 
+    UserMenu, 
+    AddStory, 
+    VueTagsInput,
+  },
   props: {
     id: {
       type: String,
@@ -200,6 +223,9 @@ export default {
       new_tag: '',
       tags: [],
       autocomplete_tags: [],
+      all_categories: [],
+      selected_categories: {},
+      selectedKey: "id",
       customToolbar: [
         [{ font: [] }],
         [{ header: [false, 1, 2, 3, 4, 5, 6] }],
@@ -242,35 +268,89 @@ export default {
             id: tag.id
           }
         });
+        this.getAllCategories().then( () => {
+          this.selected_categories = this.story.categories.reduce( (cats, cat) => {
+            cats[cat.id] = true;
+            return cats;
+          }, {});
 
-        if (res.data.chapter_ids && res.data.chapter_ids.length > 0){
-          var index = -1;
-          if (this.chapterid){
-            index = res.data.chapter_ids.findIndex( (c) => c.id === this.chapterid);
-          }
-          else if (this.chapter.index > -1){
-            index = this.chapter.index;
-          }
+          if (res.data.chapter_ids && res.data.chapter_ids.length > 0){
+            var index = -1;
+            if (this.chapterid){
+              index = res.data.chapter_ids.findIndex( (c) => c.id === this.chapterid);
+            }
+            else if (this.chapter.index > -1){
+              index = this.chapter.index;
+            }
 
-          if (index == -1){
-            index = 0;
-          }
+            if (index == -1){
+              index = 0;
+            }
 
-          this.chapter.index = index;
-          if (res.data.chapter_ids.length > index){
-            this.chapter.id = res.data.chapter_ids[index].id;
-            this.axios.get(`/story/chapter/${this.chapter.id}`).then(res => {
-              this.chapter.body = res.data.body;
-              this.chapter.title = res.data.title;
-            })
+            this.chapter.index = index;
+            if (res.data.chapter_ids.length > index){
+              this.chapter.id = res.data.chapter_ids[index].id;
+              this.axios.get(`/story/chapter/${this.chapter.id}`).then(res => {
+                this.chapter.body = res.data.body;
+                this.chapter.title = res.data.title;
+              })
+            }
+            else{
+              this.chapter.id = null;
+              this.chapter.title = `Chapter ${this.chapter.index+1}`;
+              this.chapter.body = '\n';
+            }
           }
-          else{
-            this.chapter.id = null;
-            this.chapter.title = `Chapter ${this.chapter.index+1}`;
-            this.chapter.body = '\n';
-          }
-        }
+        });
       })
+    },
+    sortCategories( a, b ){
+      if (!a.parent && b.parent){
+        return -1;
+      }
+      else if (a.parent && !b.parent){
+        return 1;
+      }
+
+      if (a.name < b.name){
+        return -1;
+      }
+      else if (a.name > b.name){
+        return 1;
+      }
+
+      if (a.id < b.id){
+        return -1;
+      }
+      else if (a.id > b.id){
+        return 1;
+      }
+
+      return 0
+    },
+    async getAllCategories() {
+      await this.axios.get(`/category/list/`).then(res =>{
+        var cats = res.data.results.sort(this.sortCategories);
+        var top = cats.filter( (cat) => !cat.parent );
+        this.all_categories = top.map((cat) => this.makeCategory(cats, cat));
+        return Promise.resolve();
+      });
+    },
+    makeCategory(categories, root){
+      var children = categories.filter( (cat) => {
+        return cat.parent && cat.parent === root.id;;
+      });
+      return {
+        key: `${root.id}`,
+        label: root.name,
+        name: name,
+        data: root,
+        selectable: true,
+        leaf: children && children.length > 0 ? false : true,
+        children: children && children.length > 0 ? children.map( (child) => {
+          return this.makeCategory(categories, child);
+        }) : null
+      }
     },
     getAllTags() {
       this.axios.get(`/tag/`).then(res => {
@@ -280,7 +360,6 @@ export default {
             id: tag.id
           }
         });
-        this.tag_warning = null;
       });
     },
     isDuplicate(tags, tag) {
@@ -307,7 +386,11 @@ export default {
           title: this.story.title,
           is_published: is_published,
           has_chapters: this.has_chapters === "true",
-          categories: this.story.categories,
+          categories: Object.keys(this.selected_categories).map( (k) => {
+            return {
+              id: k
+            }
+          }),
           tags: this.tags.map( (tag) => {
             return {
               name: tag.text,

@@ -1,92 +1,68 @@
-import AuthService from '../services/auth.service';
 
-const user = JSON.parse(localStorage.getItem('user'));
-const initialState = user
-  ? { status: { loggedIn: true }, user, role: { isInit: false, isAdmin: false, isAuthor: false } }
-  : { status: { loggedIn: false }, user: null, role: { isInit: false, isAdmin: false, isAuthor: false } };
+const initialState = {
+  isRefreshing: false, 
+  refreshingCall: null,
+  token: null,
+  isAuthenticated: false,
+  authenticationFailed: false,
+  role: { 
+    isInit: false, 
+    isAdmin: false, 
+    isAuthor: false
+  }
+};
 
 export const auth = {
   namespaced: true,
   state: initialState,
   actions: {
-    login({ commit }, user) {
-      return AuthService.login(user).then(
-        user => {
-          commit('loginSuccess', user);
-          return Promise.resolve(user);
-        },
-        error => {
-          commit('loginFailure');
-          return Promise.reject(error);
-        }
-      );
+    setToken( { commit }, token ) {
+      commit('setToken', token);
+      return token;
     },
-    logout({ commit }) {
-      AuthService.logout();
-      commit('logout');
+    setAuthenticated( { commit }, authenticated ) {
+      commit('setAuthenticated', authenticated);
+      return authenticated;
     },
-    register({ commit }, user) {
-      return AuthService.register(user).then(
-        response => {
-          commit('registerSuccess');
-          return Promise.resolve(response.data);
-        },
-        error => {
-          commit('registerFailure');
-          return Promise.reject(error);
-        }
-      );
+    setRefreshingState( { commit }, refreshingState ) {
+      commit('setRefreshingState', refreshingState);
+      return refreshingState;
     },
-    refreshToken({ commit }, accessToken) {
-        commit('refreshToken', accessToken);
+    setRefreshingCall( { commit }, refreshingCall ) {
+      commit('setRefreshingCall', refreshingCall);
+      return refreshingCall;
     },
-    refreshRole({ commit }){
-        return AuthService.getRole().then(
-            role => {
-                commit('refreshRole', role);
-                return Promise.resolve(role);
-            },
-            error => {
-              commit('registerFailure');
-              return Promise.reject(error);
-            }
-        )
-    }
+    setRole({ commit }, role ) {
+      commit('setRole', role);
+      return role;
+    },
+    setAuthenticationFailed( { commit }, authenticationFailed ) {
+      commit('setAuthenticationFailed', authenticationFailed);
+      return authenticationFailed;
+    },
   },
   mutations: {
-    loginSuccess(state, user) {
-      state.status.loggedIn = true;
-      state.user = user;
+    setToken(state, token) {
+      state.token = token;
     },
-    loginFailure(state) {
-      state.status.loggedIn = false;
-      state.user = null;
+    setAuthenticated(state, isAuthenticated) {
+      state.isAuthenticated  = isAuthenticated;
     },
-    logout(state) {
-      state.status.loggedIn = false;
-      state.user = null;
+    setRefreshingState(state, isRefreshing) {
+      state.isRefreshing  = isRefreshing;
+    },
+    setRefreshingCall(state, refreshingCall) {
+      state.refreshingCall  = refreshingCall;
+    },
+    setRole(state, role){
       state.role = {
-        isInit: true,
-        isAdmin: false,
-        isAuthor: false
-      };
-    },
-    registerSuccess(state) {
-      state.status.loggedIn = false;
-    },
-    registerFailure(state) {
-      state.status.loggedIn = false;
-    },
-    refreshToken(state, accessToken) {
-      state.status.loggedIn = true;
-      state.user = { ...state.user, accessToken: accessToken };
-    },
-    refreshRole(state, role){
-      state.role = {
-        isInit: true,
+        isInit: role ? true : false,
         isAdmin: (role === "administrator"),
         isAuthor: (role === "author")
       };
+    },
+    setAuthenticationFailed(state, authenticationFailed){
+      state.authenticationFailed = authenticationFailed
     }
   }
 };

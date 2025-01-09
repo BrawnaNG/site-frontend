@@ -1,10 +1,13 @@
 import axiosInstance from "./api";
-import TokenService from "./token.service";
+import AuthService from "./auth.service";
 
 const setup = (store) => {
   axiosInstance.interceptors.request.use(
     (config) => {
-      const token = TokenService.getLocalAccessToken();
+      if (config.url.startsWith("token")){
+        return config;
+      }
+      const token = store.state.auth.token;
       if (token) {
         config.headers["Authorization"] = 'Bearer ' + token;
       }
@@ -16,36 +19,21 @@ const setup = (store) => {
   );
 
   axiosInstance.interceptors.response.use(
-    (res) => {
-      return res;
-    },
-    async (err) => {
-      const originalConfig = err.config;
-
-      if (originalConfig.url !== "token/" && originalConfig.url !== "token/refresh/" && err.response) {
-        // Access Token was expired
-        if (err.response.status === 401 && !originalConfig._retry) {
-          originalConfig._retry = true;
-          try {
-            let refreshToken = TokenService.getLocalRefreshToken();
-            if (refreshToken){
-              const rs = await axiosInstance.post("token/refresh/", {
-                refresh: TokenService.getLocalRefreshToken(),
-              });
-
-              const { accessToken } = rs.data;
-
-              store.dispatch('refreshToken', accessToken);
-              TokenService.updateLocalAccessToken(accessToken);
-            }
-            return axiosInstance(originalConfig);
-          } catch (_error) {
-            store.dispatch('auth/logout');
-            return Promise.reject(_error);
-          }
+    (response) => response,
+    (error) => {
+      const status = error.response?.status;
+      const url = error.config.url;
+      if (status === 401 && !url.startsWith("token")) {
+        const authenticationFailed = store.state.auth.authenticationFailed;
+        if (!authenticationFailed){
+          return AuthService.refreshToken(store, _ => {
+            error.config.headers['Authorization'] = 'Bearer ' + store.state.auth.token;
+            error.config.baseURL = undefined;
+            return axiosInstance.request(error.config);
+          });
         }
       }
-      return Promise.reject(err);
+      return Promise.reject(error);
     }
   );
 };

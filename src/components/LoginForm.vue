@@ -165,6 +165,7 @@
 </template>
 
 <script>
+import AuthService from '../services/auth.service';
 export default {
   name: "LoginForm",
   emits: ['closeLogin','changeFormState'],
@@ -197,19 +198,9 @@ export default {
         username: this.login.username,
         password: this.login.password
       };
-      this.$store.dispatch("auth/login", user).then(
-        () => {
-          this.$store.dispatch("auth/refreshRole");
-          this.$emit('closeLogin')
-        },
-        (error) => {
-          this.loading = false;
-          this.message =
-            (error.response &&
-              error.response.data &&
-              error.response.data.message) ||
-            error.message ||
-            error.toString();
+      AuthService.login(this.$store, user).then(
+        (_) => {
+          this.$emit('closeLogin');
         }
       );
     },
@@ -220,21 +211,13 @@ export default {
         email: this.signUp.email,
         password: this.signUp.password
       };
-      this.$store.dispatch("auth/register", user).then(
-        (data) => {
-        this.view = 'login'
-        },
-        (error) => {
-          this.message =
-            (error.response &&
-              error.response.data &&
-              error.response.data.message) ||
-            error.message ||
-            error.toString();
-          this.successful = false;
-          this.loading = false;
-        });
-      }
+      AuthService.register(this.$store, user).then(
+        (_) => {
+          //TODO DISPLAY SUCCESS / WAIT FOR VERIFICATION MESSAGE
+          this.$emit('closeLogin');
+        }
+      );
+    }
   }
 }
 </script>

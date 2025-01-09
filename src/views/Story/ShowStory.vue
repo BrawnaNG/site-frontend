@@ -54,7 +54,7 @@
               {{ story.chapters[0].body }}
             </div>
             <div
-              v-if="loggedIn" 
+              v-if="isAuthenticated" 
               class="row pb-4"
             >
               <div class="container-fluid">
@@ -132,8 +132,8 @@ export default {
     }
   },
   computed: {
-    loggedIn() {
-      return this.$store.state.auth.status.loggedIn;
+    isAuthenticated() {
+      return this.$store.state.auth.status.isAuthenticated;
     }
   },
   mounted() {

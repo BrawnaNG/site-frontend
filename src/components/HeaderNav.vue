@@ -78,7 +78,7 @@
             >
           </div>
           <div 
-            v-if="!loggedIn"
+            v-if="!isAuthenticated"
             class="p-2"
           >
             <img
@@ -180,6 +180,8 @@
 import LoginForm from "@/components/LoginForm.vue";
 import MultiSearch from "@/components/MultiSearch.vue";
 import EventBus from "../common/EventBus";
+import AuthService from '../services/auth.service';
+
 export default {
   name: "HeaderNav",
   components: {MultiSearch, LoginForm},
@@ -198,13 +200,8 @@ export default {
     role() {
       return this.$store.state.auth.role;
     },
-    loggedIn() {
-      return this.$store.state.auth.status.loggedIn;
-    }
-  },
-  watch: {
-    'loginModal.show'() {
-      this.checkUser()
+    isAuthenticated() {
+      return this.$store.state.auth.isAuthenticated;
     }
   },
   beforeMount() {
@@ -217,9 +214,9 @@ export default {
     closeLogin(){
       document.getElementById('loginModalClose').click();
     },
-    async checkUser(){
-      if (this.loggedIn && !this.role.isInit){
-        this.$store.dispatch("auth/refreshRole");
+    checkUser(){
+      if (!this.role.isInit){
+        AuthService.getRole(this.$store);
       }
     },
     logOut(){

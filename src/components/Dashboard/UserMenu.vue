@@ -34,7 +34,7 @@
         </ul>
       </div>
       <div 
-        v-if="loggedIn"
+        v-if="isAuthenticated"
         class="col-6 menu-bar-item cursor-pointer text-white text-right mr-3 px-4 pb-2 py-2"
       >
         <span
@@ -53,8 +53,8 @@ import EventBus from "../../common/EventBus";
 export default {
   name: "UserMenu",
   computed: {
-    loggedIn() {
-      return this.$store.state.auth.status.loggedIn;
+    isAuthenticated() {
+      return this.$store.state.auth.isAuthenticated;
     }
   },
   methods: {
