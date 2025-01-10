@@ -2,54 +2,46 @@
   "name": "story-client",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "serve": "vite",
+    "build": "vite build",
+    "lint": "eslint --fix src"
   },
   "dependencies": {
+    "@popperjs/core": "^2.11.8",
+    "@vitejs/plugin-vue": "^5.1.3",
+    "@vue/compat": "^3.5.6",
+    "@vue/compiler-sfc": "^3.5.6",
     "axios": "^1.3.4",
+    "bootstrap": "4",
+    "bootstrap-icons": "^1.11.3",
     "bootstrap-vue": "^2.23.1",
-    "core-js": "^3.8.3",
+    "eslint-plugin-vue": "^9.28.0",
+    "jquery": "3",
     "moment": "^2.29.4",
+    "package.json": "^2.0.1",
+    "popper.js": "1.16.1",
+    "vee-validate": "^4.13.2",
+    "vue": "^3.2.25",
+    "vue-axios": "^3.5.2",
     "vue-moment": "^4.1.0",
-    "vue-router": "^3.5.1",
-    "vue-toasted": "^1.1.28",
+    "vue-router": "4",
     "vue-tree-navigation": "^4.0.1",
     "vue2-editor": "^2.10.3",
-    "vuex": "^3.6.2"
+    "vue3-toastify": "^0.2.3",
+    "vuex": "^4.0.2",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.16",
-    "@babel/eslint-parser": "^7.12.16",
-    "@vue/cli-plugin-babel": "~5.0.0",
-    "@vue/cli-plugin-eslint": "~5.0.0",
-    "@vue/cli-plugin-router": "~5.0.0",
-    "@vue/cli-plugin-vuex": "~5.0.0",
-    "@vue/cli-service": "~5.0.0",
-    "eslint": "^7.32.0",
-    "eslint-plugin-vue": "^8.0.3",
+    "@eslint/compat": "^1.1.1",
+    "eslint": "^9.10.0",
+    "prettier": "^3.3.3",
     "sass": "^1.59.3",
-    "sass-loader": "^13.2.1",
-    "vue-template-compiler": "^2.6.14"
-  },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/essential",
-      "eslint:recommended"
-    ],
-    "parserOptions": {
-      "parser": "@babel/eslint-parser"
-    },
-    "rules": {}
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead"
-  ]
+    "stylelint": "^16.9.0",
+    "stylelint-config-recommended": "^14.0.1",
+    "stylus": "^0.54.8",
+    "vite": "^5.4.6",
+    "vite-plugin-eslint": "^1.8.1"
+  }
 }

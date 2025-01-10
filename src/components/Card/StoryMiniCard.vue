@@ -1,36 +1,59 @@
 <template>
   <div class="story-card px-2 py-4">
-    <b-col cols="12" class="story-card-title pb-3">
+    <b-col
+      cols="12"
+      class="story-card-title pb-3"
+    >
       <h5 class="m-0">
-        Climate impact of plastics
+        {{ storyCard.title }}
       </h5>
     </b-col>
-    <b-col cols="12" class="story-card-content pb-4">
+    <b-col
+      cols="12"
+      class="story-card-content pb-4"
+    >
       <p class="m-0">
-        Plastics are frequently criticized for everything from their toxicity to their contributions to ocean pollution,
-        but they play an important role in reducing greenhouse gas emissions.
+        {{ storyCard.body }}
       </p>
     </b-col>
-    <b-col cols="12" class="story-card-footer">
+    <b-col
+      cols="12"
+      class="story-card-footer"
+    >
       <template v-if="cardMode === 'small'">
-        Username • Sep 22 | Category
+        {{ moment(storyCard.created_at).format('MMM YY') }}
+        |
+        {{ (storyCard.categories.length ? storyCard.categories[0].name : '') }}
       </template>
-     <template v-else>
-       July 6, 2022
-     </template>
-
+      <template v-else>
+        {{ moment(storyCard.created_at).format('MMM YY') }}
+      </template>
     </b-col>
   </div>
 </template>
 
 <script>
+import { inject } from 'vue';
 export default {
   name: "StoryCard",
   props: {
+    storyCard: {
+      type: Object,
+      default: () => ({
+            title : "",
+            body: "",
+            created_at: null,
+            categories: []
+        })
+    },
     cardMode: {
       type: String,
       default: 'small'
     }
+  },
+  setup() {
+    const moment = inject('moment');
+    return { moment };
   }
 }
 </script>

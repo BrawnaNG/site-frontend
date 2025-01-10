@@ -1,25 +1,32 @@
-import Vue from 'vue'
-import App from './App.vue'
-import router from './router'
-import store from './store'
+import { createApp } from 'vue';
+import App from './App.vue';
+import router from './router';
+import store from './store';
 
-import './plugin/Axios'
-import './plugin/Bootsrtap'
-import VueMoment from "vue-moment";
+import api from './services/api';
+import VueAxios from 'vue-axios';
 import VueTreeNavigation from 'vue-tree-navigation';
-import Toasted from 'vue-toasted';
+import Vue3Toastify from 'vue3-toastify';
+import moment from "moment";
+import setupInterceptors from './services/setupinterceptors';
 
-Vue.use(Toasted, {
-  theme: "toasted-primary",
-  position: "bottom-right",
-  iconPack: 'fontawesome'
-});
-Vue.use(VueTreeNavigation);
-Vue.use(VueMoment);
-Vue.config.productionTip = false
+import BootstrapVue from 'bootstrap-vue';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
 
-new Vue({
-  router,
-  store,
-  render: h => h(App)
-}).$mount('#app')
+setupInterceptors(store);
+
+var app = createApp(App)
+  .use(Vue3Toastify, {
+    autoClose: 3000,
+    position: "bottom-right"
+  })
+  .use(VueTreeNavigation)
+  .use(router)
+  .use(store)
+  .use(VueAxios, api)
+  .use(BootstrapVue)
+  .provide("moment", moment);
+
+app.config.productionTip = false;
+app.mount('#app');

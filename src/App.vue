@@ -1,29 +1,30 @@
 <template>
   <div id="app">
-    <header-nav/>
-    <router-view/>
-    <site-footer/>
+    <header-nav />
+    <router-view />
+    <site-footer />
   </div>
 </template>
 
 <script>
-import HeaderNav from "@/components/HeaderNav";
-import SiteFooter from "@/components/SiteFooter";
+import HeaderNav from "@/components/HeaderNav.vue";
+import SiteFooter from "@/components/SiteFooter.vue";
+import EventBus from "./common/EventBus";
 
 export default {
   components: {SiteFooter, HeaderNav},
   mounted() {
-    document.title = 'Stories'
-    // this.login()
+    document.title = 'Stories',
+    EventBus.on("logout", () => {
+      this.logOut();
+    });
+  },
+  beforeUnmount() {
+    EventBus.remove("logout");
   },
   methods: {
-    login() {
-      this.$axios.post('http://127.0.0.1:8000/api/token/', {
-        username: 'admin',
-        password: 'admin'
-      }).then(res => {
-        localStorage.setItem('csrf-token', res.data.access)
-      })
+    logOut() {
+      this.$store.dispatch('auth/logout');
     }
   }
 }
