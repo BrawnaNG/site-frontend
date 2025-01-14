@@ -1,36 +1,39 @@
 <template>
   <div class="user-list-page">
     <div class="user-list-table py-3 px-4 mb-4">
-      <table
-        borderless
-        sort-icon-left
-        :items="userList.data"
-        :fields="userList.fields"
+      <DataTable 
+        :value="userList.data"
+        table-style="min-width: 50rem"
+        paginator
+        :rows="10"
+        :rowsPerPageOptions="[10, 20, 50]"
       >
-        <tbody>
-          <tr>
-            <td>
-              {{ moment(data.item.date_joined).format('DD MMM YYYY, hh:mm a') }}
-              <div class="user-list-table-action">
-                <span class="mr-3 cursor-pointer">
-                  <img
-                    src="../../assets/image/icon/Delete.svg"
-                    @click="showDisabledUserModal(data.item)"
-                  >
-                </span>
-                <span class="mr-3 cursor-pointer">
-                  <img src="../../assets/image/icon/Edit.svg">
-                </span>
-                <span class="cursor-pointer">
-                  <router-link :to="{name: 'userStories', params: {username: data.item.alias}}">
-                    <img src="../../assets/image/icon/Show.svg">
-                  </router-link>
-                </span>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+        <Column 
+          v-for="field of userList.fields"
+          :key="field.key"
+          :field="field.key"
+          :header="field.label">
+        </Column>
+        <Column header="Action">
+          <template #body="slotProps">
+            <span class="cursor-pointer">
+              <img
+                src="../../assets/image/icon/Delete.svg"
+                @click="showDisabledUserModal(slotProps.data)"
+              >
+            </span>
+            <span class="cursor-pointer">
+              <img src="../../assets/image/icon/Edit.svg">
+            </span>
+            <span class="cursor-pointer">
+              <router-link :to="{name: 'userStories', params: {username: slotProps.data.alias}}">
+                <img src="../../assets/image/icon/Show.svg">
+              </router-link>
+            </span>
+          </template>
+
+        </Column>
+      </DataTable>
     </div>
   </div>
 
@@ -66,7 +69,7 @@
                 class="story-default-btn saved-stories-btn px-3 py-2 font-weight-bold"
                 @click="closeUserDisableDialog()"
               >
-                No, Thanks
+                Cancel
               </button>
               <button
                 pill
@@ -74,7 +77,7 @@
                 class="story-default-btn saved-stories-btn px-3 py-2 font-weight-bold"
                 @click="UserDisabled()"
               >
-                Yes, disable it
+                Disable User
               </button>
             </div>
           </div>
@@ -120,11 +123,7 @@ export default {
             sortable: true,
             sortDirection: 'desc',
             class: 'user-table'
-          },
-          { key: 'action',
-            label: 'Operations',
-            class: 'user-table'
-          },
+          }
         ],
         total: 0,
         page: 1

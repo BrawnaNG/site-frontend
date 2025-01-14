@@ -62,9 +62,15 @@
 
 <script>
 import StoryLargeCard from "@/components/Card/StoryLargeCard.vue";
+import AdminBreadCrumbs from "@/components/Admin/AdminBreadCrumbs.vue";
+import AdminMenu from "@/components/Admin/AdminMenu.vue";
 export default {
   name: "UserStories",
-  components: {StoryLargeCard},
+  components: {
+    StoryLargeCard,
+    AdminBreadCrumbs,
+    AdminMenu
+  },
   data() {
     return {
       username: '',
@@ -124,10 +130,7 @@ export default {
   },
   methods: {
     getUserStories() {
-      // this.axios.get(`story/list/?username=${this.username}`).then(res => {
-      //   console.log(res.data);
-      // })
-      this.axios.get(`/story/list/?page=${this.userStories.page}`).then(res => {
+      this.axios.get(`/story/list-admin/?page=${this.userStories.page}&username=${this.username}`).then(res => {
         this.userStories.total = res.data.count
         this.userStories.data = res.data.results
       })

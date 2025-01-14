@@ -10,11 +10,13 @@ import Vue3Toastify from 'vue3-toastify';
 import moment from "moment";
 import setupInterceptors from './services/setupinterceptors';
 import PrimeVue from 'primevue/config';
-import { TreeTable, Column } from 'primevue';
+import { TreeTable, Column, DataTable } from 'primevue';
+import Toast from 'primevue/toast';
+import ToastService from 'primevue/toastservice';
 import Aura from '@primevue/themes/aura';
 
-import "bootstrap/dist/css/bootstrap.min.css"
-import "bootstrap"
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap";
 
 setupInterceptors(store);
 
@@ -32,8 +34,11 @@ var app = createApp(App)
       preset: Aura
     }
   })
+  .use(ToastService)
   .component('TreeTable', TreeTable)
   .component('Column', Column)
+  .component('DataTable', DataTable)
+  .component('Toast', Toast)
   .provide("moment", moment);
 
 app.config.productionTip = false;

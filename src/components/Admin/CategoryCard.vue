@@ -1,77 +1,107 @@
 <template>
-  <div class="container-fluid category-card border p-3 mb-4">
-    <div class="row category-card-head m-0 justify-content-between pb-3">
-      <div class="col p-0">
+  <div 
+    class="container-fluid category-card p-3"
+    :class="{ 'border': isRoot }"
+  >
+    <div 
+      class="row m-0 justify-content-between pl-6"
+      :class="getClass"
+    >
+      <div class="col-6 p-0">
+        <span class="spacer">
         {{ category.name }}
-      </div>
-      <div class="col p-0">
-        <span class="mr-3 cursor-pointer">
-          <img src="../../assets/image/icon/Delete.svg">
         </span>
+      </div>
+        
+      <div class="col-4 p-0">
         <span
-          class="mr-3 cursor-pointer"
-          @click="editCategory(category.name)"
+          class="mr-3 cursor-pointer edit-btn"
+          @click="editCategory(category.id, category.name)"
         >
           <img src="../../assets/image/icon/Edit.svg">
         </span>
+        <span 
+          class="mr-3 cursor-pointer delete-btn"
+          @click="deleteCategory(category.id)"
+        >
+          <img src="../../assets/image/icon/Delete.svg">
+        </span>
       </div>
     </div>
-    <template v-if="category.parent">
-      <div class="category-card-content p-3">
-        <div class="category-card-content-add-btn py-2">
-          <button
-            pill
-            variant="dark"
-            class="story-default-btn pr-2 pl-1 py-1 font-weight-bold"
+    <div 
+      class="row"
+      :class="getClass"
+    >
+      <div 
+          class="add-btn col-8 spacer"
+          v-if="category.depth < 2">
+        <button
+          pill
+          variant="dark"
+          class="pr-1 py-1 px-2 font-weight-bold rounded-pill"
+          @click="addSubCategory(category.id, category.name)"
+        >
+          <img
+            src="../../assets/image/icon/add.svg"
+            class="mr-1"
+            alt="go"
           >
-            <img
-              src="../../assets/image/icon/add.svg"
-              class="mr-1"
-              alt="go"
-            >
-            Add Sub-Category
-          </button>
-        </div>
-        <div class="container-flex category-card-content-sub py-2">
-          <div 
-            v-for="subCat in category.subCat"
-            :key="`subCat_${subCat}`"
-            class="row m-0 justify-content-between"
-          >
-            <div class="col category-card-content-sub-name p-0">
-              {{ subCat.name }}
-            </div>
-            <div class="col category-card-content-sub-btn p-0">
-              <span class="delete-btn mr-3 cursor-pointer">
-                <img src="../../assets/image/icon/Delete.svg">
-              </span>
-              <span class="edit-btn cursor-pointer">
-                <img src="../../assets/image/icon/Edit.svg">
-              </span>
-            </div>
-          </div>
-        </div>
+          Add Sub-Category
+        </button>
       </div>
-    </template>
+    </div>
+
+    <div class="row">
+      <template v-if="category.children">
+          <CategoryCard
+            v-for="(subCat) in category.children"
+            :key="`cat_card_${subCat.id}`"
+            :category="subCat"
+            @edit-category="editCategory"
+            @add-sub-category="addSubCategory"
+            @delete-category="deleteCategory"
+          />
+      </template>
+    </div>
   </div>
+
 </template>
 
 <script>
 export default {
   name: "CategoryCard",
+  emits: ['editCategory','addSubCategory','deleteCategory'],
   props: {
     category: {
       type: Object,
       default: () =>({
+        title: "",
         name: "",
-        parent: null
+        id: null,
+        parent: null,
+        depth: 0,
+        description: "",
+        children: []
       })
     }
   },
-  emits: ['showEditCategoryForm'],
+  computed: {
+    getClass() {
+      return `category-card-content-depth-${this.category.depth}`;
+    },
+    isRoot() {
+      return this.category.depth === 0;
+    }
+  },
   methods:{
-    editCategory(name) {
-      this.$emit('showEditCategoryForm', name)
+    editCategory(id, name) {
+      this.$emit('editCategory', id, name);
+    },
+    addSubCategory(parent_id, parent_name){
+      this.$emit('addSubCategory', parent_id, parent_name);
+    },
+    deleteCategory(id){
+      this.$emit('deleteCategory', id);
     }
   }
 }
@@ -85,32 +115,61 @@ export default {
     }
   }
   &-content {
-    &-add-btn {
-      button {
-        font-size: .7em;
-        img {
-          width: 1.8vw;
+
+    .edit-btn {
+      img {
+        width: 1.4vw;
+      }
+    }
+    
+    .delete-btn {
+      img {
+        width: 1.1vw;
+      }
+    }
+
+    &-depth-0 {
+      font-size: 1em;
+      font-weight: bolder;
+      .spacer {
+        padding-left: 50px;
+      }
+
+      .add-btn {
+        button {
+          font-size: .8em;
+          background-color: black;
+          color: white;
+          img {
+            width: 1.6vw;
+          }
         }
       }
 
     }
-    &-sub {
-      &-name {
-        font-size: .8em;
-        color: #707070;
-      }
-      &-btn {
-        .edit-btn {
-          img {
-            width: 1.4vw;
-          }
-        }
-        .delete-btn {
-          img {
-            width: 1.1vw;
-          }
-        }
 
+    &-depth-1 {
+      font-size: 0.9em;
+      .spacer {
+        padding-left: 100px;
+      }
+      .add-btn {
+        button {
+          font-size: .7em;
+          background-color: gray;
+          color: white;
+          img {
+            width: 1.3vw;
+          }
+        }
+      }
+
+    }
+
+    &-depth-2 {
+      font-size: 0.7em;
+      .spacer {
+        padding-left: 150px;
       }
     }
   }

@@ -199,6 +199,7 @@ import BreadCrumbs from "@/components/Dashboard/BreadCrumbs.vue";
 import UserMenu from "@/components/Dashboard/UserMenu.vue";
 import AddStory from "@/components/Dashboard/AddStory.vue";
 import VueTagsInput from '@sipec/vue3-tags-input';
+import categorySort from "@/common/CategorySort";
 
 export default {
   name: "AddEditStory",
@@ -355,34 +356,10 @@ export default {
     },
     getAllCategories() {
       this.axios.get(`/category/list/`).then(res =>{
-        var cats = res.data.results.sort(this.sortCategories);
+        var cats = res.data.results.sort(categorySort.sortCategories);
         var top = cats.filter( (cat) => !cat.parent );
         this.all_categories = top.map((cat) => this.makeCategory(cats, cat));
       });
-    },
-    sortCategories( a, b ){
-      if (!a.parent && b.parent){
-        return -1;
-      }
-      else if (a.parent && !b.parent){
-        return 1;
-      }
-
-      if (a.name < b.name){
-        return -1;
-      }
-      else if (a.name > b.name){
-        return 1;
-      }
-
-      if (a.id < b.id){
-        return -1;
-      }
-      else if (a.id > b.id){
-        return 1;
-      }
-
-      return 0
     },
     makeCategory(categories, root){
       var children = categories.filter( (cat) => {
