@@ -1,19 +1,16 @@
 <template>
   <div class="container-flex comments-card">
     <div class="row card-content">
-      <div class="col-2">
-        AVATAR
-      </div>
       <div class="col-10">
         <div class="container-flex">
           <div class="row">
-            {{ commentCard.user }}
+            <h6>
+              {{ commentCard.user }}
+              {{ moment(commentCard.created_at).format(' - MMM YY') }}
+            </h6>
           </div>
-          <div class="row">
-            {{ moment(commentCard.created_at).format('MMM YY') }}
-          </div>
-          <div class="row">
-            {{ commentCard.body }}
+          <div class="row ps-4">
+              {{ commentCard.body }}
           </div>
         </div>
       </div>

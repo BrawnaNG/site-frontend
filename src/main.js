@@ -14,6 +14,7 @@ import { TreeTable, Column, DataTable } from 'primevue';
 import Toast from 'primevue/toast';
 import ToastService from 'primevue/toastservice';
 import Aura from '@primevue/themes/aura';
+import Tag from 'primevue/tag';
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap";
@@ -39,6 +40,7 @@ var app = createApp(App)
   .component('Column', Column)
   .component('DataTable', DataTable)
   .component('Toast', Toast)
+  .component('Tag', Tag)
   .provide("moment", moment);
 
 app.config.productionTip = false;
