@@ -1,7 +1,51 @@
 <template>
-  <div class="story-header container-fluid">
+
+  <div 
+    class="offcanvas offcanvas-top offcanvas-m py-3 search-canvas"
+    tabindex="-1" 
+    id="searchCanvas"
+    aria-labelledby="searchCanvasLabel"
+  >  
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-10">
+          <input
+                v-model="searchForm.text"
+                class="form-control"
+                placeholder="Search story, author or tags"
+                data-bs-dismiss="offcanvas"
+                data-bs-target="#offcanvasResponsive" 
+                @keydown.enter="searchStories"
+              >
+        </div>
+        <div class="col-2">
+          <button 
+            class="btn btn-primary mx-2" 
+            data-bs-dismiss="offcanvas"
+            type="button"
+            data-bs-target="#offcanvasResponsive" 
+            aria-label="Search"
+            @click="searchStories"
+          >
+          Search
+          </button>
+          <button 
+            class="btn btn-secondary" 
+            data-bs-dismiss="offcanvas"
+            type="button"
+            data-bs-target="#offcanvasResponsive" 
+            aria-label="Cancel"
+          >
+          Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+</div>
+
+  <div class="story-header container-fluid bg-light">
     <div class="row">
-      <div class="col-7">
+      <div class="col-2">
         <nav class="navbar navbar-expand-xs navbar-light bg-light">
           <button 
             class="navbar-toggler" 
@@ -20,20 +64,11 @@
               class="d-inline-block align-text-top"
             >
           </button>
-          <a 
-            class="navbar-brand" 
-            href="#"
-          >
-            <img
-              src="../assets/image/icon/logo.svg"
-              class="story-header-logo"
-            >
-          </a>
           <div 
             id="navbarSupportedContent"
             class="collapse navbar-collapse"
           >
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ml-8">
+            <ul class="navbar-nav me-auto my-2 mb-lg-0 ml-8">
               <li class="nav-item"
               >
                 <router-link
@@ -72,13 +107,18 @@
           </div>
         </nav>
       </div>
-      <div class="col-5">
+      <div class="col-8 text-center my-1">
+        <h1>Brawna Stories</h1>
+      </div>
+      <div class="col-2 my-1">
         <div class="d-flex float-end">
           <div class="p-2">
             <img
               src="../assets/image/icon/search-normal.svg"
-              class="story-header-action mr-2"
-              @click="searchModal.show = true"
+              class="story-header-action"
+              data-bs-toggle="offcanvas" 
+              data-bs-target="#searchCanvas" 
+              aria-controls="searchCanvas"
             >
           </div>
           <div 
@@ -153,18 +193,10 @@
           <h5 
             id="searchModalLabel"
             class="modal-title"
+            @click="searchStories"
           >
             Search
           </h5>
-          <button 
-            type="button" 
-            class="btn-close" 
-            data-bs-dismiss="modal" 
-            aria-label="Close"
-          />
-        </div>
-        <div class="modal-body">
-          <multi-search />
         </div>
         <div class="modal-footer">
           <button 
@@ -193,11 +225,10 @@ export default {
   data() {
     return {
       loginModal: {
-        show: false,
         title: 'Login to the site'
       },
-      searchModal: {
-        show: false,
+      searchForm: {
+        text: ""
       }
     }
   },
@@ -213,6 +244,14 @@ export default {
     this.checkUser();
   },
   methods: {
+    searchStories(){
+      this.$router.push( {
+        name: 'searchResults', 
+        params: {
+          searchText: this.searchForm.text
+        }
+      });
+    },
     changeModalTitle(mode) {
       this.loginModal.title = (mode === 'login' ? 'Login to the site' : 'Sign up');
     },
@@ -241,6 +280,12 @@ export default {
 </script>
 
 <style lang="scss">
+.search-canvas {
+  max-height: 10% !important;
+  height: fit-content !important;
+  border: none !important;
+}
+
 .story-header {
   height: 5.68vw;
   border-bottom: 1px solid #D6D6D6;
@@ -255,6 +300,7 @@ export default {
   &-action {
     width: 2vw;
     cursor: pointer;
+    display: flex;
   }
 }
 #navbar-backdrop.navbar-menu {

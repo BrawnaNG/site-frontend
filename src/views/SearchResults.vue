@@ -2,36 +2,40 @@
   <div class="search-result-page">
     <div class="container-flex search-result-page-head border-bottom py-4">
       <div class="row my-0 col-10 mx-auto justify-content-between">
-        <div class="col-5 p-0">
-          <h1 class="m-0 font-weight-bolder">
-            Results for {{ searchText }}
-          </h1>
+        <div class="col-4 p-0">
+          <h2 class="m-0 font-weight-bolder">
+            Results for "{{ searchText }}"
+          </h2>
         </div>
-        <div class="m-0 col-6 border-bottom justify-content-between p-1">
-          <div class="pr-0 text-center">
-            <img src="../assets/image/icon/search-normal.svg">
-          </div>
-          <div class="p-0">
-            <input
-              v-model="searchText"
-              class="border-0 login-form-input"
-              placeholder="Search story, author ot tags"
-              @keyup="advanceSearch()"
-            >
-          </div>
-          <div class="text-right pt-1 px-0">
-            <span
-              class="badge px-2 py-1 cursor-pointer"
-              variant="light"
-              @click="clearSearch()"
-            >
-              clear
-            </span>
-          </div>
+        <div class="col-6">
+          <input
+                v-model="searchTextInput"
+                class="form-control"
+                placeholder="Search story, author or tags"
+                @keydown.enter="advanceSearch"
+              >
+        </div>
+        <div class="col-2">
+          <button 
+            class="btn btn-primary mx-2" 
+            type="button"
+            aria-label="Search"
+            @click="advanceSearch"
+          >
+          Search
+          </button>
+          <button 
+            class="btn btn-secondary" 
+            type="button"
+            aria-label="Clear"
+            @click="clearSearch"
+          >
+          Clear
+          </button>
         </div>
       </div>
     </div>
-    <div class="container-flex search-result-page-content my-4 p-5">
+    <div class="container-flex search-result-page-content my-2 p-2">
       <div class="row pb-4 px-3">
         <h3 class="m-0">
           Stories
@@ -51,13 +55,13 @@
         </div>
       </template>
       <template v-else>
-        <div class="row m-0 border w-100 h-100 font-size-8 font-weight-bold text-secondary justify-content-center align-items-center">
+        <div class="row m-0 w-100 h-100 font-size-8 font-weight-bold text-secondary justify-content-center align-items-center">
           No Stories found.
         </div>
       </template>
     </div>
-    <div class="container-flex search-result-page-content my-4 p-5">
-      <div class="row col-10 mx-auto my-0">
+    <div class="container-flex search-result-page-content my-2 p-2">
+      <div class="row mx-auto my-0">
         <div class="pb-4">
           <h3 class="m-0">
             Authors
@@ -69,9 +73,6 @@
             :key="`last_user_${index}`"
             class="row card-user py-3 m-0"
           >
-            <div class="col-9 p-0 m-0">
-              TODO - AVATAR
-            </div>
             <div class="card-user-name font-weight-bold">
               {{ user.user }}
             </div>
@@ -106,17 +107,21 @@ import StoryMiniCard from "@/components/Card/StoryMiniCard.vue";
 export default {
   name: "SearchResults",
   components: {StoryMiniCard},
+  props: {
+    searchText: {
+      type: String,
+      default: ""
+    }
+  },
   data() {
     return {
-      searchText: '',
+      searchTextInput: this.searchText,
       storyResults: [],
       authorResults: [],
       tagResults: [],
-
     }
   },
   created() {
-    this.searchText = this.$route.params.searchKey
     this.advanceSearch()
   },
   methods: {
@@ -127,27 +132,32 @@ export default {
     },
 
     advanceStorySearch() {
-      this.axios.get(`/story/search/?q=${this.searchText}`).then(res => {
-        this.storyResults = res.data
-      })
+      if (this.searchTextInput){
+        this.axios.get(`/story/search/?q=${this.searchTextInput}`).then(res => {
+          this.storyResults = res.data;
+        });
+      }
     },
 
     advanceAuthorSearch() {
-      this.axios.get(`/story/search/?user=${this.searchText}`).then(res => {
-        this.authorResults = res.data
-      })
+      if (this.searchTextInput){
+        this.axios.get(`/story/search/?user=${this.searchTextInput}`).then(res => {
+          this.authorResults = res.data;
+        });
+      }
     },
 
     advanceTagSearch() {
-      this.axios.get(`/story/search/?tag==${this.searchText}`).then(res => {
-        this.tagResults = res.data
-      })
+      if (this.searchTextInput){
+        this.axios.get(`/story/search/?tag==${this.searchTextInput}`).then(res => {
+          this.tagResults = res.data;
+        })
+      }
     },
 
     clearSearch() {
-      this.searchText = '';
-      this.advanceSearch()
-      this.$router.push({name: 'searchResults'})
+      this.searchTextInput = '';
+      this.storyResults = [];
     }
   }
 }

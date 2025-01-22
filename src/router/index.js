@@ -24,8 +24,9 @@ const routes = [
     },
   },
   {
-    path: '/search-results/search=:searchKey?',
+    path: '/search-results/search=:searchText?',
     name: 'searchResults',
+    props: true,
     component: SearchResults,
     meta: {
       authRequired: 'false',
