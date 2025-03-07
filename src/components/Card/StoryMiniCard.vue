@@ -10,14 +10,14 @@
     </div>
     <div class="row story-card-content pb-4">
       <p class="m-0">
-        {{ storyCard.body }}
+        {{ storyCard.user }}
       </p>
     </div>
     <div class="row story-card-footer m-0">
       <template v-if="cardMode === 'mini'">
         {{ moment(storyCard.created_at).format('MMM YY') }}
         |
-        {{ (storyCard.categories.length ? storyCard.categories[0].name : '') }}
+        {{ storyCard.first_category }}
       </template>
       <template v-else>
         {{ moment(storyCard.created_at).format('MMM YY') }}
@@ -35,8 +35,9 @@ export default {
       type: Object,
       default: () => ({
             title : "",
-            body: "",
+            user: "",
             created_at: null,
+            first_category: "",
             categories: []
         })
     },

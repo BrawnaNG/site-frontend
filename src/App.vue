@@ -2,7 +2,6 @@
   <div id="app">
     <header-nav />
     <router-view />
-    <site-footer />
   </div>
 </template>
 

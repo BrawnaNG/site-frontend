@@ -12,6 +12,9 @@
             {{ storyCard.title }}
           </h4>
         </div>
+        <div class="row story-large-card-author pb-3 px-1 m-0">
+            {{ storyCard.user }}
+        </div>
         <div
           v-if="storyCard.brief"
           class="row story-large-card-content pb-3 px-1"
@@ -44,7 +47,7 @@
     <div class="row story-large-card-footer px-3">
       {{ moment(storyCard.created_at).format('MMM YY') }}
       |
-      {{ (storyCard.categories.length ? storyCard.categories[0].name : '') }}
+      {{ storyCard.first_category }}
     </div>
   </div>
 </template>
@@ -60,8 +63,10 @@ export default {
             id : "",
             title : "",
             brief : "",
+            user: "",
             created_at: null,
             categories: [],
+            first_category: ""
         })
     },
     cardMode:{

@@ -1,3 +1,4 @@
+import { error } from "jquery";
 import axiosInstance from "./api";
 import TokenService from "./token.service";
 
@@ -46,8 +47,8 @@ class AuthService {
         return Promise.resolve(); 
       },
       (error) => {
-        store.dispatch("auth/setRole", null);
-        return Promise.reject(error); 
+        store.dispatch("auth/setRole", "reader");
+        return Promise.resolve();
       }
     );
   }
@@ -90,6 +91,15 @@ class AuthService {
               _error =>{
                 store.dispatch('auth/setRefreshingState', false);
                 store.dispatch('auth/setAuthenticationFailed', true);
+                TokenService.removeUser();
+                return Promise.reject();
+              }
+            )
+            .catch(
+              (_error) => {
+                store.dispatch('auth/setRefreshingState', false);
+                store.dispatch('auth/setAuthenticationFailed', true);
+                TokenService.removeUser();
                 return Promise.reject();
               }
             )
@@ -97,15 +107,26 @@ class AuthService {
           else{
             store.dispatch('auth/setRefreshingState', false);
             store.dispatch('auth/setAuthenticationFailed', true);
+            TokenService.removeUser();
             return Promise.reject();
           }
         }
-      ).then(cb);
+      )
+      .catch(
+        (_error) => {
+          store.dispatch('auth/setRefreshingState', false);
+          store.dispatch('auth/setAuthenticationFailed', true);
+          TokenService.removeUser();
+          return Promise.reject();
+        }
+      )
+      .then(cb);
       store.dispatch('auth/setRefreshingCall', refreshingCall);
       return refreshingCall;
     }
     store.dispatch('auth/setAuthenticationFailed', true);
     store.dispatch('auth/setRefreshingState', false);
+    TokenService.removeUser();
     return Promise.reject();
   }
 

@@ -13,8 +13,6 @@
                 v-model="searchForm.text"
                 class="form-control"
                 placeholder="Search story, author or tags"
-                data-bs-dismiss="offcanvas"
-                data-bs-target="#offcanvasResponsive" 
                 @keydown.enter="searchStories"
               >
         </div>
@@ -217,7 +215,7 @@ import LoginForm from "@/components/LoginForm.vue";
 import MultiSearch from "@/components/MultiSearch.vue";
 import EventBus from "../common/EventBus";
 import AuthService from '../services/auth.service';
-import {Collapse} from "bootstrap";
+import {Collapse, Offcanvas} from "bootstrap";
 
 export default {
   name: "HeaderNav",
@@ -251,6 +249,10 @@ export default {
           searchText: this.searchForm.text
         }
       });
+      const searchbar = document.querySelector('.search-canvas');
+      if (searchbar) {
+        Offcanvas.getInstance(searchbar).hide();
+      }
     },
     changeModalTitle(mode) {
       this.loginModal.title = (mode === 'login' ? 'Login to the site' : 'Sign up');
@@ -273,7 +275,7 @@ export default {
                 toggle: false,
             }).hide();
         }
-    }
+    },
   }
 }
 

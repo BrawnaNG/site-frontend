@@ -15,7 +15,7 @@
           </h6>
         </div>
       </div>
-      <div class="row">
+      <div class="row pb-4">
         <div class="col">
           <story-large-card 
             :card-mode="'read'"
@@ -24,6 +24,13 @@
         </div> 
       </div>
     </template>
+    <div class="row">
+      <div class="col big-card-head-title">
+        <h6>
+          Recent Stories
+        </h6>
+      </div>
+    </div>
     <div 
       v-for="(chunk, row) in recent_story_chunks"
       :key="`recentStoriesRow_${row}`"
@@ -40,6 +47,15 @@
         />
       </div>
     </div>
+    <div class="row p-2">
+      <div class="col-xl-2 mx-auto">
+        <button 
+          class="px-2 py-1 font-weight-bold rounded-pill home-default-btn"
+          @click="loadMore">
+          Show More
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -53,7 +69,8 @@ export default {
     return {
       featuredStory: null,
       recentStories: [],
-      cols: 3
+      cols: 3,
+      page: 1
     }
   },
   computed:{
@@ -70,16 +87,24 @@ export default {
     this.getRecentStories();
   },
   methods: {
-    getFeaturedStory() {
-      this.axios.get(`/story/featured/`).then(res => {
-        this.featuredStory = res.data[0]
+    async getFeaturedStory() {
+      await this.axios.get(`/story/featured/`).then(res => {
+        this.featuredStory = res.data[0];
       })
     },
-    getRecentStories(){
-      this.axios.get(`/story/list/?page=1`).then(res => {
-        this.recentStories = res.data.results.slice(0,6)
+    async getRecentStories(){
+      this.page = 1;
+      await this.axios.get(`/story/list/?page=1`).then(res => {
+        this.recentStories = res.data.results.slice(0,12);
       })
-    }
+    },
+    async loadMore(){
+      this.page++;
+      await this.axios.get(`/story/list/?page=${this.page}`).then(res => {
+        let newstories = res.data.results.slice(0,12);
+        this.recentStories = this.recentStories.concat(newstories);
+      })
+    },
   }
 }
 </script>
@@ -121,6 +146,13 @@ export default {
     }
     &-view-all {
       text-decoration: underline;
+    }
+  }
+  .home-default-btn {
+    background-color: black;
+    color: white;
+    img {
+      width: 2vw;
     }
   }
 
