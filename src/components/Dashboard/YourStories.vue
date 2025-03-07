@@ -1,32 +1,26 @@
 <template>
-  <div class="your-stories">
+  <div class="your-stories container-flex">
     <template v-if="recentStories.data.length">
-      <b-col
+      <div 
         v-for="storyCard in recentStories.data"
-        :key="`storyCard_${storyCard.id}`"
-        cols="12"
-        class="p-0"
+        :key="`recentStoryCard_${storyCard.id}`"
+        class="col-12"
       >
-        <story-large-card :story-card="storyCard" />
-      </b-col>
-      <b-row class="justify-content-center m-0 pt-4">
-        <b-pagination
-          v-model="recentStories.page"
-          class="pagination-custom-style"
-          pills
-          :total-rows="recentStories.total"
+        <story-large-card
+          :story-card="storyCard"
+          :card-mode="'edit'"
         />
-      </b-row>
+      </div>
+      <div class="row">
+        TODO PAGINATION
+      </div>
     </template>
     <template v-else>
-      <b-row class="m-0 p-5 justify-content-center align-items-center">
-        <b-col
-          cols="auto"
-          class="p-4 text-center text-secondary"
-        >
-          Empty Data
-        </b-col>
-      </b-row>
+      <div class="row m-0 p-5 justify-content-center align-items-center">
+        <div class="col p-4 text-center text-secondary">
+          You have not submitted any stories
+        </div>
+      </div>
     </template>
   </div>
 </template>
@@ -39,6 +33,7 @@ export default {
   components: {StoryLargeCard},
   data() {
     return {
+      cols: 3,
       recentStories: {
         data: [],
         page: 1,
@@ -55,7 +50,6 @@ export default {
     this.getRecentStories()
   },
   methods: {
-
     getRecentStories() {
       this.axios.get(`/story/mine/?page=${this.recentStories.page}`).then(res => {
         this.recentStories.total = res.data.count

@@ -1,57 +1,48 @@
 <template>
   <div class="multi-search">
-    <div class="multi-search-input-wrapper border-bottom">
-      <b-row class="m-0 border-bottom justify-content-between p-1">
-        <b-col
+    <div class="multi-search-input-wrapper border-bottom container">
+      <div class="row border-bottom justify-content-between m-0">
+        <div
           cols="auto"
-          class="pr-0 text-center"
+          class="col text-center pr-0"
         >
           <img src="../assets/image/icon/search-normal.svg">
-        </b-col>
-        <b-col
-          cols="10"
-          class="p-0"
+        </div>
+        <div
+          class="col col-10 p-0"
         >
-          <b-form-input
+          <input
             v-model="searchText"
             class="border-0 login-form-input"
             placeholder="Search story, author ot tags"
             @keyup="advanceSearch()"
-          />
-        </b-col>
-        <b-col
-          cols="1"
-          class="text-right pt-1 px-0"
+          >
+        </div>
+        <div
+          class="text-right col col-2 pt-1 px-0"
         >
-          <b-badge
-            class="px-2 py-1 cursor-pointer"
+          <span
+            class="badge px-2 py-1 cursor-pointer"
             variant="light"
             @click="searchText = ''"
           >
             clear
-          </b-badge>
-        </b-col>
-      </b-row>
+          </span>
+        </div>
+      </div>
     </div>
-    <div class="multi-search-result-wrapper mt-5">
-      <b-row class="m-0 p-2">
-        <b-col
-          cols="4"
-          class="p-2"
-        >
+    <div class="multi-search-result-wrapper container mt-5">
+      <div class="row m-0 p-2">
+        <div class="col col-4 p-2">
           <h5 class="m-0 font-weight-bold pb-3">
             Stories
           </h5>
-          <b-col
-            cols="12"
-            class="multi-search-result-box border p-3"
-          >
+          <div class="col col-12 multi-search-result-box border p-3">
             <template v-if="storyResults.length">
-              <b-col
+              <div
                 v-for="(story, index) in storyResults"
                 :key="`story_res_card_${index}`"
-                cols="12"
-                class="px-0 py-2 border-bottom"
+                class="col col-12px-0 py-2 border-bottom"
               >
                 <div class="result-box-title">
                   <h6 class="m-0">
@@ -61,93 +52,70 @@
                 <div class="result-box-user color-gray font-size-8">
                   By : {{ story.user }}
                 </div>
-              </b-col>
+              </div>
             </template>
             <template v-else>
-              <b-row class="m-0 h-100 font-size-8 font-weight-bold text-secondary justify-content-center align-items-center">
+              <div class="row m-0 h-100 font-size-8 font-weight-bold text-secondary justify-content-center align-items-center">
                 No Stories found.
-              </b-row>
+              </div>
             </template>
-          </b-col>
-        </b-col>
-        <b-col
-          cols="4"
-          class="p-2"
-        >
+          </div>
+        </div>
+        <div class="col col-4 p-2">
           <h5 class="m-0 font-weight-bold pb-3">
             Authors
           </h5>
-          <b-col
-            cols="12"
-            class="multi-search-result-box border p-3"
-          >
+          <div class="col col-12 multi-search-result-box border p-3">
             <template v-if="authorResults.length">
-              <b-col
+              <div
                 v-for="(user, index) in authorResults"
                 :key="`author_res_card_${index}`"
-                cols="12"
-                class="px-0 py-2 border-bottom"
+                class="col col-12 px-0 py-2 border-bottom"
               >
-                <b-row class="m-0 justify-content-between">
-                  <b-col
-                    cols="auto"
-                    class="p-0"
-                  >
+                <div class="row m-0 justify-content-between">
+                  <div class="col p-0">
                     {{ user.user }}
-                  </b-col>
+                  </div>
 
-                  <b-col
-                    cols="auto"
-                    class="px-0 color-gray font-size-7 pt-1"
-                  >
+                  <div class="col px-0 color-gray font-size-7 pt-1">
                     32 stories
-                  </b-col>
-                </b-row>
-              </b-col>
+                  </div>
+                </div>
+              </div>
             </template>
             <template v-else>
-              <b-row class="m-0 h-100 font-size-8 font-weight-bold text-secondary justify-content-center align-items-center">
+              <div class="row m-0 h-100 font-size-8 font-weight-bold text-secondary justify-content-center align-items-center">
                 No Author found.
-              </b-row>
+              </div>
             </template>
-          </b-col>
-        </b-col>
-        <b-col
-          cols="4"
-          class="p-2"
-        >
+          </div>
+        </div>
+        <div class="col col-4 p-2">
           <h5 class="m-0 font-weight-bold pb-3">
             Tags
           </h5>
-          <b-col
-            cols="12"
-            class="multi-search-result-box border p-5"
-          >
+          <div class="col col-12 multi-search-result-box border p-5">
             <template v-if="tagResults.length">
-              <b-col
+              <div
                 v-for="(tag, index) in tagResults"
                 :key="`tag_res_card_${index}`"
-                cols="12"
-                class="px-0 py-2 border-bottom"
+                class="col col-12 px-0 py-2 border-bottom"
               >
-                <b-col
-                  cols="auto"
-                  class="p-0"
-                >
+                <div class="col p-0">
                   {{ tag.name }}
-                </b-col>
-              </b-col>
+                </div>
+              </div>
             </template>
             <template v-else>
-              <b-row class="m-0 h-100 font-size-8 font-weight-bold text-secondary justify-content-center align-items-center">
+              <div class="row m-0 h-100 font-size-8 font-weight-bold text-secondary justify-content-center align-items-center">
                 No Tags found.
-              </b-row>
+              </div>
             </template>
-          </b-col>
-        </b-col>
-      </b-row>
+          </div>
+        </div>
+      </div>
       <div class="text-center py-3">
-        <b-button
+        <button
           pill
           :disabled="!storyResults.length && !authorResults.length && !tagResults.length"
           :to="{name: 'searchResults', params: {searchKey: searchText}}"
@@ -156,15 +124,15 @@
           @click="showSearchResultPage()"
         >
           Show more
-        </b-button>
-        <b-button
+        </button>
+        <button
           pill
           variant="outline-dark"
           class="story-default-btn px-3 py-2 ml-3 font-weight-bold"
           @click="showSearchResultPage()"
         >
           close
-        </b-button>
+        </button>
       </div>
     </div>
   </div>
@@ -179,7 +147,6 @@ export default {
       storyResults: [],
       authorResults: [],
       tagResults: [],
-
     }
   },
   methods: {

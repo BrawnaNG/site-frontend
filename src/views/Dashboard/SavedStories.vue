@@ -1,159 +1,72 @@
 <template>
   <div class="saved-stories-page">
-    <b-col
-      cols="10"
-      class="saved-stories-page-head mx-auto py-3"
-    >
-      <b-row class="h-100 m-0">
-        <b-col
-          cols="6"
-          class="px-0"
-        >
-          <b-col class="saved-stories-page-head-title px-0">
-            <h4 class="m-0 font-weight-bolder">
-              Dashboard
-            </h4>
-          </b-col>
-          <b-col class="saved-stories-page-head-breadcrumb pt-1 px-0">
-            <b-breadcrumb
-              class="bg-transparent pb-0 px-0 m-0"
-              :items="breadcrumb"
-            />
-          </b-col>
-        </b-col>
-        <b-col
-          cols="6"
-          class="px-0 pt-2 mt-1 text-right"
-        >
-          <b-button
-            pill
-            variant="dark"
-            :to="{name: 'addEditStory'}"
-            class="story-default-btn pl-3 pr-2 py-2 font-weight-bold"
-          >
-            Create Story
-            <img
-              src="../../assets/image/icon/add.svg"
-              class="ml-2"
-              alt="go"
-            >
-          </b-button>
-        </b-col>
-      </b-row>
-    </b-col>
-    <b-col
-      cols="12"
-      class="py-3 menu-bar-wrapper px-0"
-    >
-      <b-row class="col-10 mx-auto my-0">
-        <b-row class="col-10 m-0 px-0">
-          <b-col
-            cols="auto"
-            class="menu-bar-item cursor-pointer text-white text-center mr-3 px-1 pb-2"
-          >
-            <router-link
-              class="pb-2 px-1"
-              :to="{name: 'dashboard'}"
-            >
-              Your Stories
-            </router-link>
-          </b-col>
-          <b-col
-            cols="auto"
-            class="menu-bar-item cursor-pointer text-white text-center mr-3 px-1 pb-2"
-          >
-            <router-link
-              class="pb-2 px-1"
-              :to="{name: 'savedStories'}"
-            >
-              Saved Stories
-            </router-link>
-          </b-col>
-          <b-col
-            cols="auto"
-            class="menu-bar-item cursor-pointer text-white text-center mr-3 px-1 pb-2"
-          >
-            <router-link
-              class="pb-2 px-1"
-              :to="{name: 'commentsStory'}"
-            >
-              Comments
-            </router-link>
-          </b-col>
-          <b-col
-            cols="auto"
-            class="menu-bar-item cursor-pointer text-white text-center mr-3 px-1 pb-2"
-          >
-            <router-link
-              class="pb-2 px-1"
-              :to="{name: 'drafts'}"
-            >
-              Drafts
-            </router-link>
-          </b-col>
-        </b-row>
-        <b-col
-          cols="2"
-          class="text-right p-0"
-        >
-          <span class="text-white">
-            Log out
-          </span>
-        </b-col>
-      </b-row>
-    </b-col>
-    <b-col
-      cols="10"
-      class="saved-stories-page-content mx-auto py-5"
-    >
-      <div class="pb-5">
-        <h2 class="m-0">
+    <div class="container-fluid saved-stories-page-head mx-auto py-3">
+      <div class="row h-100 m-0">
+        <div class="col-8 px-4 dashboard-page-head-title">
+          <h4 class="m-0 px-4 font-weight-bolder">
+            Dashboard
+          </h4>
+          <bread-crumbs 
+            label="Saved Stories"
+            class="px-4"
+          />
+        </div>
+        <div class="col-4 px-4 pt-2 mt-1 text-right">
+          <add-story class="float-end" />
+        </div>
+      </div>
+    </div>
+    <user-menu />
+    <div class="container-fluid saved-stories-page-content mx-auto py-5">
+      <div class="row pb-2">
+        <h2 class="mx-2 px-4">
           Saved Stories
         </h2>
       </div>
-
       <div>
-        <template v-if="recentStories.data.length">
-          <template 
-            v-for="storyCard in recentStories.data"
-            :key="`storyCard_${storyCard.id}`">
-            <b-col 
-              cols="12" 
-              class="p-0"
+        <div class="saved-stories container-flex">
+          <template v-if="recentStories.data.length">
+            <div 
+              v-for="(chunk, row) in recent_story_chunks"
+              :key="`recentStoriesRow_${row}`"
+              class="row p-2"
             >
-              <story-large-card :story-card="storyCard" />
-            </b-col>
+              <div 
+                v-for="storyCard in chunk"
+                :key="`recentStoryCard_${storyCard.id}`"
+                class="col-4"
+              >
+                <story-large-card
+                  :story-card="storyCard"
+                />
+              </div>
+            </div>
+            <div class="row">
+              TODO PAGINATION
+            </div>
           </template>
-          <b-row class="justify-content-center m-0 pt-4">
-            <b-pagination
-              v-model="recentStories.page"
-              class="pagination-custom-style"
-              pills
-              :total-rows="recentStories.total"
-            />
-          </b-row>
-        </template>
-        <template v-else>
-          <b-row class="m-0 p-5 justify-content-center align-items-center">
-            <b-col
-              cols="auto"
-              class="p-4 text-center text-secondary"
-            >
-              Empty Data
-            </b-col>
-          </b-row>
-        </template>
+          <template v-else>
+            <div class="row m-0 p-5 justify-content-center align-items-center">
+              <div class="col p-4 text-center text-secondary">
+                You have not saved any stories
+              </div>
+            </div>
+          </template>
+        </div>
       </div>
-    </b-col>
+    </div>
   </div>
 </template>
 
 <script>
 import StoryLargeCard from "@/components/Card/StoryLargeCard.vue";
+import BreadCrumbs from "@/components/Dashboard/BreadCrumbs.vue";
+import UserMenu from "@/components/Dashboard/UserMenu.vue";
+import AddStory from "@/components/Dashboard/AddStory.vue";
 
 export default {
   name: "SavedStories",
-  components: {StoryLargeCard},
+  components: {StoryLargeCard, BreadCrumbs, UserMenu, AddStory},
   data() {
     return {
       breadcrumb: [

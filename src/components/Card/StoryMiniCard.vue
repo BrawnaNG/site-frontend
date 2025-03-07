@@ -1,34 +1,28 @@
 <template>
-  <div class="story-card px-2 py-4">
-    <b-col
-      cols="12"
-      class="story-card-title pb-3"
-    >
+  <div 
+    class="container story-card px-2 py-2"
+    @click="gotoStory"
+  >
+    <div class="row story-card-title pb-3">
       <h5 class="m-0">
         {{ storyCard.title }}
       </h5>
-    </b-col>
-    <b-col
-      cols="12"
-      class="story-card-content pb-4"
-    >
+    </div>
+    <div class="row story-card-content pb-4">
       <p class="m-0">
-        {{ storyCard.body }}
+        {{ storyCard.user }}
       </p>
-    </b-col>
-    <b-col
-      cols="12"
-      class="story-card-footer"
-    >
-      <template v-if="cardMode === 'small'">
+    </div>
+    <div class="row story-card-footer m-0">
+      <template v-if="cardMode === 'mini'">
         {{ moment(storyCard.created_at).format('MMM YY') }}
         |
-        {{ (storyCard.categories.length ? storyCard.categories[0].name : '') }}
+        {{ storyCard.first_category }}
       </template>
       <template v-else>
         {{ moment(storyCard.created_at).format('MMM YY') }}
       </template>
-    </b-col>
+    </div>
   </div>
 </template>
 
@@ -41,19 +35,25 @@ export default {
       type: Object,
       default: () => ({
             title : "",
-            body: "",
+            user: "",
             created_at: null,
+            first_category: "",
             categories: []
         })
     },
     cardMode: {
       type: String,
-      default: 'small'
+      default: 'mini'
     }
   },
   setup() {
     const moment = inject('moment');
     return { moment };
+  },
+  methods: {
+    gotoStory: function() {
+      this.$router.push({name: 'story', params: { id: this.storyCard.id } });
+    }
   }
 }
 </script>
