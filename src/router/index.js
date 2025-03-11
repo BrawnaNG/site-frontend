@@ -1,4 +1,4 @@
-import { createMemoryHistory, createRouter } from 'vue-router';
+import { createRouter, createWebHistory } from 'vue-router';
 import Home from '../views/Home.vue';
 import Dashboard from '../views/Dashboard/DashboardPage.vue';
 import Admin from '../views/Admin/AdminPage.vue';
@@ -24,24 +24,27 @@ const routes = [
     },
   },
   {
-    path: '/search-results/search=:searchKey?',
+    path: '/search-results/search=:searchText?',
     name: 'searchResults',
+    props: true,
     component: SearchResults,
     meta: {
       authRequired: 'false',
     },
   },
   {
-    path: '/story/show-story/:id?',
+    path: '/story/show-story/:id/:chapterid?',
     name: 'story',
+    props: true,
     component: ShowStory,
     meta: {
       authRequired: 'false',
     },
   },
   {
-    path: '/story/add-edit-story/:id?',
+    path: '/story/add-edit-story/:id/:chapterid?',
     name: 'addEditStory',
+    props: true,
     component: AddEditStory,
     meta: {
       authRequired: 'true',
@@ -132,7 +135,7 @@ const routes = [
 ]
 
 var router = createRouter({
-  history: createMemoryHistory(),
+  history: createWebHistory(),
   routes,
 });
 
@@ -140,7 +143,10 @@ router.beforeEach((to, from, next) => {
 
   if (to.meta.authRequired === 'true'){
     let role = store.state.auth.role;
-    if (to.meta.roles.includes(role)){
+    if (to.meta.roles.includes('admin') && role.isAdmin){
+      return next()
+    }
+    else if (to.meta.roles.includes('author') && role.isAuthor){
       return next()
     }
     else{

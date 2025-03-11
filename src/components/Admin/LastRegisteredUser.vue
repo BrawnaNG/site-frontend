@@ -1,35 +1,26 @@
 <template>
   <div class="last-register-user py-2 px-3">
     <template v-if="userList.length">
-      <b-row
+      <div
         v-for="(user, index) in userList"
         :key="`last_user_${index}`"
-        class="card-user py-3 m-0"
+        class="container-flex card-user py-3 m-0"
       >
-        <b-row class="col-9 p-0 m-0">
-          <b-col
-            cols="auto"
-            class="card-user-avatar p-0"
-          >
-            <b-avatar
-              text="BV"
-              size="2.4rem"
-            />
-          </b-col>
-          <b-col>
+        <div class="row p-0 m-0">
+          <div class="col card-user-avatar p-0">
+            TODO - AVATAR
+          </div>
+          <div class="col">
             <div class="card-user-name font-weight-bold">
               {{ user.alias }}
             </div>
             <div class="card-user-email">
               {{ user.email }}
             </div>
-          </b-col>
-        </b-row>
-        <b-row class="col-3 m-0 justify-content-end align-items-center p-0">
-          <b-col
-            cols="auto"
-            class="card-user-action p-0"
-          >
+          </div>
+        </div>
+        <div class="row m-0 justify-content-end align-items-center p-0">
+          <div class="row card-user-action p-0">
             <span class="mr-2">
               {{ moment(user.date_joined).from() }}
             </span>
@@ -39,9 +30,9 @@
                 alt="show"
               >
             </span>
-          </b-col>
-        </b-row>
-      </b-row>
+          </div>
+        </div>
+      </div>
     </template>
   </div>
 </template>

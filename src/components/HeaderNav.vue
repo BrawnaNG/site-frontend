@@ -1,112 +1,212 @@
 <template>
-  <div class="story-header">
-    <b-row class="m-0 justify-content-between align-items-center px-5 h-100">
-      <b-col cols="auto p-0">
-        <img
-          v-b-toggle.sidebar-backdrop
-          src="../assets/image/icon/menu.svg"
-          class="story-header-menu"
-        >
-      </b-col>
-      <b-col cols="auto p-0">
-        <img
-          src="../assets/image/icon/logo.svg"
-          class="story-header-logo"
-        >
-      </b-col>
-      <b-col
-        cols="auto"
-        class="p-0"
-      >
-        <img
-          src="../assets/image/icon/search-normal.svg"
-          class="story-header-action mr-2"
-          @click="searchModal.show = true"
-        >
 
-        <template v-if="logged">
-          <img
-            title="You are logged in"
-            src="../assets/image/icon/profile-circle.svg"
-            class="story-header-action"
-            @click="logOut()"
+  <div 
+    class="offcanvas offcanvas-top offcanvas-m py-3 search-canvas"
+    tabindex="-1" 
+    id="searchCanvas"
+    aria-labelledby="searchCanvasLabel"
+  >  
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-10">
+          <input
+                v-model="searchForm.text"
+                class="form-control"
+                placeholder="Search story, author or tags"
+                @keydown.enter="searchStories"
+              >
+        </div>
+        <div class="col-2">
+          <button 
+            class="btn btn-primary mx-2" 
+            data-bs-dismiss="offcanvas"
+            type="button"
+            data-bs-target="#offcanvasResponsive" 
+            aria-label="Search"
+            @click="searchStories"
           >
-        </template>
-        <template v-else>
-          <img
-            src="../assets/image/icon/profile-circle.svg"
-            class="story-header-action"
-            @click="loginModal.show = true"
+          Search
+          </button>
+          <button 
+            class="btn btn-secondary" 
+            data-bs-dismiss="offcanvas"
+            type="button"
+            data-bs-target="#offcanvasResponsive" 
+            aria-label="Cancel"
           >
-        </template>
-      </b-col>
-    </b-row>
-
-    <b-sidebar
-      id="sidebar-backdrop"
-      title="Menu"
-      sidebar-class="sidebar-menu p-4"
-      variant="dark"
-      backdrop
-      shadow
-    >
-      <div class="py-3 px-2">
-        <ul>
-          <li class="sidebar-menu-item pb-2">
-            <router-link
-              class="sidebar-menu-item-link"
-              :to="{name: 'home'}"
-            >
-              Home
-            </router-link>
-          </li>
-          <li 
-            v-if="role.isAuthor || role.isAdmin"
-            class="sidebar-menu-item pb-2"
-          >
-            <router-link
-              class="sidebar-menu-item-link"
-              :to="{name: 'dashboard'}"
-            >
-              Dashboard
-            </router-link>
-          </li>
-          <li 
-            v-if="role.isAdmin"
-            class="sidebar-menu-item pb-2"
-          >
-            <router-link
-              class="sidebar-menu-item-link"
-              :to="{name: 'admin'}"
-            >
-              Admin
-            </router-link>
-          </li>
-        </ul>
+          Cancel
+          </button>
+        </div>
       </div>
-    </b-sidebar>
+    </div>
+</div>
 
-    <b-modal
-      v-model="loginModal.show"
-      hide-footer
-      :title="loginModal.title"
-    >
-      <login-form
-        @close-login="loginModal.show = false"
-        @change-form-state="changModalTitle"
-      />
-    </b-modal>
-
-    <b-modal
-      v-model="searchModal.show"
-      hide-footer
-      hide-header
-      size="xl"
-    >
-      <div class="p-2">
-        <multi-search @close-multi-search-dialog="searchModal.show = false" />
+  <div class="story-header container-fluid bg-light">
+    <div class="row">
+      <div class="col-2">
+        <nav class="navbar navbar-expand-xs navbar-light bg-light">
+          <button 
+            class="navbar-toggler" 
+            type="button" 
+            data-bs-toggle="collapse" 
+            data-bs-target="#navbarSupportedContent" 
+            aria-controls="navbarSupportedContent" 
+            aria-expanded="false" 
+            aria-label="Toggle menu"
+          >
+            <img 
+              src="../assets/image/icon/menu.svg" 
+              alt="" 
+              width="30" 
+              height="24" 
+              class="d-inline-block align-text-top"
+            >
+          </button>
+          <div 
+            id="navbarSupportedContent"
+            class="collapse navbar-collapse"
+          >
+            <ul class="navbar-nav me-auto my-2 mb-lg-0 ml-8">
+              <li class="nav-item"
+              >
+                <router-link
+                  class="navbar-menu-item-link nav-link active"
+                  :to="{name: 'home'}"
+                  @click="collapseNavbar"
+                >
+                  Home
+                </router-link>
+              </li>
+              <li 
+                v-if="role.isAuthor || role.isAdmin"
+                class="nav-item"
+              >
+                <router-link
+                  class="navbar-menu-item-link nav-link"
+                  :to="{name: 'dashboard'}"
+                  @click="collapseNavbar"
+                >
+                  Dashboard
+                </router-link>
+              </li>
+              <li 
+                v-if="role.isAdmin"
+                class="nav-item"
+              >
+                <router-link
+                  class="navbar-menu-item-link nav-link"
+                  :to="{name: 'admin'}"
+                  @click="collapseNavbar"
+                >
+                  Admin
+                </router-link>
+              </li>
+            </ul>
+          </div>
+        </nav>
       </div>
-    </b-modal>
+      <div class="col-8 text-center my-1">
+        <h1>Brawna Stories</h1>
+      </div>
+      <div class="col-2 my-1">
+        <div class="d-flex float-end">
+          <div class="p-2">
+            <img
+              src="../assets/image/icon/search-normal.svg"
+              class="story-header-action"
+              data-bs-toggle="offcanvas" 
+              data-bs-target="#searchCanvas" 
+              aria-controls="searchCanvas"
+            >
+          </div>
+          <div 
+            v-if="!isAuthenticated"
+            class="p-2"
+          >
+            <img
+              src="../assets/image/icon/profile-circle.svg"
+              class="story-header-action"
+              data-bs-toggle="modal"
+              data-bs-target="#loginModal"
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div 
+    id="loginModal"
+    class="modal" 
+    tabindex="-1"
+    aria-labelledby="loginModalLabel" 
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 
+            id="loginModalLabel"
+            class="modal-title"
+          >
+            {{ loginModal.title }}
+          </h5>
+          <button 
+            type="button" 
+            class="btn-close" 
+            data-bs-dismiss="modal" 
+            aria-label="Close"
+          />
+        </div>
+        <div class="modal-body">
+          <login-form
+            @change-form-state="changeModalTitle"
+            @close-login="closeLogin"
+          />
+        </div>
+        <div class="modal-footer">
+          <button 
+            id="loginModalClose"
+            type="button"
+            class="btn btn-secondary" 
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div 
+    id="searchModal"
+    class="modal fade" 
+    tabindex="-1"
+    aria-labelledby="searchModalLabel" 
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 
+            id="searchModalLabel"
+            class="modal-title"
+            @click="searchStories"
+          >
+            Search
+          </h5>
+        </div>
+        <div class="modal-footer">
+          <button 
+            type="button"
+            class="btn btn-secondary" 
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -114,59 +214,80 @@
 import LoginForm from "@/components/LoginForm.vue";
 import MultiSearch from "@/components/MultiSearch.vue";
 import EventBus from "../common/EventBus";
+import AuthService from '../services/auth.service';
+import {Collapse, Offcanvas} from "bootstrap";
+
 export default {
   name: "HeaderNav",
   components: {MultiSearch, LoginForm},
   data() {
     return {
-      logged: false,
-      role: {
-        isAuthor: false,
-        isAdmin: false
-      },
       loginModal: {
-        show: false,
         title: 'Login to the site'
       },
-      searchModal: {
-        show: false,
+      searchForm: {
+        text: ""
       }
     }
   },
-  watch: {
-    'loginModal.show'() {
-      this.checkUserLogin()
+  computed: {
+    role() {
+      return this.$store.state.auth.role;
+    },
+    isAuthenticated() {
+      return this.$store.state.auth.isAuthenticated;
     }
   },
   beforeMount() {
-    this.checkUserLogin();
-    this.checkUserRole();
+    this.checkUser();
   },
   methods: {
-    changModalTitle(mode) {
-      this.loginModal.title = (mode === 'login' ? 'Login to the site' : 'Sign up')
+    searchStories(){
+      this.$router.push( {
+        name: 'searchResults', 
+        params: {
+          searchText: this.searchForm.text
+        }
+      });
+      const searchbar = document.querySelector('.search-canvas');
+      if (searchbar) {
+        Offcanvas.getInstance(searchbar).hide();
+      }
     },
-    checkUserLogin() {
-      this.logged = this.$store.state.auth.status.loggedIn;
+    changeModalTitle(mode) {
+      this.loginModal.title = (mode === 'login' ? 'Login to the site' : 'Sign up');
     },
-    async checkUserRole(){
-      let role = this.$store.state.auth.role;
-      if (!role){
-        this.$store.dispatch("auth/refreshRole").then(() => {
-          this.role = this.$store.state.auth.role;
-        });
+    closeLogin(){
+      document.getElementById('loginModalClose').click();
+    },
+    checkUser(){
+      if (!this.role.isInit){
+        AuthService.getRole(this.$store);
       }
     },
     logOut(){
       EventBus.dispatch("logout");
-      this.logged = false;
-    }
+    },
+    collapseNavbar() {
+      const navbar = document.querySelector('.navbar-collapse.show');
+        if (navbar) {
+            new Collapse(navbar, {
+                toggle: false,
+            }).hide();
+        }
+    },
   }
 }
 
 </script>
 
 <style lang="scss">
+.search-canvas {
+  max-height: 10% !important;
+  height: fit-content !important;
+  border: none !important;
+}
+
 .story-header {
   height: 5.68vw;
   border-bottom: 1px solid #D6D6D6;
@@ -181,9 +302,10 @@ export default {
   &-action {
     width: 2vw;
     cursor: pointer;
+    display: flex;
   }
 }
-#sidebar-backdrop.sidebar-menu {
+#navbar-backdrop.navbar-menu {
   background-color: black !important;
   color: white !important;
   width: 30vw;
@@ -191,7 +313,7 @@ export default {
     color: white !important;
   }
 
-  a.sidebar-menu-item-link {
+  a.navbar-menu-item-link {
     color: #EFEFEF !important;
     font-size: 1.2em;
     font-family: NotoSerif-Bold;

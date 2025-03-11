@@ -1,276 +1,286 @@
 <template>
+  <Toast />
+
   <div class="categories-page">
-    <b-col
-      cols="10"
-      class="admin-page-head mx-auto py-3"
-    >
-      <b-row class="h-100 m-0">
-        <b-col
-          cols="6"
-          class="px-0"
-        >
-          <b-col class="admin-page-head-title px-0">
+    <div class="container-fluid admin-page-head mx-auto py-3">
+      <div class="row h-100 m-0">
+        <div class="col-6 px-0">
+          <div class="admin-page-head-title px-0">
             <h4 class="m-0 font-weight-bolder">
               Admin
             </h4>
-          </b-col>
-          <b-col class="admin-page-head-breadcrumb pt-1 px-0">
-            <b-breadcrumb
-              class="bg-transparent pb-0 px-0 m-0"
-              :items="breadcrumb"
-            />
-          </b-col>
-        </b-col>
-      </b-row>
-    </b-col>
-    <b-col
-      cols="12"
-      class="py-3 menu-bar-wrapper px-0"
-    >
-      <b-row class="col-10 mx-auto my-0">
-        <b-row class="col-10 m-0 px-0">
-          <b-col
-            cols="auto"
-            class="menu-bar-item cursor-pointer text-white text-center mr-3 pb-2"
-          >
-            <router-link
-              class="pb-2 px-1"
-              :to="{name: 'admin'}"
-            >
-              Recent Stories
-            </router-link>
-          </b-col>
-          <b-col
-            cols="auto"
-            class="menu-bar-item cursor-pointer text-white text-center mr-3 pb-2"
-          >
-            <router-link
-              class="pb-2 px-1"
-              :to="{name: 'users'}"
-            >
-              Users
-            </router-link>
-          </b-col>
-          <b-col
-            cols="auto"
-            class="menu-bar-item cursor-pointer text-white text-center mr-3 pb-2"
-          >
-            <router-link
-              class="pb-2 px-1"
-              :to="{name: 'comments'}"
-            >
-              Comments
-            </router-link>
-          </b-col>
-          <b-col
-            cols="auto"
-            class="menu-bar-item cursor-pointer text-white text-center mr-3 pb-2"
-          >
-            <router-link
-              class="pb-2 px-1"
-              :to="{name: 'categories'}"
-            >
-              Categories
-            </router-link>
-          </b-col>
-        </b-row>
-        <b-col
-          cols="2"
-          class="text-right p-0"
-        >
-          <span class="text-white">
-            Log out
-          </span>
-        </b-col>
-      </b-row>
-    </b-col>
-    <b-col
-      cols="10"
-      class="categories-content mx-auto py-5"
-    >
-      <b-row class="m-0">
-        <b-col
-          cols="6"
-          class="px-0 pb-5"
-        >
-          <h2 class="m-0">
-            Categories
-          </h2>
-        </b-col>
-        <b-col
-          cols="6"
-          class="px-0 pb-5 text-right"
-        >
-          <b-button
-            pill
-            variant="dark"
-            class="story-default-btn pl-3 pr-2 py-2 font-weight-bold"
-            @click="showCategoryForm('Add')"
-          >
-            Add Category
-            <img
-              src="../../assets/image/icon/add.svg"
-              class="ml-2"
-              alt="go"
-            >
-          </b-button>
-        </b-col>
-      </b-row>
-      <b-col
-        cols="12"
-        class="py-4 px-0"
-      >
-        <template v-if="categoryList.length">
-          <category-card
-            v-for="(category, index) in categoryList"
-            :key="`cat_card_${index}`"
-            :category="category"
-            @show-edit-category-form="showEditCategoryForm"
-          />
-        </template>
-      </b-col>
-    </b-col>
-
-    <b-modal
-      v-model="categoryForm.show"
-      hide-footer
-      :title="`${categoryForm.type} category`"
-    >
-      <div class="px-2 py-4">
-        <div class="p-1 rounded border">
-          <b-form-input
-            v-model="categoryForm.name"
-            class="border-0 login-form-input"
-            placeholder="Category title"
-          />
-        </div>
-        <div class="pt-4">
-          <template v-if="categoryForm.type === 'Add'">
-            <b-button
-              pill
-              variant="dark"
-              class="story-default-btn saved-stories-btn px-3 py-2 mr-3 font-weight-bold"
-              @click="addCategory()"
-            >
-              Add Category
-            </b-button>
-          </template>
-          <template v-else>
-            <b-button
-              pill
-              variant="dark"
-              class="story-default-btn saved-stories-btn px-3 py-2 mr-3 font-weight-bold"
-              @click="editCategory()"
-            >
-              Edit Category
-            </b-button>
-          </template>
-          <b-button
-            pill
-            variant="outline-dark"
-            class="story-default-btn saved-stories-btn px-3 py-2  font-weight-bold"
-            @click="closeCategoryFormDialog()"
-          >
-            Cancel
-          </b-button>
+          </div>
         </div>
       </div>
-    </b-modal>
+      <div class="row admin-page-head-breadcrumb pt-1 px-0">
+        <admin-bread-crumbs label="Categories" />
+      </div>
+    </div>
+    <admin-menu />
+    <div class="content-flex categories-content mx-auto py-0">
+      <div class="row h-100 m-0">
+        <div class="col-8 px-4">
+          <h2 class="m-0 px-4 font-weight-bolder align-middle">
+            Categories
+          </h2>
+        </div>
+        <div class="col-4 px-4 align-middle">
+          <div class="float-end">
+            <button
+              class="cat-default-btn pr-2 py-2 px-4 font-weight-bold rounded-pill"
+              @click="addCategory"
+            >
+              Add Category
+              <img
+                src="../../assets/image/icon/add.svg"
+                class="mx-2 px-0"
+              >
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container-fluid categories-content mx-auto">    
+      <div class="row py-4 px-0">
+        <template v-if="categoryList.length">
+          <CategoryCard
+            v-for="(category) in categoryList"
+            :key="`cat_card_${category.id}`"
+            :category="category"
+            @edit-category="editCategory"
+            @add-sub-category="addSubCategory"
+            @delete-category="deleteCategory"
+          />
+        </template>
+      </div>
+    </div>
+  </div>
+
+  <div
+    id="categoryModal"
+    class="modal"
+    tabindex="-1"
+    aria-labelledby="categoryModalLabel" 
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+      
+        <div class="modal-header">
+          <h5 
+            id="categoryModalLabel"
+            class="modal-title"
+          >
+            {{modalTitle}}
+          </h5>
+        </div>
+
+        <div class="modal-body">
+          <div 
+            class="mb-3"
+            v-if="categoryForm.type === 'sub'"
+          >
+            <label class="fw-semibold">Parent Category: </label>
+            <span class="ms-2">{{ categoryForm.parent_name }}</span>
+          </div>
+
+          <div class="mb-3">
+            <input
+              v-model="categoryForm.name"
+              class="form-control"
+              placeholder="Category name"
+              @keydown.enter="categoryAction()"
+            >
+          </div>
+
+        </div>
+        
+        <div class="modal-footer">
+          <button
+              class="btn btn-primary"
+              @click="categoryAction()"
+            >
+              {{modalSubmitLabel}}
+          </button>
+          <button 
+            type="button"
+            class="btn btn-secondary" 
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
+        </div>
+      </div>  
+    </div>
   </div>
 </template>
 
 <script>
 import CategoryCard from "@/components/Admin/CategoryCard.vue";
+import AdminBreadCrumbs from "@/components/Admin/AdminBreadCrumbs.vue";
+import AdminMenu from "@/components/Admin/AdminMenu.vue";
+import categorySort from "@/common/CategorySort";
+import { Modal } from "bootstrap";
 export default {
   name: "CategoryManagement",
-  components: {CategoryCard},
+  components: {
+    CategoryCard,
+    AdminBreadCrumbs,
+    AdminMenu
+  },
   data() {
     return {
-      breadcrumb: [
-        {
-          text: 'Home',
-          href: '/'
-        },
-        {
-          text: 'Admin',
-          href: '#/admin/recent-stories'
-        },
-        {
-          text: 'Categories',
-        }
-      ],
       categoryList: [],
       categoryForm: {
-        show: false,
         type: 'add',
         name: '',
-        oldName: ''
+        id: null,
+        parent_name: null,
+        parent_id: null
       }
     }
   },
   mounted() {
-    this.getCategoryList()
+    this.getCategoryList();
+    this.categoryModal = new Modal('#categoryModal');
+  },
+  computed: {
+    modalTitle() {
+      switch(this.categoryForm.type){
+        case 'add':
+          return "New Category";
+        case 'edit':
+          return "Edit Category";
+        case 'sub':
+          return "New Sub-Category";
+        default:
+          return "Category";
+      }
+    },
+    modalSubmitLabel() {
+      switch(this.categoryForm.type){
+        case 'add':
+        case 'sub':
+          return "Add";
+        case 'edit':
+          return "Save";
+        default:
+          return "Submit";
+      }
+    }
   },
   methods: {
+
+    refreshCategories(){
+      this.getCategoryList();
+    },
+
     getCategoryList() {
       this.axios.get(`/category/list/`).then(res => {
-        this.categoryList = res.data
+        let results = res.data;
+        let top = results.filter( cat => !cat.parent );
+        this.categoryList = top.map(cat => this.makeCategory(results, cat))
+          .sort(categorySort.sortByTitle);
       })
     },
 
-    showCategoryForm(type, name='') {
-      this.categoryForm = {
-        show: true,
-        type: type,
-        name: name,
-        oldName: name
+    makeCategory(categories, root){
+      var children = categories.filter( (cat) => {
+        return cat.parent && cat.parent === root.id;;
+      });
+      root["depth"] = this.getDepth(categories, root);
+      root["title"] = this.getTitle(categories, root);
+      if (children && children.length > 0 ){
+        root["children"] = children.map(child => this.makeCategory(categories, child))
+          .sort(categorySort.sortByTitle);
       }
+      return root;
     },
 
-    showEditCategoryForm(name) {
-      this.showCategoryForm('Edit', name)
-    },
-
-    closeCategoryFormDialog() {
-      this.categoryForm = {
-        show: false,
-        type: 'Add',
-        name: '',
-        oldName: ''
+    getDepth(categories, cat){
+      if (cat.parent){
+        let parent = categories.find( c => c.id === cat.parent );
+        if (parent){
+          return this.getDepth(categories, parent) + 1;
+        }
       }
+      return 0;
     },
 
-    addCategory() {
-      this.axios.post('category/add/', {
-        name: this.categoryForm.name
-      }).then(res => {
-        this.$toasted.show(`Add New Category!`, {
-          duration: 3000,
-          type: 'dark',
-        });
-        this.closeCategoryFormDialog()
-        this.getCategoryList()
-        console.log(res);
-      })
+    getTitle(categories, cat){
+      if (cat.parent){
+        let parent = categories.find( c => c.id === cat.parent );
+        if (parent){
+          return `${this.getTitle(categories, parent)} ${"\\"} ${cat.name}`;
+        }
+      }
+      return cat.name;
     },
 
-    editCategory() {
-      this.axios.post(`/category/change/${this.categoryForm.oldName}`, {
+    categoryAction() {
+      let data = {
         name: this.categoryForm.name
-      }).then(res => {
-        this.$toasted.show(`Update Category Successfully!`, {
-          duration: 3000,
-          type: 'dark',
-        });
-        this.closeCategoryFormDialog()
-        this.getCategoryList()
-        console.log(res);
-      })
+      };
+
+      if (this.categoryForm.type === 'sub'){
+        data["parent"] = this.categoryForm.parent_id;
+      }
+
+      let method = (this.categoryForm.type === 'sub' || this.categoryForm.type  === 'add') ? this.axios.post : this.axios.patch;
+      let url = (this.categoryForm.type  === 'sub' || this.categoryForm.type  === 'add') ? 'category/add/' : `category/change/${this.categoryForm.id}/`;
+
+      method(url,data).then(
+        _ =>{
+          this.categoryModal.hide();
+          let message = (this.categoryForm.type  === 'sub' || this.categoryForm.type  === 'add') ? 'New Category Added' : 'Category Updated';
+          this.$toast.add({ severity: 'info', summary: 'Info', detail: message, life: 3000 });
+          this.getCategoryList()
+        },
+        _error => {
+          let message = (this.categoryForm.type  === 'sub' || this.categoryForm.type === 'add') ? 'Error Adding Category' : 'Error Updating Category';
+          this.$toast.add({ severity: 'error', summary: 'Error', detail: message, life: 3000 });
+        }
+      )
     },
+    addCategory(){
+      this.categoryForm.name = '';
+      this.categoryForm.type = 'add';
+      this.categoryModal.show();
+    },
+    addSubCategory(parent_id, parent_name){
+      this.categoryForm.name = '';
+      this.categoryForm.type = 'sub';
+      this.categoryForm.parent_id = parent_id;
+      this.categoryForm.parent_name = parent_name;
+      this.categoryModal.show();
+    },
+    editCategory(id, name){
+      this.categoryForm.id = id;
+      this.categoryForm.name = name;
+      this.categoryForm.type = 'edit';
+      this.categoryModal.show();
+    },
+    deleteCategory(id){
+      this.axios.delete(`category/change/${id}/`).then(
+        _ => {
+          this.$toast.add({ severity: 'info', summary: 'Info', detail: 'Category Deleted', life: 3000 });
+          this.refreshCategories();
+        },
+        _error => {
+          this.$toast.add({ severity: 'error', summary: 'Error', detail: 'Error Updating Category', life: 3000 });
+        }
+      );   
+    }
   }
 }
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+  .cat-default-btn {
+    background-color: black;
+    color: white;
+    img {
+      width: 2vw;
+    }
+  }
 </style>

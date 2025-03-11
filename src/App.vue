@@ -2,7 +2,6 @@
   <div id="app">
     <header-nav />
     <router-view />
-    <site-footer />
   </div>
 </template>
 
@@ -10,6 +9,7 @@
 import HeaderNav from "@/components/HeaderNav.vue";
 import SiteFooter from "@/components/SiteFooter.vue";
 import EventBus from "./common/EventBus";
+import AuthService from "./services/auth.service";
 
 export default {
   components: {SiteFooter, HeaderNav},
@@ -24,7 +24,7 @@ export default {
   },
   methods: {
     logOut() {
-      this.$store.dispatch('auth/logout');
+      AuthService.logout(this.$store);
     }
   }
 }

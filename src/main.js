@@ -9,10 +9,15 @@ import VueTreeNavigation from 'vue-tree-navigation';
 import Vue3Toastify from 'vue3-toastify';
 import moment from "moment";
 import setupInterceptors from './services/setupinterceptors';
+import PrimeVue from 'primevue/config';
+import { TreeTable, Column, DataTable } from 'primevue';
+import Toast from 'primevue/toast';
+import ToastService from 'primevue/toastservice';
+import Aura from '@primevue/themes/aura';
+import Tag from 'primevue/tag';
 
-import BootstrapVue from 'bootstrap-vue';
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap-vue/dist/bootstrap-vue.css';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap";
 
 setupInterceptors(store);
 
@@ -25,7 +30,17 @@ var app = createApp(App)
   .use(router)
   .use(store)
   .use(VueAxios, api)
-  .use(BootstrapVue)
+  .use(PrimeVue, {
+    theme: {
+      preset: Aura
+    }
+  })
+  .use(ToastService)
+  .component('TreeTable', TreeTable)
+  .component('Column', Column)
+  .component('DataTable', DataTable)
+  .component('Toast', Toast)
+  .component('Tag', Tag)
   .provide("moment", moment);
 
 app.config.productionTip = false;

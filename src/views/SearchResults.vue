@@ -1,168 +1,192 @@
 <template>
   <div class="search-result-page">
-    <div class="search-result-page-head border-bottom py-4">
-      <b-row class="my-0 col-10 mx-auto justify-content-between">
-        <b-col
-          cols="5"
-          class="p-0"
-        >
-          <h1 class="m-0 font-weight-bolder">
-            Results for “Emily”
-          </h1>
-        </b-col>
-        <b-row class="m-0 col-6 border-bottom justify-content-between p-1">
-          <b-col
-            cols="auto"
-            class="pr-0 text-center"
+    <div class="container-flex search-result-page-head border-bottom py-4">
+      <div class="row my-0 col-10 mx-auto justify-content-between">
+        <div class="col-4 p-0">
+          <h2 class="m-0 font-weight-bolder">
+            Results for "{{ searchTextDisplay }}"
+          </h2>
+        </div>
+        <div class="col-6">
+          <input
+                v-model="searchTextInput"
+                class="form-control"
+                placeholder="Search story, author or tags"
+                @keydown.enter="initialSearch"
+              >
+        </div>
+        <div class="col-2">
+          <button 
+            class="btn btn-primary mx-2" 
+            type="button"
+            aria-label="Search"
+            @click="initialSearch"
           >
-            <img src="../assets/image/icon/search-normal.svg">
-          </b-col>
-          <b-col
-            cols="9"
-            class="p-0"
+          Search
+          </button>
+          <button 
+            class="btn btn-secondary" 
+            type="button"
+            aria-label="Clear"
+            @click="initialSearch"
           >
-            <b-form-input
-              v-model="searchText"
-              class="border-0 login-form-input"
-              placeholder="Search story, author ot tags"
-              @keyup="advanceSearch()"
-            />
-          </b-col>
-          <b-col
-            cols="1"
-            class="text-right pt-1 px-0"
-          >
-            <b-badge
-              class="px-2 py-1 cursor-pointer"
-              variant="light"
-              @click="clearSearch()"
-            >
-              clear
-            </b-badge>
-          </b-col>
-        </b-row>
-      </b-row>
+          Clear
+          </button>
+        </div>
+      </div>
     </div>
-    <div class="search-result-page-content my-4 p-5">
-      <b-col
-        cols="10"
-        class="mx-auto p-0"
-      >
-        <div class="pb-4 px-3">
+    <div class="container-fluid search-result-page-content my-2 p-2">
+      <div class="row pb-4 px-3">
+        <h3 class="m-0">
+          Stories: {{storyResultsCount}} found
+        </h3>
+      </div>
+      <template v-if="storyResults.length">
+        <div 
+          v-for="(chunk, row) in storyChunks"
+          :key="`storySearch_${row}`"
+          class="row p-2"
+        >
+          <div
+            v-for="story in chunk"
+            :key="`story_${story.id}`"
+            class="col-4"
+          >
+            <story-mini-card 
+              :card-mode="'mini'"
+              :story-card="story"
+            />
+          </div>
+        </div>
+        <div class="row p-2">
+        <div 
+          v-if="storyResults.length < storyResultsCount"
+          class="col-xl-2 mx-auto">
+          <button 
+            class="px-2 py-1 font-weight-bold rounded-pill home-default-btn"
+            @click="advanceStorySearch">
+            Show More
+          </button>
+        </div>
+      </div>
+
+      </template>
+      <template v-else>
+        <div class="row m-0 w-100 h-100 font-size-8 font-weight-bold text-secondary justify-content-center align-items-center">
+          No Stories found.
+        </div>
+      </template>
+    </div>
+    <div class="container-flex search-result-page-content my-2 p-2">
+      <div class="row mx-auto my-0">
+        <div class="pb-4">
           <h3 class="m-0">
-            Stories
+            Authors
           </h3>
         </div>
-        <b-row class="search-result-page-content-story col-12 m-0 py-4 px-0">
-          <template v-if="storyResults.length">
-            <b-col
-              v-for="index in 6"
-              :key="`story_${index}`"
-              cols="4"
-              class="p-3"
+        <template v-if="authorResults.length">
+          <div 
+            v-for="(chunk, row) in authorChunks"
+            :key="`authorSearch_${row}`"
+            class="row p-2"
+          >
+            <div
+              v-for="(user, index) in chunk"
+              :key="`user_${index}`"
+              class="col-4 border"
             >
-              <story-mini-card />
-            </b-col>
-          </template>
-          <template v-else>
-            <div class="px-3 w-100">
-              <b-row class="m-0 border w-100 h-100 font-size-8 font-weight-bold text-secondary justify-content-center align-items-center">
-                No Stories found.
-              </b-row>
+              <div class="card-user-name font-weight-bold">
+                {{ user.alias }}
+              </div>
+              <div class="card-user-email">
+                {{ user.email }}
+              </div>            
+              <div class="col-3 m-0 justify-content-end align-items-center p-0">
+                <span class="mr-2">
+                  {{ user.story_count }} stories
+                </span>
+                <span 
+                  class="cursor-pointer"
+                  v-if="user.story_count > 0">
+                  <img
+                    src="../assets/image/icon/Show.svg"
+                    alt="show"
+                  >
+                </span>
+              </div>
             </div>
-          </template>
-        </b-row>
-      </b-col>
-      <b-row class="col-10 mx-auto my-0">
-        <b-col
-          cols="6"
-          class="pl-0"
-        >
-          <div class="pb-4">
-            <h3 class="m-0">
-              Authors
-            </h3>
           </div>
-          <div class="search-result-page-content-author p-3 border">
-            <template v-if="authorResults.length">
-              <b-row
-                v-for="(user, index) in authorResults"
-                :key="`last_user_${index}`"
-                class="card-user py-3 m-0"
-              >
-                <b-row class="col-9 p-0 m-0">
-                  <b-col
-                    cols="auto"
-                    class="card-user-avatar p-0"
+          <div 
+            v-if="authorResults.length < authorResultsCount"
+            class="col-xl-2 mx-auto">
+            <button 
+              class="px-2 py-1 font-weight-bold rounded-pill home-default-btn"
+              @click="advanceAuthorSearch">
+              Show More
+            </button>
+          </div>
+        </template>
+        <template v-else>
+          <div class="row m-0 h-100 font-size-8 font-weight-bold text-secondary justify-content-center align-items-center">
+            No Authors found.
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <div class="container-flex search-result-page-content my-2 p-2">
+      <div class="row mx-auto my-0">
+        <div class="pb-4">
+          <h3 class="m-0">
+            Tags
+          </h3>
+        </div>
+        <template v-if="tagResults.length">
+          <div 
+            v-for="(chunk, row) in tagChunks"
+            :key="`tagSearch_${row}`"
+            class="row p-2"
+          >
+            <div
+              v-for="(tag, index) in chunk"
+              :key="`tag_${index}`"
+              class="col-4 border"
+            >
+              <div class="card-user-name font-weight-bold">
+                {{ tag.name }}
+              </div>          
+              <div class="col-3 m-0 justify-content-end align-items-center p-0">
+                <span class="mr-2">
+                  {{ tag.story_count }} stories
+                </span>
+                <span 
+                  v-if="tag.story_count > 0"
+                  class="cursor-pointer"
                   >
-                    <b-avatar
-                      text="BV"
-                      size="2.4rem"
-                    />
-                  </b-col>
-                  <b-col>
-                    <div class="card-user-name font-weight-bold">
-                      {{ user.user }}
-                    </div>
-                    <div class="card-user-email">
-                      admin@gmail.com
-                    </div>
-                  </b-col>
-                </b-row>
-                <b-row class="col-3 m-0 justify-content-end align-items-center p-0">
-                  <b-col
-                    cols="auto"
-                    class="card-user-action p-0"
+                  <img
+                    src="../assets/image/icon/Show.svg"
+                    alt="show"
                   >
-                    <span class="mr-2">
-                      32 stories
-                    </span>
-                    <span class="cursor-pointer">
-                      <img
-                        src="../assets/image/icon/Show.svg"
-                        alt="show"
-                      >
-                    </span>
-                  </b-col>
-                </b-row>
-              </b-row>
-            </template>
-            <template v-else>
-              <b-row class="m-0 h-100 font-size-8 font-weight-bold text-secondary justify-content-center align-items-center">
-                No Authors found.
-              </b-row>
-            </template>
+                </span>
+              </div>
+            </div>
           </div>
-        </b-col>
-        <b-col
-          cols="6"
-          class="pr-0"
-        >
-          <div class="pb-4">
-            <h3 class="m-0">
-              Tags
-            </h3>
+          <div 
+            v-if="tagResults.length < tagResultsCount"
+            class="col-xl-2 mx-auto">
+            <button 
+              class="px-2 py-1 font-weight-bold rounded-pill home-default-btn"
+              @click="advanceTagSearch">
+              Show More
+            </button>
           </div>
-          <div class="search-result-page-content-tag p-3 border">
-            <template v-if="tagResults.length">
-              <b-row
-                v-for="(tag, index) in tagResults"
-                :key="`tag_user_${index}`"
-                class="card-user py-3 m-0"
-              >
-                <div class="card-user-name font-weight-bold">
-                  {{ tag.name }}
-                </div>
-              </b-row>
-            </template>
-            <template v-else>
-              <b-row class="m-0 h-100 font-size-8 font-weight-bold text-secondary justify-content-center align-items-center">
-                No Tags found.
-              </b-row>
-            </template>
+        </template>
+        <template v-else>
+          <div class="row m-0 h-100 font-size-8 font-weight-bold text-secondary justify-content-center align-items-center">
+            No Tags found.
           </div>
-        </b-col>
-      </b-row>
+        </template>
+      </div>
     </div>
   </div>
 </template>
@@ -172,48 +196,113 @@ import StoryMiniCard from "@/components/Card/StoryMiniCard.vue";
 export default {
   name: "SearchResults",
   components: {StoryMiniCard},
-  data() {
-    return {
-      searchText: '',
-      storyResults: [],
-      authorResults: [],
-      tagResults: [],
-
+  props: {
+    searchText: {
+      type: String,
+      default: ""
     }
   },
+  data() {
+    return {
+      searchTextInput: this.searchText,
+      searchTextDisplay: this.searchText,
+      storyResults: [],
+      shortResultsCount: 0,
+      authorResults: [],
+      tagResults: [],
+      cols: 3,
+      storyPage: 1,
+      authorPage: 1,
+      tagPage: 1
+    }
+  },
+  computed:{
+    storyChunks() { return this.chunkResults(this.storyResults); },
+    authorChunks()  { return this.chunkResults(this.authorResults); },
+    tagChunks()  { return this.chunkResults(this.tagResults); },
+  },
   created() {
-    this.searchText = this.$route.params.searchKey
-    this.advanceSearch()
+    this.initialSearch()
   },
   methods: {
-    advanceSearch() {
-      this.advanceStorySearch()
-      this.advanceAuthorSearch()
-      this.advanceTagSearch()
+    initialSearch() {
+      this.searchTextDisplay = this.searchTextInput;
+      this.storySearch(1, false);
+      this.authorSearch(1, false);
+      this.tagSearch(1, false);
     },
 
-    advanceStorySearch() {
-      this.axios.get(`/story/search/?q=${this.searchText}`).then(res => {
-        this.storyResults = res.data
-      })
+    async storySearch(page, append) {
+      if (this.searchTextInput){
+        this.storyPage = page;
+        await this.axios.get(`/story/search/story?q=${this.searchTextInput}&page=${page}`).then(res => {
+          if (append){
+            this.storyResults = this.storyResults.concat(res.data.results);
+          }
+          else{
+            this.storyResults = res.data.results;
+          }
+          this.storyResultsCount = res.data.count;
+        });
+      }
     },
 
-    advanceAuthorSearch() {
-      this.axios.get(`/story/search/?user=${this.searchText}`).then(res => {
-        this.authorResults = res.data
-      })
+    advanceStorySearch()
+    {
+      this.storySearch(this.storyPage+1, true);
     },
 
-    advanceTagSearch() {
-      this.axios.get(`/story/search/?tag==${this.searchText}`).then(res => {
-        this.tagResults = res.data
-      })
+    async authorSearch(page, append) {
+      if (this.searchTextInput){
+        this.authorPage = page;
+        await this.axios.get(`/story/search/author?author=${this.searchTextInput}&page=${page}`).then(res => {
+          if (append){
+            this.authorResults = this.authorResults.concat(res.data.results);
+          }
+          else{
+            this.authorResults = res.data.results;
+          }
+          this.authorResultsCount = res.data.count;
+        });
+      }
+    },
+
+    advanceAuthorSearch()
+    {
+      this.authorSearch(this.authorPage+1, true);
+    },
+
+    async tagSearch(page, append) {
+      if (this.searchTextInput){
+        await this.axios.get(`/story/search/tag?tag==${this.searchTextInput}&page=${page}`).then(res => {
+          if (append){
+            this.tagResults = this.tagResults.concat(res.data.results);
+          }
+          else{
+            this.tagResults = res.data.results;
+          }
+          this.tagResultsCount = res.data.count;
+        })
+      }
+    },
+    
+    async advanceTagSearch() {
+      this.authorSearch(this.tagPage+1, true);
     },
 
     clearSearch() {
-      this.searchText = '';
-      this.advanceSearch()
-      this.$router.push({name: 'searchResults'})
+      this.searchTextInput = '';
+      this.storyResults = [];
+      this.authorResults = [];
+      this.tagResults = [];
+      this.page = 1;
+    },
+    chunkResults(results) {
+      let chunks = [];
+      for (let i = 0; i < results.length; i+=this.cols){
+        chunks.push(results.slice(i, i + this.cols));
+      }
+      return chunks;
     }
   }
 }
