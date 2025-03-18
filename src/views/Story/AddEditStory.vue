@@ -356,7 +356,7 @@ export default {
     },
     getAllCategories() {
       this.axios.get(`/category/list/`).then(res =>{
-        var cats = res.data.results.sort(categorySort.sortCategories);
+        var cats = res.data.sort(categorySort.sortCategories);
         var top = cats.filter( (cat) => !cat.parent );
         this.all_categories = top.map((cat) => this.makeCategory(cats, cat));
       });
@@ -450,12 +450,14 @@ export default {
     nextChapter(){
       this.saveStory(this.story.is_published, () => {
         this.chapter.index++;
+        this.chapter.id = null;
         this.getStory();
       });
     },
     prevChapter(){
       this.saveStory(this.story.is_published, () => {
         this.chapter.index--;
+        this.chapter.id = null;
         this.getStory();
       });
     }
