@@ -13,7 +13,7 @@
         <input
           v-model="login.username"
           type="text"
-          class="border-0 login-form-input"      
+          class="border-0 login-form-input form-control"      
           placeholder="Enter your username"
         >
       </div>
@@ -23,7 +23,7 @@
         <input
           v-model="login.password"
           :type="showPassword ? 'text' : 'password'"
-          class="border-0 login-form-input"
+          class="border-0 login-form-input form-control"
           placeholder="Enter your password"
         >
       </div>
@@ -72,7 +72,7 @@
         <input
           v-model="signUp.alias"
           type="text"
-          class="border-0 login-form-input"
+          class="border-0 login-form-input form-control"
           placeholder="Enter your display name"
         >
       </div>
@@ -82,7 +82,7 @@
         <input
           v-model="signUp.username"
           type="text"        
-          class="border-0 login-form-input"
+          class="border-0 login-form-input form-control"
           placeholder="Enter your username"
         >
       </div>
@@ -91,7 +91,7 @@
       <div class="rounded border p-1">
         <input
           v-model="signUp.email"
-          class="border-0 login-form-input"
+          class="border-0 login-form-input form-control"
           type="email"
           placeholder="Enter your email"
         >
@@ -102,7 +102,7 @@
         <input
           v-model="signUp.password"
           :type="showPassword ? 'text' : 'password'"
-          class="border-0 login-form-input"
+          class="border-0 login-form-input form-control"
           placeholder="Enter your password"
         >
       </div>
@@ -120,7 +120,7 @@
         <input
           v-model="signUp.rePassword"
           :type="showRepeatPassword ? 'text' : 'password'"
-          class="border-0 login-form-input"
+          class="border-0 login-form-input form-control"
           placeholder="Enter your password again"
         >
       </div>

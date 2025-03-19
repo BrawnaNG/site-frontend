@@ -15,11 +15,11 @@
       </div>
     </div>
     <admin-menu />
-    <div class="container-flex comments-content mx-auto py-5">
-      <div class="rowpb-5">
-        <h2 class="m-0">
+    <div class="container-fluid admin-page-content mx-auto py-3">
+      <div class="row m-0">
+        <p class="m-0 admin-page-content-title">
           Comments
-        </h2>
+        </p>
       </div>
       <div 
         v-for="com in comments"
@@ -51,6 +51,6 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+  @import '@/assets/style/admin.scss';
 </style>

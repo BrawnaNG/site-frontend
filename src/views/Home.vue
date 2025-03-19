@@ -25,7 +25,7 @@
       </div>
     </template>
     <div class="row">
-      <div class="col big-card-head-title">
+      <div class="col home-section-title">
         <h6>
           Recent Stories
         </h6>
@@ -111,35 +111,32 @@ export default {
 <style scoped lang="scss">
 .home-wrapper {
 
+  padding-right: 5%;
+  padding-left: 5%;
+  padding-top: 2%;
+  font-family: NotoSerif-Regular;
+
   .home-head {
     &-title {
+      font-family: NotoSerif-Bold;
       font-size: 6em;
     }
   }
 
-  .home-content {
-    &-big-card {
-      border: .8px solid #EFEFEF;
-      .big-card {
-        &-head-title {
-          color: #A7A7A7;
-        }
-        &-content {
-          font-size: .9em;
-          color: #363636;
-        }
-        &-footer {
-          font-size: .74em;
-          color: #A7A7A7;
-        }
-      }
+  .big-card {
+    &-head-title {
+      color: #A7A7A7;
     }
-
-    &-row {
-      background-color: black;
-
+    &-content {
+      font-size: .9em;
+      color: #363636;
+    }
+    &-footer {
+      font-size: .74em;
+      color: #A7A7A7;
     }
   }
+
   .home-section {
     &-title {
       color: #A7A7A7;
@@ -148,6 +145,7 @@ export default {
       text-decoration: underline;
     }
   }
+
   .home-default-btn {
     background-color: black;
     color: white;

@@ -1,6 +1,6 @@
 <template>
   <div 
-    class="container-fluid category-card p-3"
+    class="container-fluid category-card py-3"
     :class="{ 'border': isRoot }"
   >
     <div 

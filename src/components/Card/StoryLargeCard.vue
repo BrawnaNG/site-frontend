@@ -7,20 +7,17 @@
         class="col-sm-9"
         @click="gotoStory"
       >
-        <div class="row story-large-card-title pb-3 px-1">
-          <h4 class="m-0">
+        <div class="row story-large-card-title px-1">
+          <p>
             {{ storyCard.title }}
-          </h4>
-        </div>
-        <div class="row story-large-card-author pb-3 px-1 m-0">
-            {{ storyCard.user }}
+          </p>
         </div>
         <div
-          v-if="storyCard.brief"
+          v-if="storyCard.excerpt"
           class="row story-large-card-content pb-3 px-1"
         >
           <p class="m-0">
-            {{ storyCard.brief }}
+            {{ storyCard.excerpt }}
           </p>
         </div>
       </div>
@@ -45,6 +42,8 @@
       </div>
     </div>
     <div class="row story-large-card-footer px-3">
+      {{ storyCard.user }}
+      |
       {{ moment(storyCard.created_at).format('MMM YY') }}
       |
       {{ storyCard.first_category }}
@@ -66,7 +65,8 @@ export default {
             user: "",
             created_at: null,
             categories: [],
-            first_category: ""
+            first_category: "",
+            excerpt: ""
         })
     },
     cardMode:{
@@ -92,8 +92,9 @@ export default {
 <style scoped lang="scss">
 .story-large-card {
   border: .8px solid #EFEFEF;
-  &-head-title {
-    color: #A7A7A7;
+  &-title {
+    font-size: 1.8em;
+    font-weight: bolder;
   }
   &-content {
     font-size: .9em;

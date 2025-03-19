@@ -3,18 +3,20 @@
     class="container story-card px-2 py-2"
     @click="gotoStory"
   >
-    <div class="row story-card-title pb-3">
-      <h5 class="m-0">
+    <div class="row story-card-title">
+      <p>
         {{ storyCard.title }}
-      </h5>
-    </div>
-    <div class="row story-card-content pb-4">
-      <p class="m-0">
-        {{ storyCard.user }}
       </p>
     </div>
-    <div class="row story-card-footer m-0">
+    <div class="row story-card-content">
+      <p>
+        {{ storyCard.excerpt }}
+      </p>
+    </div>
+    <div class="row story-card-footer m-0 pt-2">
       <template v-if="cardMode === 'mini'">
+        {{ storyCard.user }}
+        |
         {{ moment(storyCard.created_at).format('MMM YY') }}
         |
         {{ storyCard.first_category }}
@@ -36,6 +38,7 @@ export default {
       default: () => ({
             title : "",
             user: "",
+            excerpt: "",
             created_at: null,
             first_category: "",
             categories: []
@@ -63,18 +66,21 @@ export default {
   border: .8px solid #EFEFEF;
 
   &-title {
-    color: #707070;
+    font-weight: bolder;
   }
   &-content {
     font-size: .8em;
     color: #707070;
-   p {
+
      overflow: hidden;
      text-overflow: ellipsis;
      display: -webkit-box;
      -webkit-line-clamp: 4; /* number of lines to show */
      line-clamp: 4;
-   }
+      overflow: hidden;
+      word-break: break-word;
+      -webkit-box-orient: vertical;
+   
   }
   &-footer {
     font-size: .7em;

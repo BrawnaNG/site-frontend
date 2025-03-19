@@ -13,7 +13,7 @@
         >
           <input
             v-model="searchText"
-            class="border-0 login-form-input"
+            class="border-0 login-form-input form-control"
             placeholder="Search story, author ot tags"
             @keyup="advanceSearch()"
           >

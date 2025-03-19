@@ -43,10 +43,10 @@
 
   <div class="story-header container-fluid bg-light">
     <div class="row">
-      <div class="col-2">
-        <nav class="navbar navbar-expand-xs navbar-light bg-light">
+      <div class="col-2 pt-2">
+        <nav class="navbar navbar-expand-xs navbar-light">
           <button 
-            class="navbar-toggler" 
+            class="navbar-toggler"
             type="button" 
             data-bs-toggle="collapse" 
             data-bs-target="#navbarSupportedContent" 
@@ -66,7 +66,7 @@
             id="navbarSupportedContent"
             class="collapse navbar-collapse"
           >
-            <ul class="navbar-nav me-auto my-2 mb-lg-0 ml-8">
+            <ul class="navbar-nav me-auto mx-3 mt-2">
               <li class="nav-item"
               >
                 <router-link
@@ -105,10 +105,10 @@
           </div>
         </nav>
       </div>
-      <div class="col-8 text-center my-1">
-        <h1>Brawna Stories</h1>
+      <div class="col-8 text-center site-title">
+        <p class="lh-1">Brawna</p>
       </div>
-      <div class="col-2 my-1">
+      <div class="col-2 my-1 pt-1">
         <div class="d-flex float-end">
           <div class="p-2">
             <img
@@ -282,41 +282,50 @@ export default {
 </script>
 
 <style lang="scss">
-.search-canvas {
-  max-height: 10% !important;
-  height: fit-content !important;
-  border: none !important;
-}
+  .search-canvas {
+    max-height: 10% !important;
+    height: fit-content !important;
+    border: none !important;
+  }
 
-.story-header {
-  height: 5.68vw;
-  border-bottom: 1px solid #D6D6D6;
-  &-menu {
-    width: 2.2vw;
-    cursor: pointer;
+  .site-title {
+    font-size: 5em;
+    font-weight: bolder;
+    font-family: NotoSerif-Bold;
+    margin: 0%;
   }
-  &-logo {
-    width: 8.8vw;
-    cursor: pointer;
+
+  .story-header {
+    height: 7.2vw;
+    border-bottom: 1px solid #D6D6D6;
+    padding-top: 5px;
+    &-menu {
+      width: 2.2vw;
+      cursor: pointer;
+    }
+    &-logo {
+      width: 8.8vw;
+      cursor: pointer;
+    }
+    &-action {
+      width: 2vw;
+      cursor: pointer;
+      display: flex;
+    }
   }
-  &-action {
-    width: 2vw;
-    cursor: pointer;
-    display: flex;
+
+  .navbar-collapse {
+    margin-top: 5px;
+    background-color: black !important;
   }
-}
-#navbar-backdrop.navbar-menu {
-  background-color: black !important;
-  color: white !important;
-  width: 30vw;
-  button {
+  .navbar-menu-item-link {
     color: white !important;
   }
-
-  a.navbar-menu-item-link {
-    color: #EFEFEF !important;
-    font-size: 1.2em;
-    font-family: NotoSerif-Bold;
+  .nav-item {
+    a {
+      font-size: 1.2em;
+      font-weight: bolder;
+      font-family: NotoSerif-Bold;
+    }
   }
-}
 </style>

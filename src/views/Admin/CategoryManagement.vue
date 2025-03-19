@@ -1,28 +1,29 @@
 <template>
   <Toast />
 
-  <div class="categories-page">
+  <div class="admin-page">
     <div class="container-fluid admin-page-head mx-auto py-3">
       <div class="row h-100 m-0">
         <div class="col-6 px-0">
           <div class="admin-page-head-title px-0">
-            <h4 class="m-0 font-weight-bolder">
+            <p class="m-0 font-weight-bolder">
               Admin
-            </h4>
+            </p>
           </div>
         </div>
       </div>
-      <div class="row admin-page-head-breadcrumb pt-1 px-0">
+      <div class="row admin-page-head-breadcrumb pt-1 px-2">
         <admin-bread-crumbs label="Categories" />
       </div>
     </div>
-    <admin-menu />
-    <div class="content-flex categories-content mx-auto py-0">
-      <div class="row h-100 m-0">
-        <div class="col-8 px-4">
-          <h2 class="m-0 px-4 font-weight-bolder align-middle">
-            Categories
-          </h2>
+    <admin-menu current="categories" />
+
+    <div class="container-fluid admin-page-content mx-auto py-3">
+      <div class="row m-0">
+        <div class="col-8 pl-0">
+            <p class="m-0 admin-page-content-title">
+              Categories
+            </p>
         </div>
         <div class="col-4 px-4 align-middle">
           <div class="float-end">
@@ -40,17 +41,21 @@
         </div>
       </div>
     </div>
-    <div class="container-fluid categories-content mx-auto">    
-      <div class="row py-4 px-0">
+    <div class="container-fluid admin-page-content mx-auto">    
+      <div class="row py-2 px-0">
         <template v-if="categoryList.length">
-          <CategoryCard
+          <div 
+            class="pb-2"
             v-for="(category) in categoryList"
             :key="`cat_card_${category.id}`"
-            :category="category"
-            @edit-category="editCategory"
-            @add-sub-category="addSubCategory"
-            @delete-category="deleteCategory"
-          />
+          >
+            <CategoryCard
+              :category="category"
+              @edit-category="editCategory"
+              @add-sub-category="addSubCategory"
+              @delete-category="deleteCategory"
+            />
+          </div>
         </template>
       </div>
     </div>
@@ -116,7 +121,7 @@
 </template>
 
 <script>
-import CategoryCard from "@/components/Admin/CategoryCard.vue";
+import CategoryCard from "@/components/Card/CategoryCard.vue";
 import AdminBreadCrumbs from "@/components/Admin/AdminBreadCrumbs.vue";
 import AdminMenu from "@/components/Admin/AdminMenu.vue";
 import categorySort from "@/common/CategorySort";
@@ -276,6 +281,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
+  @import '@/assets/style/admin.scss';
+
   .cat-default-btn {
     background-color: black;
     color: white;

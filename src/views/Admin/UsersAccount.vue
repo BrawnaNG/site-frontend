@@ -1,23 +1,25 @@
 <template>
-  <div class="users-account-page">
-    <div class="container-flex admin-page-head mx-auto py-3">
+  <div class="admin-page">
+    <div class="container-fluid admin-page-head mx-auto py-3">
       <div class="row h-100 m-0">
-        <div class="col px-0">
-          <h4 class="m-0 font-weight-bolder">
-            Admin
-          </h4>
+        <div class="col-6 px-0">
+          <div class="admin-page-head-title px-0">
+            <p class="m-0">
+              Admin
+            </p>
+          </div>
         </div>
-      </div>>
-      <div class="row admin-page-head-breadcrumb pt-1 px-0">
+      </div>
+      <div class="row admin-page-head-breadcrumb pt-1 px-2">
         <admin-bread-crumbs label="Users" />
       </div>
     </div>
-    <admin-menu />
-    <div class="container-flex users-account-content mx-auto py-5">
-      <div class="pb-5">
-        <h2 class="m-0">
+    <admin-menu current="users"/>
+    <div class="container-flex admin-page-content mx-auto py-3">
+      <div class="pb-3">
+        <p class="m-0 admin-page-content-title">
           Users
-        </h2>
+        </p>
       </div>
       <user-list />
     </div>
@@ -34,6 +36,6 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+  @import '@/assets/style/admin.scss';
 </style>
