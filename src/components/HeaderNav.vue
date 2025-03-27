@@ -296,15 +296,11 @@ export default {
   }
 
   .story-header {
-    height: 7.2vw;
+    height: 6em;
     border-bottom: 1px solid #D6D6D6;
     padding-top: 5px;
     &-menu {
       width: 2.2vw;
-      cursor: pointer;
-    }
-    &-logo {
-      width: 8.8vw;
       cursor: pointer;
     }
     &-action {
