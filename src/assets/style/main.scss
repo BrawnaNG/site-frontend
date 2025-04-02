@@ -1,0 +1,84 @@
+//bootstrap style file
+@import 'node_modules/bootstrap/scss/bootstrap.scss';
+
+//font face
+@import "../fonts/font-face.css";
+
+body {
+  font-family: NotoSerif-Regular;
+
+  .cursor-pointer {
+    cursor: pointer;
+  }
+
+  .pagination-custom-style {
+    .page-item {
+      .page-link {
+        color: black !important;
+        border: none;
+        font-family: NotoSerif-Bold;
+        font-size: 1.2em;
+        &:focus {
+          box-shadow: 0 0 0 0.2rem rgba(100, 100, 100, 0.25);
+        }
+      }
+
+      &.disabled {
+        .page-link {
+          color: #A7A7A7 !important;
+        }
+      }
+
+      &.active {
+        .page-link {
+          color: white !important;
+          background-color: black !important;
+          border-color: black !important;
+        }
+      }
+
+    }
+  }
+
+  .breadcrumb-item {
+    font-size: .8em;
+    a {
+      color: #A7A7A7;
+    }
+  }
+
+  .menu-bar-wrapper {
+    background-color: black;
+    font-size: 1.2em;
+
+    .menu-bar-item {
+      a {
+        color: white;
+        &.router-link-active {
+          border-bottom: 2px solid white;
+          font-weight: bold;
+        }
+        &:hover {
+          text-decoration: none;
+        }
+      }
+    }
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: NotoSerif-Bold;
+  }
+
+  .color-gray {
+    color: #707070;
+  }
+
+  .font-size-8 {
+    font-size: .8em;
+  }
+
+  .font-size-7 {
+    font-size: .7em;
+  }
+}
+
