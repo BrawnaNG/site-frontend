@@ -21,7 +21,9 @@
           </li>
           <li class="menu-bar-item cursor-pointer text-white">
             <p
-              class="px-1 menu-bar-logout">
+              class="px-1 menu-bar-logout"
+              @click="logOut()"
+            >
               Log out
             </p>
           </li>
@@ -31,6 +33,7 @@
 </template>
 
 <script>
+import EventBus from "../../common/EventBus";
 export default {
   name: "AdminMenu",
   props: {
@@ -70,6 +73,11 @@ export default {
       }
       return menuItems;
     }
+  },
+  methods : {
+    logOut(){
+      EventBus.dispatch("logout");
+    },
   }
 }
 </script>

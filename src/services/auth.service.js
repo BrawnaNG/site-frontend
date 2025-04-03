@@ -130,7 +130,7 @@ class AuthService {
     return Promise.reject();
   }
 
-  async register(user) {
+  async register(_store, user) {
     return await axiosInstance.post('accounts/registration/', {
       username: user.username,
       email: user.email,
