@@ -6,6 +6,8 @@ import path from 'path';
 const filename = fileURLToPath(import.meta.url);
 const pathSegments = path.dirname(filename);
 
+// Testing Github actions
+
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd());
 
