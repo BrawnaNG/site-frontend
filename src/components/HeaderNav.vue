@@ -1,46 +1,5 @@
 <template>
 
-  <div 
-    class="offcanvas offcanvas-top offcanvas-m py-3 search-canvas"
-    tabindex="-1" 
-    id="searchCanvas"
-    aria-labelledby="searchCanvasLabel"
-  >  
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-10">
-          <input
-                v-model="searchForm.text"
-                class="form-control"
-                placeholder="Search story, author or tags"
-                @keydown.enter="searchStories"
-              >
-        </div>
-        <div class="col-2">
-          <button 
-            class="btn btn-primary mx-2" 
-            data-bs-dismiss="offcanvas"
-            type="button"
-            data-bs-target="#offcanvasResponsive" 
-            aria-label="Search"
-            @click="searchStories"
-          >
-          Search
-          </button>
-          <button 
-            class="btn btn-secondary" 
-            data-bs-dismiss="offcanvas"
-            type="button"
-            data-bs-target="#offcanvasResponsive" 
-            aria-label="Cancel"
-          >
-          Cancel
-          </button>
-        </div>
-      </div>
-    </div>
-</div>
-
   <div class="story-header container-fluid bg-light">
     <div class="row">
       <div class="col-2 pt-2">
@@ -100,25 +59,44 @@
                 >
                   Admin
                 </router-link>
+              </li>  
+              <li>  
+                <router-link
+                  class="navbar-menu-item-link nav-link"
+                  :to="{name: 'about'}"
+                  @click="collapseNavbar"
+                >
+                  About
+                </router-link>
               </li>
             </ul>
           </div>
         </nav>
       </div>
-      <div class="col-8 text-center site-title">
+      <div class="col-6 text-center site-title">
         <p class="lh-1">Brawna</p>
       </div>
-      <div class="col-2 my-1 pt-1">
-        <div class="d-flex float-end">
-          <div class="p-2">
-            <img
-              src="../assets/image/icon/search-normal.svg"
-              class="story-header-action"
-              data-bs-toggle="offcanvas" 
-              data-bs-target="#searchCanvas" 
-              aria-controls="searchCanvas"
-            >
-          </div>
+      <div class="col-2 my-2 pt-3">
+        <input
+          v-model="searchForm.text"
+          class="form-control"
+          placeholder="Search story, author or tags"
+          @keydown.enter="searchStories"
+        >
+      </div>
+      <div class="col-1 my-2 pt-3">
+        <button 
+          pill
+          variant="dark"
+          class="pr-1 py-2 px-3 font-weight-bold rounded-pill btn-search"
+          aria-label="Search"
+          @click="searchStories"
+        >
+        Search
+        </button>
+      </div>
+      <div class="col-1 my-2 pt-2">  
+        <div class="d-flex float-end"></div>
           <div 
             v-if="!isAuthenticated"
             class="p-2"
@@ -133,7 +111,6 @@
         </div>
       </div>
     </div>
-  </div>
   
   <div 
     id="loginModal"
@@ -153,7 +130,7 @@
           </h5>
           <button 
             type="button" 
-            class="btn-close" 
+            class="btn-close rounded-pill py-2" 
             data-bs-dismiss="modal" 
             aria-label="Close"
           />
@@ -167,37 +144,6 @@
         <div class="modal-footer">
           <button 
             id="loginModalClose"
-            type="button"
-            class="btn btn-secondary" 
-            data-bs-dismiss="modal"
-          >
-            Close
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div 
-    id="searchModal"
-    class="modal fade" 
-    tabindex="-1"
-    aria-labelledby="searchModalLabel" 
-    aria-hidden="true"
-  >
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 
-            id="searchModalLabel"
-            class="modal-title"
-            @click="searchStories"
-          >
-            Search
-          </h5>
-        </div>
-        <div class="modal-footer">
-          <button 
             type="button"
             class="btn btn-secondary" 
             data-bs-dismiss="modal"
@@ -249,10 +195,6 @@ export default {
           searchText: this.searchForm.text
         }
       });
-      const searchbar = document.querySelector('.search-canvas');
-      if (searchbar) {
-        Offcanvas.getInstance(searchbar).hide();
-      }
     },
     changeModalTitle(mode) {
       this.loginModal.title = (mode === 'login' ? 'Login to the site' : 'Sign up');
@@ -282,12 +224,6 @@ export default {
 </script>
 
 <style lang="scss">
-  .search-canvas {
-    max-height: 10% !important;
-    height: fit-content !important;
-    border: none !important;
-  }
-
   .site-title {
     font-size: 5em;
     font-weight: bolder;
@@ -307,6 +243,15 @@ export default {
       width: 2vw;
       cursor: pointer;
       display: flex;
+    }
+  }
+
+  .btn-search {
+    font-size: .8em;
+    background-color: black;
+    color: white;
+    img {
+      width: 1.6vw;
     }
   }
 
