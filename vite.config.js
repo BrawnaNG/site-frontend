@@ -24,6 +24,11 @@ export default defineConfig(({ mode }) => {
           '@': path.resolve(pathSegments, './src'),
         },
         extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
-      }
+      },
+      esbuild: {
+        supported: {
+          'top-level-await': true //browsers can handle top-level-await features
+        },
+      },
    }
 })
