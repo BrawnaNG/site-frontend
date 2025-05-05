@@ -11,28 +11,28 @@ on:
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v4
+
     - name: Build Node.js site
       uses: actions/setup-node@v4
       with:
         node-version: '22.x'
     - run: yarn
     - run: npm run build --if-present
+    - run: ls -l dist
 
-    - name: Deploy via SSH
-    - uses: actions/checkout@v4
-    - env:
+    - name: Deploy
+      env:
         PRIVATE_KEY: ${{ secrets.SSH_STAGE_PRIVATE_KEY }}
         HOSTNAME: ${{ secrets.SSH_STAGE_HOST }}
         USER_NAME: ${{ secrets.SSH_STAGE_USER_NAME }}
-    - run: ls -l dist
-    - run: |
-        MYIP=$(curl http://ipecho.net/plain)
-        echo $MYIP
+      run: |
+        curl http://ipecho.net/plain
         echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-        aws ec2
         exit
         scp -v -o StrictHostKeyChecking=no -i private_key -r dist ${USER_NAME}@${HOSTNAME}:dist-new
         ssh -v -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
