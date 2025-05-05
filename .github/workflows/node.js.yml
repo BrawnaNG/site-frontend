@@ -22,6 +22,7 @@ jobs:
     - run: npm run build --if-present
 
     - name: Deploy via SSH
+    - uses: actions/checkout@v4
     - env:
         PRIVATE_KEY: ${{ secrets.SSH_STAGE_PRIVATE_KEY }}
         HOSTNAME: ${{ secrets.SSH_STAGE_HOST }}
