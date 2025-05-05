@@ -32,8 +32,8 @@ jobs:
         USER_NAME: ${{ secrets.SSH_STAGE_USER_NAME }}
       run: |
         echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-        scp -o StrictHostKeyChecking=no -i ./private_key -r dist ${USER_NAME}@${HOSTNAME}:dist-new
-        ssh -o StrictHostKeyChecking=no -i ./private_key ${USER_NAME}@${HOSTNAME} '
+        scp -v -o StrictHostKeyChecking=no -i private_key -r dist ${USER_NAME}@${HOSTNAME}:dist-new
+        ssh -v -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
         pwd
         mv dist/ dist-old/
         mv dist-new/ dist/
