@@ -11,12 +11,9 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
-
     - name: Build Node.js site
       uses: actions/setup-node@v4
       with:
@@ -26,6 +23,10 @@ jobs:
     - run: ls -l dist
 
   deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
     - name: Deploy via SSH
       env:
         PRIVATE_KEY: ${{ secrets.SSH_STAGE_PRIVATE_KEY }}
