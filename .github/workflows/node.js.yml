@@ -16,10 +16,25 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
+
+    - name: Build Node.js site
       uses: actions/setup-node@v4
       with:
         node-version: '22.x'
     - run: yarn
     - run: npm run build --if-present
     - run: ls -l dist
+
+    - name: Deploy
+      env:
+        PRIVATE_KEY: ${{ secrets.SSH_STAGE_PRIVATE_KEY }}
+        HOSTNAME: ${{ secrets.SSH_STAGE_HOST }}
+        USER_NAME: ${{ secrets.SSH_STAGE_USER_NAME }}
+      run: |
+        echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+        scp -o StrictHostKeyChecking=no -i ./private_key -r dist ${USER_NAME}@{HOSTNAME}:dist-new
+        ssh -o StrictHostKeyChecking=no -i ./private_key ${USER_NAME}@${HOSTNAME} '
+        pwd
+        mv dist/ dist-old/
+        mv dist-new/ dist/
+        echo apache
