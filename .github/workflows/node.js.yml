@@ -47,5 +47,4 @@ jobs:
         echo apache '
 
     - name: Close Security Group
-      if: alway()
       run: bash devops/close-sh.sh
