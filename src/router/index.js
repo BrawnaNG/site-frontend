@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '../views/Home.vue';
+import About from '../views/About.vue';
 import Dashboard from '../views/Dashboard/DashboardPage.vue';
 import Admin from '../views/Admin/AdminPage.vue';
 import UsersAccount from "@/views/Admin/UsersAccount.vue";
@@ -130,6 +131,14 @@ const routes = [
     meta: {
       authRequired: 'true',
       roles: ['admin']
+    },
+  },
+  {
+    path: '/about',
+    name: 'about',
+    component: About,
+    meta: {
+      authRequired: 'false'
     },
   },
 ]
