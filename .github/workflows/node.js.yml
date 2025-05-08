@@ -25,13 +25,11 @@ jobs:
     - run: npm run build --if-present
 
     - name: Open Security Group
+      run: bash devops/open-sg.sh
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.STAGE_AWS_ACCESS_KEY_ID }}
         AWS_DEFAULT_REGION: ${{ secrets.STAGE_AWS_DEFAULT_REGION }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.STAGE_AWS_SECRET_ACCESS_KEY }}
-      run: |
-        env
-        bash devops/open-sg.sh
 
     - name: Deploy
       env:
@@ -53,8 +51,8 @@ jobs:
 
     - name: Close Security Group
       if: always()
+      run: bash devops/close-sg.sh
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.STAGE_AWS_ACCESS_KEY_ID }}
         AWS_DEFAULT_REGION: ${{ secrets.STAGE_AWS_DEFAULT_REGION }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.STAGE_AWS_SECRET_ACCESS_KEY }}
-      run: bash devops/close-sg.sh
