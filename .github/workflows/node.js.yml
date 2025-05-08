@@ -26,7 +26,7 @@ jobs:
     - run: ls -l dist
 
     - name: Open Security Group
-    - run: bash devops/open-sh.sh
+      run: bash devops/open-sh.sh
 
     - name: Deploy
       env:
@@ -47,4 +47,8 @@ jobs:
         echo apache '
 
     - name: Close Security Group
+      env:
+        AWS_ACCESS_KEY_ID: ${{ STAGE_AWS_ACCESS_KEY_ID }}
+        AWS_DEFAULT_REGION: ${{ STAGE_AWS_DEFAULT_REGION }}
+        AWS_SECRET_ACCESS_KEY: ${{ STAGE_AWS_SECRET_ACCESS_KEY }}
       run: bash devops/close-sh.sh
