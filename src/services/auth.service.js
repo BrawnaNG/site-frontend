@@ -1,4 +1,3 @@
-import { error } from "jquery";
 import axiosInstance from "./api";
 import TokenService from "./token.service";
 
