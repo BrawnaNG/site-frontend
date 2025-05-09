@@ -46,6 +46,14 @@
         Login
       </button>
     </div>
+    <div 
+      class="row"
+      v-if="errorMessage"
+      >
+      <span class="text-danger">
+        {{  errorMessage }}
+      </span>
+    </div>
     <div class="row login-form-sub-title text-center">
       <div class="col c-6">
         <span>
@@ -161,6 +169,14 @@
         >Login here</span>
       </div>
     </div>
+    <div 
+      class="row"
+      v-if="errorMessage"
+      >
+      <span class="text-danger">
+        {{  errorMessage }}
+      </span>
+    </div>
   </div>
 </template>
 
@@ -184,7 +200,8 @@ export default {
       },
       view: 'login',
       showPassword: false,
-      showRepeatPassword: false
+      showRepeatPassword: false,
+      errorMessage: ''
     }
   },
   watch: {
@@ -194,17 +211,22 @@ export default {
   },
   methods: {
     loginUser() {
+      this.errorMessage = null;
       let user = {
         username: this.login.username,
         password: this.login.password
       };
       AuthService.login(this.$store, user).then(
-        (_) => {
+        (_response) => {
           this.$emit('closeLogin');
+        },
+        (_error) => {
+          this.errorMessage = "Login failed";
         }
       );
     },
     signUpUser() {
+      this.errorMessage = null;
       let user = {
         alias: this.signUp.alias,
         username: this.signUp.username,
@@ -212,9 +234,12 @@ export default {
         password: this.signUp.password
       };
       AuthService.register(this.$store, user).then(
-        (_) => {
+        (_response) => {
           //TODO DISPLAY SUCCESS / WAIT FOR VERIFICATION MESSAGE
           this.$emit('closeLogin');
+        },
+        (_error) => {
+          this.errorMessage = "Sign up failed";
         }
       );
     }

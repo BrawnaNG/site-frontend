@@ -85,6 +85,8 @@ export default {
 <style scoped lang="scss">
 
   .menu-bar{
+    width: 90%;
+
     &-wrapper{
       padding-top: 1em;
       padding-bottom: 0.2cqmin;
@@ -93,7 +95,6 @@ export default {
       } 
     }
 
-    width: 90%;
     :first-child{
       padding-left: 5%;
       text-align: left;
