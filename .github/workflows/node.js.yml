@@ -9,6 +9,7 @@ on:
   pull_request:
     branches: [ "staging" ]
 
+# See https://github.com/mnapoli/github-to-aws for how the AWS credentials work
 permissions:
     id-token: write # This is required for requesting the JWT
     contents: read  # This is required for actions/checkout
@@ -31,8 +32,6 @@ jobs:
     - name: Open SG
       run: bash devops/open-sg.sh
 
-
-
     - name: Build Node.js site
       uses: actions/setup-node@v4
       with:
@@ -49,7 +48,6 @@ jobs:
       run: |
         MYIP=$(curl http://ipecho.net/plain)
         echo $MYIP
-        aws ec2
         echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
         exit
         scp -v -o StrictHostKeyChecking=no -i private_key -r dist ${USER_NAME}@${HOSTNAME}:dist-new
@@ -62,7 +60,3 @@ jobs:
     - name: Close Security Group
       if: always()
       run: bash devops/close-sg.sh
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.STAGE_AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.STAGE_AWS_SECRET_ACCESS_KEY }}
-        AWS_DEFAULT_REGION: ${{ secrets.STAGE_AWS_DEFAULT_REGION }}

@@ -10,7 +10,7 @@ CURRENT_DATE=$(date +'%Y-%m-%d')
 SEC_GROUP_RULE_DESCRIPTION="dynamic ip updated - ${CURRENT_DATE}"
 
 # Change rule to a 'private' IP
-NEW_IPV4_CIDR="192.168.1.2/32
+NEW_IPV4_CIDR="192.168.1.2/32"
 
 # updates I.P. and description in the sec group rule
 aws ec2 modify-security-group-rules --group-id ${SEC_GROUP_ID} --security-group-rules SecurityGroupRuleId=${SEC_GROUP_RULE_ID},SecurityGroupRule="{CidrIpv4=${NEW_IPV4_CIDR}, IpProtocol=tcp,FromPort=22,ToPort=22,Description=${SEC_GROUP_RULE_DESCRIPTION}}"
