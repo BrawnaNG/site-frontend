@@ -12,7 +12,7 @@
                 v-model="searchTextInput"
                 class="form-control"
                 placeholder="Search story, author or tags"
-                @keydown.enter="initialSearch"
+                @keydown.enter="pushSearch"
               >
         </div>
         <div class="col-2">
@@ -20,7 +20,7 @@
             class="btn btn-primary mx-2" 
             type="button"
             aria-label="Search"
-            @click="initialSearch"
+            @click="pushSearch"
           >
           Search
           </button>
@@ -28,7 +28,7 @@
             class="btn btn-secondary" 
             type="button"
             aria-label="Clear"
-            @click="initialSearch"
+            @click="clearSearch"
           >
           Clear
           </button>
@@ -41,7 +41,7 @@
           Stories: {{storyResultsCount}} found
         </h3>
       </div>
-      <template v-if="storyResults.length">
+      <template v-if="storyResultsCount > 0">
         <div 
           v-for="(chunk, row) in storyChunks"
           :key="`storySearch_${row}`"
@@ -84,7 +84,7 @@
             Authors
           </h3>
         </div>
-        <template v-if="authorResults.length">
+        <template v-if="authorResultsCount > 0">
           <div 
             v-for="(chunk, row) in authorChunks"
             :key="`authorSearch_${row}`"
@@ -141,7 +141,7 @@
             Tags
           </h3>
         </div>
-        <template v-if="tagResults.length">
+        <template v-if="tagResultsCount > 0">
           <div 
             v-for="(chunk, row) in tagChunks"
             :key="`tagSearch_${row}`"
@@ -191,121 +191,153 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import StoryMiniCard from "@/components/Card/StoryMiniCard.vue";
-export default {
-  name: "SearchResults",
-  components: {StoryMiniCard},
-  props: {
-    searchText: {
-      type: String,
-      default: ""
-    }
-  },
-  data() {
-    return {
-      searchTextInput: this.searchText,
-      searchTextDisplay: this.searchText,
-      storyResults: [],
-      shortResultsCount: 0,
-      authorResults: [],
-      tagResults: [],
-      cols: 3,
-      storyPage: 1,
-      authorPage: 1,
-      tagPage: 1
-    }
-  },
-  computed:{
-    storyChunks() { return this.chunkResults(this.storyResults); },
-    authorChunks()  { return this.chunkResults(this.authorResults); },
-    tagChunks()  { return this.chunkResults(this.tagResults); },
-  },
-  created() {
-    this.initialSearch()
-  },
-  methods: {
-    initialSearch() {
-      this.searchTextDisplay = this.searchTextInput;
-      this.storySearch(1, false);
-      this.authorSearch(1, false);
-      this.tagSearch(1, false);
-    },
+import {ref, computed, watch} from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import api from '@/services/api';
 
-    async storySearch(page, append) {
-      if (this.searchTextInput){
-        this.storyPage = page;
-        await this.axios.get(`/story/search/story?q=${this.searchTextInput}&page=${page}`).then(res => {
-          if (append){
-            this.storyResults = this.storyResults.concat(res.data.results);
-          }
-          else{
-            this.storyResults = res.data.results;
-          }
-          this.storyResultsCount = res.data.count;
-        });
+const route = useRoute();
+const router = useRouter();
+const searchTextInput = ref(route.params.search);
+const searchTextDisplay = ref(route.params.search);
+const storyResults = ref([]);
+const storyResultsCount = ref(0);
+const authorResults = ref([]);
+const authorResultsCount = ref(0);
+const tagResults = ref([]);
+const tagResultsCount = ref(0)
+const cols = 3;
+const storyPage = ref(1);
+const authorPage = ref(1);
+const tagPage = ref(1);
+
+const storyChunks = computed( () => {
+  if (storyResultsCount.value > 0){
+    return chunkResults(storyResults.value);
+  }
+  return [];
+});
+
+const authorChunks = computed( () => {
+  if (authorResultsCount.value > 0){
+    return chunkResults(authorResults.value);
+  }
+  return [];
+});
+
+const tagChunks = computed( () => {
+  if (tagResultsCount.value > 0){
+    return chunkResults(tagResults.value);
+  }
+  return [];
+});
+
+watch(
+  () => route.params.search,
+  (newSearchText, _oldSearchText) => {
+    searchTextInput.value = newSearchText;
+    clearSearch();
+    initialSearch();
+  }
+)
+
+const initialSearch = () => {
+  searchTextDisplay.value = searchTextInput.value;
+  storySearch(1, false);
+  authorSearch(1, false);
+  tagSearch(1, false);
+}
+
+const chunkResults = (results) => {
+  let chunks = [];
+  for (let i = 0; i < results.length; i+=cols){
+    chunks.push(results.slice(i, i + cols));
+  }
+  return chunks;
+}
+
+const storySearch = async (page, append) => {
+  if (searchTextInput.value){
+    storyPage.value = page;
+    await api.get(`/story/search/story?q=${searchTextInput.value}&page=${page}`).then(res => {
+      if (append){
+        storyResults.value = storyResults.value.concat(res.data.results);
       }
-    },
-
-    advanceStorySearch()
-    {
-      this.storySearch(this.storyPage+1, true);
-    },
-
-    async authorSearch(page, append) {
-      if (this.searchTextInput){
-        this.authorPage = page;
-        await this.axios.get(`/story/search/author?author=${this.searchTextInput}&page=${page}`).then(res => {
-          if (append){
-            this.authorResults = this.authorResults.concat(res.data.results);
-          }
-          else{
-            this.authorResults = res.data.results;
-          }
-          this.authorResultsCount = res.data.count;
-        });
+      else{
+        storyResults.value = res.data.results;
       }
-    },
-
-    advanceAuthorSearch()
-    {
-      this.authorSearch(this.authorPage+1, true);
-    },
-
-    async tagSearch(page, append) {
-      if (this.searchTextInput){
-        await this.axios.get(`/story/search/tag?tag==${this.searchTextInput}&page=${page}`).then(res => {
-          if (append){
-            this.tagResults = this.tagResults.concat(res.data.results);
-          }
-          else{
-            this.tagResults = res.data.results;
-          }
-          this.tagResultsCount = res.data.count;
-        })
-      }
-    },
-    
-    async advanceTagSearch() {
-      this.authorSearch(this.tagPage+1, true);
-    },
-
-    clearSearch() {
-      this.searchTextInput = '';
-      this.storyResults = [];
-      this.authorResults = [];
-      this.tagResults = [];
-      this.page = 1;
-    },
-    chunkResults(results) {
-      let chunks = [];
-      for (let i = 0; i < results.length; i+=this.cols){
-        chunks.push(results.slice(i, i + this.cols));
-      }
-      return chunks;
-    }
+      storyResultsCount.value = res.data.count;
+    });
   }
 }
+
+const advanceStorySearch = () =>
+{
+  storySearch(storyPage.value + 1, true);
+}
+
+const authorSearch = async (page, append) => {
+  if (searchTextInput.value){
+    authorPage.value = page;
+    await api.get(`/story/search/author?author=${searchTextInput.value}&page=${page}`).then(res => {
+      if (append){
+        authorResults.value = authorResults.value.concat(res.data.results);
+      }
+      else{
+        authorResults.value = res.data.results;
+      }
+      authorResultsCount.value = res.data.count;
+    });
+  }
+}
+
+const advanceAuthorSearch = () => {
+  authorSearch(authorPage.value+1, true);
+}
+
+const tagSearch = async (page, append)  => {
+  if (searchTextInput.value){
+    tagPage.value = page;
+    await api.get(`/story/search/tag?tag==${searchTextInput.value}&page=${page}`).then(res => {
+      if (append){
+        tagResults.value = tagResults.value.concat(res.data.results);
+      }
+      else{
+        tagResults.value = res.data.results;
+      }
+      tagResultsCount.value = res.data.count;
+    })
+  }
+}
+    
+const advanceTagSearch = () => {
+  authorSearch(tagPage.value+1, true);
+}
+
+const clearSearch = () => {
+  storyResults.value = [];
+  storyResultsCount.value = 0;
+  authorResults.value = [];
+  authorResultsCount.value = 0;
+  tagResults.value = [];
+  tagResultsCount.value = 0;
+  storyPage.value = 1;
+  authorPage.value = 1;
+  tagPage.value = 1;
+}
+
+const pushSearch = () => {
+  router.push( {
+    name: 'searchResults', 
+        params: {
+        search: searchTextInput.value
+    }
+  });
+}
+
+clearSearch();
+initialSearch();
 </script>
 
 <style scoped lang="scss">
