@@ -33,6 +33,10 @@ jobs:
       run: bash devops/open-sg.sh
 
     - name: Build Node.js site
+      env:
+        VITE_API_URL: "https://stage.brawna.org/api/v1/"
+        VITE_CORS_ORIGIN: "https:/stage.brawna.org/"
+        VITE_ALLOWED_HOSTS: "stage.brawna.org"
       uses: actions/setup-node@v4
       with:
         node-version: '22.x'
@@ -47,8 +51,8 @@ jobs:
         USER_NAME: ${{ secrets.SSH_STAGE_USER_NAME }}
       run: |
         echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-        scp -v -o StrictHostKeyChecking=no -i private_key -r dist ${USER_NAME}@${HOSTNAME}:dist-new
-        ssh -v -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+        scp -o StrictHostKeyChecking=no -i private_key -r dist ${USER_NAME}@${HOSTNAME}:dist-new
+        ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
         mv ~/dist-new/ /var/www/stage.brawna.org/frontend/dist-new/
         mv /var/www/stage.brawna.org/frontend/dist/ /var/www/stage.brawna.org/frontend/dist-old/
         mv /var/www/stage.brawna.org/frontend/dist-new/ /var/www/stage.brawna.org/frontend/dist/
