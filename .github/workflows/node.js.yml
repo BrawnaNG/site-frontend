@@ -17,6 +17,16 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Open Security Group
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.STAGE_AWS_ACCESS_KEY_ID }}
+        AWS_DEFAULT_REGION: ${{ secrets.STAGE_AWS_DEFAULT_REGION }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.STAGE_AWS_SECRET_ACCESS_KEY }}
+      run: |
+        env
+        bash devops/open-sg.sh
+        env
+
     - name: Build Node.js site
       uses: actions/setup-node@v4
       with:
@@ -24,14 +34,6 @@ jobs:
     - run: yarn
     - run: npm run build --if-present
 
-    - name: Open Security Group
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.STAGE_AWS_ACCESS_KEY_ID }}
-        AWS_DEFAULT_REGION: ${{ secrets.STAGE_AWS_DEFAULT_REGION }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.STAGE_AWS_SECRET_ACCESS_KEY }}
-      run: |
-        bash devops/open-sg.sh
-        env
 
     - name: Deploy
       env:
