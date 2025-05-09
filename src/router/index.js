@@ -25,7 +25,7 @@ const routes = [
     },
   },
   {
-    path: '/search-results/search=:searchText?',
+    path: '/search-results/search=:search?',
     name: 'searchResults',
     props: true,
     component: SearchResults,

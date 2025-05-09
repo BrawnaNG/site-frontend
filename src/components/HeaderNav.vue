@@ -161,7 +161,7 @@ import LoginForm from "@/components/LoginForm.vue";
 import MultiSearch from "@/components/MultiSearch.vue";
 import EventBus from "../common/EventBus";
 import AuthService from '../services/auth.service';
-import {Collapse, Offcanvas} from "bootstrap";
+import {Collapse} from "bootstrap";
 
 export default {
   name: "HeaderNav",
@@ -192,7 +192,7 @@ export default {
       this.$router.push( {
         name: 'searchResults', 
         params: {
-          searchText: this.searchForm.text
+          search: this.searchForm.text
         }
       });
     },
