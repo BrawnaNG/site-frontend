@@ -6,8 +6,6 @@ name: Node.js CI
 on:
   push:
     branches: [ "staging" ]
-  pull_request:
-    branches: [ "staging" ]
 
 # See https://github.com/mnapoli/github-to-aws for how the AWS credentials work
 permissions:
@@ -57,7 +55,7 @@ jobs:
         scp -o StrictHostKeyChecking=no -i private_key -r dist ${USER_NAME}@${HOSTNAME}:dist-new
         ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
         mv ~/dist-new /var/www/stage.brawna.org/frontend/dist-new
-        rm -rf /var/www/stage.brawna.org/frontend/dist-old
+        sudo rm -rf /var/www/stage.brawna.org/frontend/dist-old
         mv /var/www/stage.brawna.org/frontend/dist /var/www/stage.brawna.org/frontend/dist-old
         mv /var/www/stage.brawna.org/frontend/dist-new /var/www/stage.brawna.org/frontend/dist
         sudo apache2ctl graceful '
