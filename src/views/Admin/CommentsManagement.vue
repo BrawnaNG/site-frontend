@@ -52,5 +52,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  @import '@/assets/style/admin.scss';
+  @use '@/assets/style/admin.scss' as *;
 </style>

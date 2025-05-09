@@ -1,8 +1,8 @@
 //bootstrap style file
-@import 'node_modules/bootstrap/scss/bootstrap.scss';
+@use 'node_modules/bootstrap/scss/bootstrap.scss' as *;
 
 //font face
-@import "../fonts/font-face.css";
+@use "../fonts/font-face.css" as *;
 
 body {
   font-family: NotoSerif-Regular;
@@ -81,4 +81,3 @@ body {
     font-size: .7em;
   }
 }
-

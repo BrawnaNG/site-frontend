@@ -42,6 +42,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+  @use "sass:string";
   .breadcrumb{
     a {
       color: darkgray;
@@ -57,5 +58,5 @@ export default {
     }
 
   }
-  $breadcrumb-divider: quote(">");
+  $breadcrumb-divider: string.quote(">");
 </style>
