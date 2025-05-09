@@ -9,6 +9,10 @@ on:
   pull_request:
     branches: [ "staging" ]
 
+permissions:
+    id-token: write # This is required for requesting the JWT
+    contents: read  # This is required for actions/checkout
+
 jobs:
   build:
 
@@ -17,15 +21,17 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Open Security Group
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.STAGE_AWS_ACCESS_KEY_ID }}
-        AWS_DEFAULT_REGION: ${{ secrets.STAGE_AWS_DEFAULT_REGION }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.STAGE_AWS_SECRET_ACCESS_KEY }}
-      run: |
-        env
-        bash devops/open-sg.sh
-        env
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: arn:aws:iam::413022200594:role/github-deploy-brawnang-site-frontend
+        role-session-name: github-deploy
+        aws-region: us-east-1
+
+    - name: Open SG
+      run: bash devops/open-sg.sh
+
+
 
     - name: Build Node.js site
       uses: actions/setup-node@v4
