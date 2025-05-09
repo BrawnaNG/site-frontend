@@ -43,7 +43,6 @@ jobs:
     - run: yarn
     - run: npm run build --if-present
 
-
     - name: Deploy
       env:
         PRIVATE_KEY: ${{ secrets.SSH_STAGE_PRIVATE_KEY }}
