@@ -56,9 +56,10 @@ jobs:
         echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
         scp -o StrictHostKeyChecking=no -i private_key -r dist ${USER_NAME}@${HOSTNAME}:dist-new
         ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-        mv -f ~/dist-new /var/www/stage.brawna.org/frontend/dist-new
-        mv -f /var/www/stage.brawna.org/frontend/dist /var/www/stage.brawna.org/frontend/dist-old
-        mv -f /var/www/stage.brawna.org/frontend/dist-new /var/www/stage.brawna.org/frontend/dist
+        mv ~/dist-new /var/www/stage.brawna.org/frontend/dist-new
+        rm -rf /var/www/stage.brawna.org/frontend/dist-old
+        mv /var/www/stage.brawna.org/frontend/dist /var/www/stage.brawna.org/frontend/dist-old
+        mv /var/www/stage.brawna.org/frontend/dist-new /var/www/stage.brawna.org/frontend/dist
         sudo apache2ctl graceful '
 
     - name: Close Security Group
