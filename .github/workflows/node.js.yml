@@ -47,13 +47,12 @@ jobs:
         USER_NAME: ${{ secrets.SSH_STAGE_USER_NAME }}
       run: |
         echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-        exit
         scp -v -o StrictHostKeyChecking=no -i private_key -r dist ${USER_NAME}@${HOSTNAME}:dist-new
         ssh -v -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
         mv ~/dist-new/ /var/www/stage.brawna.org/frontend/dist-new/
         mv /var/www/stage.brawna.org/frontend/dist/ /var/www/stage.brawna.org/frontend/dist-old/
         mv /var/www/stage.brawna.org/frontend/dist-new/ /var/www/stage.brawna.org/frontend/dist/
-        echo sudo apache2ctl graceful '
+        sudo apache2ctl graceful '
 
     - name: Close Security Group
       if: always()
