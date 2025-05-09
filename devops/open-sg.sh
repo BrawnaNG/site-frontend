@@ -1,6 +1,9 @@
 # Update a security group rule allowing your
 # current IPv4 I.P. to connect on port 22 (SSH)
 
+
+echo "ID: $AWS_ACCESS_KEY_ID"
+echo "region: $AWS_DEFAULT_REGION"
 # variables to identify sec group and sec group rule
 SEC_GROUP_ID='sg-06e6495b14be44e29'
 SEC_GROUP_RULE_ID='sgr-0aa0dcc8d63b86930'
