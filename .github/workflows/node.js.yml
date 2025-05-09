@@ -32,11 +32,15 @@ jobs:
     - name: Open SG
       run: bash devops/open-sg.sh
 
+    - name: Create env file
+      run: |
+        touch .env
+        echo "VITE_API_URL=https://stage.brawna.org/api/v1/" >> .env
+        echo "VITE_CORS_ORIGIN=https:/stage.brawna.org/" >> .env
+        echo "VITE_ALLOWED_HOSTS=stage.brawna.org" >> .env
+
+
     - name: Build Node.js site
-      env:
-        VITE_API_URL: "https://stage.brawna.org/api/v1/"
-        VITE_CORS_ORIGIN: "https:/stage.brawna.org/"
-        VITE_ALLOWED_HOSTS: "stage.brawna.org"
       uses: actions/setup-node@v4
       with:
         node-version: '22.x'
