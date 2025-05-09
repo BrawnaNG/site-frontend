@@ -46,16 +46,14 @@ jobs:
         HOSTNAME: ${{ secrets.SSH_STAGE_HOST }}
         USER_NAME: ${{ secrets.SSH_STAGE_USER_NAME }}
       run: |
-        MYIP=$(curl http://ipecho.net/plain)
-        echo $MYIP
         echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
         exit
         scp -v -o StrictHostKeyChecking=no -i private_key -r dist ${USER_NAME}@${HOSTNAME}:dist-new
         ssh -v -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-        pwd
-        mv dist/ dist-old/
-        mv dist-new/ dist/
-        echo apache '
+        mv ~/dist-new/ /var/www/stage.brawna.org/frontend/dist-new/
+        mv /var/www/stage.brawna.org/frontend/dist/ /var/www/stage.brawna.org/frontend/dist-old/
+        mv /var/www/stage.brawna.org/frontend/dist-new/ /var/www/stage.brawna.org/frontend/dist/
+        echo sudo apache2ctl graceful '
 
     - name: Close Security Group
       if: always()
