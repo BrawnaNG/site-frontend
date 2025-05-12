@@ -182,6 +182,8 @@
 
 <script>
 import AuthService from '../services/auth.service';
+import { useAuthStore } from '../stores/auth';
+
 export default {
   name: "LoginForm",
   emits: ['closeLogin','changeFormState'],
@@ -216,7 +218,8 @@ export default {
         username: this.login.username,
         password: this.login.password
       };
-      AuthService.login(this.$store, user).then(
+      const authStore = useAuthStore();
+      AuthService.login(authStore, user).then(
         (_response) => {
           this.$emit('closeLogin');
         },
@@ -233,7 +236,8 @@ export default {
         email: this.signUp.email,
         password: this.signUp.password
       };
-      AuthService.register(this.$store, user).then(
+      const authStore = useAuthStore();
+      AuthService.register(authStore, user).then(
         (_response) => {
           //TODO DISPLAY SUCCESS / WAIT FOR VERIFICATION MESSAGE
           this.$emit('closeLogin');

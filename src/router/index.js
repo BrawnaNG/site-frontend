@@ -13,7 +13,7 @@ import StoryDrafts from "@/views/Dashboard/StoryDrafts.vue";
 import ShowStory from "@/views/Story/ShowStory.vue";
 import AddEditStory from "@/views/Story/AddEditStory.vue";
 import SearchResults from "@/views/SearchResults.vue";
-import store from "../store";
+import { useAuthStore } from '@/stores';
 
 const routes = [
   {
@@ -148,10 +148,11 @@ var router = createRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _from, next) => {
 
   if (to.meta.authRequired === 'true'){
-    let role = store.state.auth.role;
+    const authStore = useAuthStore();
+    let role = authStore.role;
     if (to.meta.roles.includes('admin') && role.isAdmin){
       return next()
     }

@@ -169,6 +169,8 @@
 import { inject } from 'vue';
 import CommentsCard from "@/components/Card/CommentsCard.vue";
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import { useAuthStore } from '@/stores/auth';
+
 export default {
   name: "ShowStory",
   components: {
@@ -218,7 +220,8 @@ export default {
   },
   computed: {
     isAuthenticated() {
-      return this.$store.state.auth.isAuthenticated;
+      const authStore = useAuthStore();
+      return authStore.isAuthenticated;
     }
   },
   mounted() {

@@ -25,7 +25,7 @@
             id="navbarSupportedContent"
             class="collapse navbar-collapse"
           >
-            <ul class="navbar-nav me-auto mx-3 mt-2">
+            <ul class="navbar-nav me-auto mx-3 mt-2 px-2">
               <li class="nav-item"
               >
                 <router-link
@@ -60,7 +60,7 @@
                   Admin
                 </router-link>
               </li>  
-              <li>  
+              <li class="nav-item">
                 <router-link
                   class="navbar-menu-item-link nav-link"
                   :to="{name: 'about'}"
@@ -162,6 +162,7 @@ import MultiSearch from "@/components/MultiSearch.vue";
 import EventBus from "../common/EventBus";
 import AuthService from '../services/auth.service';
 import {Collapse} from "bootstrap";
+import { useAuthStore } from '../stores/auth';
 
 export default {
   name: "HeaderNav",
@@ -178,10 +179,12 @@ export default {
   },
   computed: {
     role() {
-      return this.$store.state.auth.role;
+      const authStore = useAuthStore();
+      return authStore.role;
     },
     isAuthenticated() {
-      return this.$store.state.auth.isAuthenticated;
+      const authStore = useAuthStore();
+      return authStore.isAuthenticated;
     }
   },
   beforeMount() {
@@ -204,7 +207,8 @@ export default {
     },
     checkUser(){
       if (!this.role.isInit){
-        AuthService.getRole(this.$store);
+        const authStore = useAuthStore();
+        AuthService.getRole(authStore);
       }
     },
     logOut(){
