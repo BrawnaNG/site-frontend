@@ -1,7 +1,7 @@
 import { createApp } from 'vue';
+import { createPinia } from 'pinia';
 import App from './App.vue';
 import router from './router';
-import store from './store';
 
 import api from './services/api';
 import VueAxios from 'vue-axios';
@@ -19,16 +19,16 @@ import Tag from 'primevue/tag';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap";
 
-setupInterceptors(store);
+const pinia = createPinia();
 
 var app = createApp(App)
+  .use(pinia)
   .use(Vue3Toastify, {
     autoClose: 3000,
     position: "bottom-right"
   })
   .use(VueTreeNavigation)
   .use(router)
-  .use(store)
   .use(VueAxios, api)
   .use(PrimeVue, {
     theme: {
@@ -44,4 +44,5 @@ var app = createApp(App)
   .provide("moment", moment);
 
 app.config.productionTip = false;
+setupInterceptors();
 app.mount('#app');

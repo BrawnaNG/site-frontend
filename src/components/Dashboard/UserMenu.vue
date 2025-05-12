@@ -50,11 +50,14 @@
 
 <script>
 import EventBus from "../../common/EventBus";
+import { useAuthStore } from '@/stores/auth';
+
 export default {
   name: "UserMenu",
   computed: {
     isAuthenticated() {
-      return this.$store.state.auth.isAuthenticated;
+      const authStore = useAuthStore();
+      return authStore.isAuthenticated;
     }
   },
   methods: {

@@ -2,7 +2,7 @@ import axiosInstance from "./api";
 import TokenService from "./token.service";
 
 class AuthService {
-  async login(store, user) {
+  async login(authStore, user) {
     await axiosInstance.post( 'token/', {
       username: user.username,
       password: user.password
@@ -10,65 +10,65 @@ class AuthService {
       (response) => {
         if (response.data.access) {
           localStorage.setItem('user', JSON.stringify(response.data));
-          store.dispatch('auth/setToken', response.data.access);
-          store.dispatch('auth/setAuthenticated', true);
-          store.dispatch('auth/setAuthenticationFailed', false);
+          authStore.setToken(response.data.access);
+          authStore.setAuthenticated(true);
+          authStore.setAuthenticationFailed(false);
           return Promise.resolve();
         }
         else{
           TokenService.removeUser();
-          store.dispatch('auth/setToken', null);
-          store.dispatch('auth/setAuthenticated', false);
-          store.dispatch('auth/setAuthenticationFailed', false);
+          authStore.setToken(null);
+          authStore.setAuthenticated(false);
+          authStore.setAuthenticationFailed(false);
           return Promise.reject();
         }
       },
       (_error) => {
         TokenService.removeUser();
-        store.dispatch('auth/setToken', null);
-        store.dispatch('auth/setAuthenticated', false);
-        store.dispatch('auth/setAuthenticationFailed', true);
+        authStore.setToken(null);
+        authStore.setAuthenticated(false);
+        authStore.setAuthenticationFailed(true);
         return Promise.reject();
       }
     )
   }
 
-  logout(store) {
+  logout(authStore) {
     TokenService.removeUser();
-    store.dispatch('auth/setToken', null);
-    store.dispatch('auth/setAuthenticated', false);
+    authStore.setToken(null);
+    authStore.setAuthenticated(false);
   }
 
-  async getRole(store) {
+  async getRole(authStore) {
     await axiosInstance.get("accounts/role/").then(
       (response) => {
-        store.dispatch("auth/setRole", response.data.role);
+        authStore.setRole(response.data.role);
         return Promise.resolve(); 
       },
-      (error) => {
-        store.dispatch("auth/setRole", "reader");
+      (_error) => {
+        authStore.setRole("reader");
         return Promise.resolve();
       }
     );
   }
 
-  async refreshToken(store, cb) {
-    if (store.state.auth.isRefreshing) {
-        const chained = store.state.auth.refreshingCall.then(cb);
-        store.dispatch('auth/setRefreshingCall', chained);
+  async refreshToken(authStore, cb) {
+    if (authStore.isRefreshing) {
+        const chained = authStore.refreshingCall.then(cb);
+        authStore.setRefreshingCall(chained);
         return chained;
     }
     const token = TokenService.getLocalAccessToken();
     if (token){
-      store.dispatch('auth/setRefreshingState', true);
+      authStore.setRefreshingState(true);
       const refreshingCall = axiosInstance.post("token/verify/", {
         token: token
       }).then(
         (_) => {
-          store.dispatch('auth/setToken', token);
-          store.dispatch('auth/setAuthenticated', true);
-          store.dispatch('auth/setRefreshingState', false);
-          store.dispatch('auth/setRefreshingCall', undefined);
+          authStore.setToken(token);
+          authStore.setAuthenticated(true);
+          authStore.setRefreshingState(false);
+          authStore.setRefreshingCall(undefined);
           return Promise.resolve(token);
         },
         async (_error) => {
@@ -81,31 +81,31 @@ class AuthService {
               (response) =>{
                 const access = response.data.access;
                 TokenService.updateLocalAccessToken(access);
-                store.dispatch('auth/setToken', access);
-                store.dispatch('auth/setAuthenticated', true);
-                store.dispatch('auth/setRefreshingState', false);
-                store.dispatch('auth/setRefreshingCall', undefined);
+                authStore.setToken(access);
+                authStore.setAuthenticated(true);
+                authStore.setRefreshingState(false);
+                authStore.setRefreshingCall(undefined);
                 return Promise.resolve(access);
               },
               _error =>{
-                store.dispatch('auth/setRefreshingState', false);
-                store.dispatch('auth/setAuthenticationFailed', true);
+                authStore.setRefreshingState(false);
+                authStore.setAuthenticationFailed(true);
                 TokenService.removeUser();
                 return Promise.reject();
               }
             )
             .catch(
               (_error) => {
-                store.dispatch('auth/setRefreshingState', false);
-                store.dispatch('auth/setAuthenticationFailed', true);
+                authStore.setRefreshingState(false);
+                authStore.setAuthenticationFailed(true);
                 TokenService.removeUser();
                 return Promise.reject();
               }
             )
           }
           else{
-            store.dispatch('auth/setRefreshingState', false);
-            store.dispatch('auth/setAuthenticationFailed', true);
+            authStore.setRefreshingState(false);
+            authStore.setAuthenticationFailed(true);
             TokenService.removeUser();
             return Promise.reject();
           }
@@ -113,23 +113,23 @@ class AuthService {
       )
       .catch(
         (_error) => {
-          store.dispatch('auth/setRefreshingState', false);
-          store.dispatch('auth/setAuthenticationFailed', true);
+          authStore.setRefreshingState(false);
+          authStore.setAuthenticationFailed(true);
           TokenService.removeUser();
           return Promise.reject();
         }
       )
       .then(cb);
-      store.dispatch('auth/setRefreshingCall', refreshingCall);
+      authStore.setRefreshingCall(refreshingCall);
       return refreshingCall;
     }
-    store.dispatch('auth/setAuthenticationFailed', true);
-    store.dispatch('auth/setRefreshingState', false);
+    authStore.setAuthenticationFailed(true);
+    authStore.setRefreshingState(false);
     TokenService.removeUser();
     return Promise.reject();
   }
 
-  async register(_store, user) {
+  async register(_authStore, user) {
     return await axiosInstance.post('accounts/registration/', {
       username: user.username,
       email: user.email,

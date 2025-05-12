@@ -10,6 +10,7 @@ import HeaderNav from "@/components/HeaderNav.vue";
 import SiteFooter from "@/components/SiteFooter.vue";
 import EventBus from "./common/EventBus";
 import AuthService from "./services/auth.service";
+import { useAuthStore } from './stores/auth';
 
 export default {
   components: {SiteFooter, HeaderNav},
@@ -24,7 +25,8 @@ export default {
   },
   methods: {
     logOut() {
-      AuthService.logout(this.$store);
+      const authStore = useAuthStore();
+      AuthService.logout(authStore);
     }
   }
 }
