@@ -14,6 +14,8 @@ import ShowStory from "@/views/Story/ShowStory.vue";
 import AddEditStory from "@/views/Story/AddEditStory.vue";
 import SearchResults from "@/views/SearchResults.vue";
 import { useAuthStore } from '@/stores';
+import SingleCategory from '@/views/SingleCategory.vue';
+import AllCategories from '@/views/AllCategories.vue';
 
 const routes = [
   {
@@ -137,6 +139,22 @@ const routes = [
     path: '/about',
     name: 'about',
     component: About,
+    meta: {
+      authRequired: 'false'
+    },
+  },
+  {
+    path: '/categories',
+    name: 'all-categories',
+    component: AllCategories,
+    meta: {
+      authRequired: 'false'
+    },
+  },
+  {
+    path: '/category/:category_id',
+    name: 'single-category',
+    component: SingleCategory,
     meta: {
       authRequired: 'false'
     },
