@@ -81,6 +81,7 @@ export default {
   .list-group-item {
     background-color: black !important;
     border: none;
+    position: static;
   }
 
   .menu-bar-item {

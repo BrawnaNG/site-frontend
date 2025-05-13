@@ -48,6 +48,15 @@
                   Dashboard
                 </router-link>
               </li>
+              <li class="nav-item">
+                <router-link
+                  class="navbar-menu-item-link nav-link"
+                  :to="{name: 'all-categories'}"
+                  @click="collapseNavbar"
+                >
+                  Categories
+                </router-link>
+              </li>
               <li 
                 v-if="role.isAdmin"
                 class="nav-item"
