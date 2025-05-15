@@ -22,17 +22,28 @@ const setup = () => {
 
   axiosInstance.interceptors.response.use(
     (response) => response,
-    (error) => {
+    async (error) => {
       const status = error.response?.status;
       const url = error.config.url;
+      
+      // Only attempt token refresh for 401 errors on non-token endpoints
       if (status === 401 && !url.startsWith("token")) {
-        const authenticationFailed = authStore.authenticationFailed;
-        if (!authenticationFailed){
-          return AuthService.refreshToken(authStore, _ => {
-            error.config.headers['Authorization'] = 'Bearer ' + authStore.token;
-            error.config.baseURL = undefined;
-            return axiosInstance.request(error.config);
-          });
+        // Don't attempt refresh if authentication has already failed
+        if (!authStore.authenticationFailed) {
+          try {
+            // Try to refresh the token and retry the original request
+            await AuthService.refreshToken(authStore, token => {
+              // Update the failed request with the new token
+              error.config.headers['Authorization'] = 'Bearer ' + token;
+              // Prevent axios from using the baseURL again since it's already in the URL
+              error.config.baseURL = undefined;
+              // Retry the original request with the new token
+              return axiosInstance.request(error.config);
+            });
+          } catch (refreshError) {
+            // Token refresh failed, continue with rejection
+            console.log("Token refresh failed:", refreshError);
+          }
         }
       }
       return Promise.reject(error);
