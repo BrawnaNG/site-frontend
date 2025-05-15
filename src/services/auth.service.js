@@ -53,80 +53,61 @@ class AuthService {
   }
 
   async refreshToken(authStore, cb) {
-    if (authStore.isRefreshing) {
-        const chained = authStore.refreshingCall.then(cb);
-        authStore.setRefreshingCall(chained);
-        return chained;
+    //Edge case when users are deleted from database, e.g. on migration, but they have a valid token
+    if (authStore.isAuthenticated && !authStore.authenticationFailed){
+      this.handleRefreshFailure(authStore);
+      return Promise.reject("Cannot use refresh token");
     }
-    const token = TokenService.getLocalAccessToken();
-    if (token){
-      authStore.setRefreshingState(true);
-      const refreshingCall = axiosInstance.post("token/verify/", {
-        token: token
-      }).then(
-        (_) => {
-          authStore.setToken(token);
-          authStore.setAuthenticated(true);
-          authStore.setRefreshingState(false);
-          authStore.setRefreshingCall(undefined);
-          return Promise.resolve(token);
-        },
-        async (_error) => {
-          const refreshToken = TokenService.getLocalRefreshToken();
-          if (refreshToken){
-            await axiosInstance.post("token/refresh/", {
-              refresh: refreshToken,
-              token: refreshToken
-            }).then(
-              (response) =>{
-                const access = response.data.access;
-                TokenService.updateLocalAccessToken(access);
-                authStore.setToken(access);
-                authStore.setAuthenticated(true);
-                authStore.setRefreshingState(false);
-                authStore.setRefreshingCall(undefined);
-                return Promise.resolve(access);
-              },
-              _error =>{
-                authStore.setRefreshingState(false);
-                authStore.setAuthenticationFailed(true);
-                TokenService.removeUser();
-                return Promise.reject();
-              }
-            )
-            .catch(
-              (_error) => {
-                authStore.setRefreshingState(false);
-                authStore.setAuthenticationFailed(true);
-                TokenService.removeUser();
-                return Promise.reject();
-              }
-            )
-          }
-          else{
-            authStore.setRefreshingState(false);
-            authStore.setAuthenticationFailed(true);
-            TokenService.removeUser();
-            return Promise.reject();
-          }
-        }
-      )
-      .catch(
-        (_error) => {
-          authStore.setRefreshingState(false);
-          authStore.setAuthenticationFailed(true);
-          TokenService.removeUser();
-          return Promise.reject();
-        }
-      )
-      .then(cb);
+
+    // If already refreshing, chain this request to the existing refresh call
+    if (authStore.isRefreshing) {
+      return authStore.refreshingCall.then(cb);
+    }
+
+    const refreshToken = TokenService.getLocalRefreshToken();
+    if (!refreshToken) {
+      this.handleRefreshFailure(authStore);
+      return Promise.reject("No refresh token available");
+    }
+
+    // Set refreshing state
+    authStore.setRefreshingState(true);
+    
+    try {
+      // Attempt to refresh the token
+      const refreshingCall = axiosInstance.post("token/refresh/", {
+        refresh: refreshToken
+      }).then(response => {
+        // Success - update token and state
+        const newAccessToken = response.data.access;
+        TokenService.updateLocalAccessToken(newAccessToken);
+        authStore.setToken(newAccessToken);
+        authStore.setAuthenticated(true);
+        authStore.setRefreshingState(false);
+        return newAccessToken;
+      }).catch(error => {
+        // Refresh failed - clear authentication
+        this.handleRefreshFailure(authStore);
+        throw error;
+      }).then(cb);
+      
+      // Store the refreshing call for potential chaining
       authStore.setRefreshingCall(refreshingCall);
       return refreshingCall;
+    } catch (error) {
+      this.handleRefreshFailure(authStore);
+      return Promise.reject(error);
     }
-    authStore.setAuthenticationFailed(true);
+  }
+
+  // Helper method to handle refresh failures
+  handleRefreshFailure(authStore) {
     authStore.setRefreshingState(false);
+    authStore.setRefreshingCall(undefined);
+    authStore.setToken(null);
+    authStore.setAuthenticated(false);
+    authStore.setAuthenticationFailed(true);
     TokenService.removeUser();
-    return Promise.reject();
   }
 
   async register(_authStore, user) {
