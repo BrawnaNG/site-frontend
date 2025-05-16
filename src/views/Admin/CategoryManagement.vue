@@ -266,7 +266,7 @@ export default {
       this.categoryModal.show();
     },
     deleteCategory(id){
-      this.axios.delete(`category/change/${id}/`).then(
+      this.axios.delete(`category/remove/${id}/`).then(
         _ => {
           this.$toast.add({ severity: 'info', summary: 'Info', detail: 'Category Deleted', life: 3000 });
           this.refreshCategories();

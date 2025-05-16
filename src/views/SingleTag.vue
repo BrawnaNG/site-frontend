@@ -4,7 +4,7 @@
         <div class="container-fluid search-result-page-content my-2 p-2">
             <div class="row my-2 pb-3 col-12 mx-auto justify-content-between">
                 <h2 class="m-0 font-weight-bolder">
-                    Category: {{categoryName}}
+                    Tag: {{tagName}}
                 </h2>
             </div>
 
@@ -63,11 +63,11 @@ const results = ref([]);
 const resultsCount = ref(0);
 const cols = 3;
 const currentPage = ref(1);
-const categoryName = ref("");
-const category_id = ref(route.params.category_id);
+const tagName = ref("");
+const tag_id= ref(route.params.tag_id);
 
 onMounted( async () => {
-    await categoryInfo();
+    await tagInfo();
     await initialSearch();
 });
 
@@ -79,13 +79,13 @@ const chunks = computed( () => {
 });
 
 const initialSearch = () => {
-  categorySearch(1, false);
+  tagSearch(1, false);
 }
 
-const categoryInfo = async () => {
-    await api.get(`/category/info/${category_id.value}/`).then(res => {
+const tagInfo = async () => {
+    await api.get(`/tag/info/${tag_id.value}/`).then(res => {
         if (res && res.data){
-            categoryName.value = res.data.name;
+            tagName.value = res.data.name;
         }
     });
 };
@@ -98,9 +98,9 @@ const chunkResults = (results) => {
   return chunks;
 }
 
-const categorySearch = async (page, append) => {
+const tagSearch = async (page, append) => {
     currentPage.value = page;
-    await api.get(`/story/bycategory/${category_id.value}?page=${page}`).then(res => {
+    await api.get(`/story/bytag/${tag_id.value}?page=${page}`).then(res => {
       if (append){
         results.value = results.value.concat(res.data.results);
       }
@@ -113,7 +113,7 @@ const categorySearch = async (page, append) => {
 
 const advance = () =>
 {
-  categorySearch(currentPage.value + 1, true);
+  tagSearch(currentPage.value + 1, true);
 }
 
 </script>
