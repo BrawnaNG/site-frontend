@@ -151,6 +151,7 @@
               v-for="(tag, index) in chunk"
               :key="`tag_${index}`"
               class="col-4 border"
+              @click="gotoTag(tag.id)"
             >
               <div class="card-user-name font-weight-bold">
                 {{ tag.name }}
@@ -277,6 +278,10 @@ const advanceStorySearch = () =>
   storySearch(storyPage.value + 1, true);
 }
 
+const gotoTag = (id) => {
+  router.push({name: 'single-tag', params: { tag_id: id } });
+}
+
 const authorSearch = async (page, append) => {
   if (searchTextInput.value){
     authorPage.value = page;
@@ -299,7 +304,7 @@ const advanceAuthorSearch = () => {
 const tagSearch = async (page, append)  => {
   if (searchTextInput.value){
     tagPage.value = page;
-    await api.get(`/story/search/tag?tag==${searchTextInput.value}&page=${page}`).then(res => {
+    await api.get(`/story/search/tag?tag=${searchTextInput.value}&page=${page}`).then(res => {
       if (append){
         tagResults.value = tagResults.value.concat(res.data.results);
       }

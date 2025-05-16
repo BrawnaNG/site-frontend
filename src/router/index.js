@@ -16,6 +16,8 @@ import SearchResults from "@/views/SearchResults.vue";
 import { useAuthStore } from '@/stores';
 import SingleCategory from '@/views/SingleCategory.vue';
 import AllCategories from '@/views/AllCategories.vue';
+import SingleTag from '@/views/SingleTag.vue';
+import AllTags from '@/views/AllTags.vue';
 
 const routes = [
   {
@@ -155,6 +157,22 @@ const routes = [
     path: '/category/:category_id',
     name: 'single-category',
     component: SingleCategory,
+    meta: {
+      authRequired: 'false'
+    },
+  },
+  {
+    path: '/tags',
+    name: 'all-tags',
+    component: AllTags,
+    meta: {
+      authRequired: 'false'
+    },
+  },
+  {
+    path: '/tag/:tag_id',
+    name: 'single-tag',
+    component: SingleTag,
     meta: {
       authRequired: 'false'
     },
