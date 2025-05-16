@@ -4,7 +4,7 @@
         <div class="container-fluid search-result-page-content my-2 p-2">
             <div class="row my-2 pb-3 col-12 mx-auto justify-content-between">
                 <h2 class="m-0 font-weight-bolder">
-                    Author: {{authorName}}
+                    {{ displayType }}: {{name}}
                 </h2>
             </div>
 
@@ -63,13 +63,40 @@ const results = ref([]);
 const resultsCount = ref(0);
 const cols = 3;
 const currentPage = ref(1);
-const authorName = ref("");
-const author_id= ref(route.params.author_id);
+const name = ref("");
+const id = ref(route.params.id);
+const type = ref(route.params.type);
 
 onMounted( async () => {
-    await authorInfo();
+    await info();
     await initialSearch();
 });
+
+const displayType = computed(() =>{
+  switch(type.value){
+    case 'tag':
+      return "Tags";
+    case 'accounts':
+      return "Authors";
+    case 'category':
+      return "Categories";
+    default:
+      return null;
+  }
+});
+
+const searchType = () => {
+    switch(type.value){
+    case 'tag':
+      return "bytag";
+    case 'accounts':
+      return "byauthor";
+    case 'category':
+      return "bycategory";
+    default:
+      return null;
+  }
+}
 
 const chunks = computed( () => {
   if (resultsCount.value > 0){
@@ -79,13 +106,13 @@ const chunks = computed( () => {
 });
 
 const initialSearch = () => {
-  authorSearch(1, false);
+  search(1, false);
 }
 
-const authorInfo = async () => {
-    await api.get(`/accounts/info/${author_id.value}/`).then(res => {
+const info = async () => {
+    await api.get(`/${type.value}/info/${id.value}/`).then(res => {
         if (res && res.data){
-            authorName.value = res.data.name;
+            name.value = res.data.name;
         }
     });
 };
@@ -98,9 +125,13 @@ const chunkResults = (results) => {
   return chunks;
 }
 
-const authorSearch = async (page, append) => {
+const search = async (page, append) => {
+    const searchBase = searchType();
+    if (!searchBase)
+      return
+
     currentPage.value = page;
-    await api.get(`/story/byauthor/${author_id.value}?page=${page}`).then(res => {
+    await api.get(`/story/${searchBase}/${id.value}?page=${page}`).then(res => {
       if (append){
         results.value = results.value.concat(res.data.results);
       }
@@ -113,7 +144,7 @@ const authorSearch = async (page, append) => {
 
 const advance = () =>
 {
-  authorSearch(currentPage.value + 1, true);
+  search(currentPage.value + 1, true);
 }
 
 </script>

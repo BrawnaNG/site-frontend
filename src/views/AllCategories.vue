@@ -17,7 +17,7 @@
           :key="`cat_${cat.id}`"
           class="row px-4"
         >
-            <router-link :to="{name: 'single-category', params: {category_id: cat.id}}">
+            <router-link :to="{name: 'single-parent', params: {type: 'category', id: cat.id}}">
               {{ cat.name }} ({{ cat.story_count }})
             </router-link>
             <div 
@@ -27,7 +27,7 @@
                 v-for="(sub1) in cat.children"
                   :key="`sub1_${sub1.id}`"
                 >
-                <router-link :to="{name: 'single-category', params: {category_id: sub1.id}}">
+                <router-link :to="{name: 'single-parent', params: {type: 'category', id: sub1.id}}">
                   {{ sub1.name }} ({{ sub1.story_count }})
                 </router-link>
 
@@ -38,7 +38,7 @@
                       v-for="(sub2) in sub1.children"
                         :key="`sub2_${sub1.id}`"
                       >
-                      <router-link :to="{name: 'single-category', params: {category_id: sub2.id}}">
+                      <router-link :to="{name: 'single-parent', params: {type: 'category', id: sub2.id}}">
                         {{ sub2.name }} ({{ sub2.story_count }})
                       </router-link>
                     
@@ -49,7 +49,7 @@
                             v-for="(sub3) in sub2.children"
                               :key="`sub3_${sub3.id}`"
                             >
-                            <router-link :to="{name: 'single-category', params: {category_id: sub3.id}}">
+                            <router-link :to="{name: 'single-parent', params: {type: 'category', id: sub3.id}}">
                               {{ sub3.name }} ({{ sub3.story_count }})
                             </router-link>
                           </div>
