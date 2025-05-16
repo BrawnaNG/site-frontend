@@ -18,6 +18,7 @@ import SingleCategory from '@/views/SingleCategory.vue';
 import AllCategories from '@/views/AllCategories.vue';
 import SingleTag from '@/views/SingleTag.vue';
 import AllTags from '@/views/AllTags.vue';
+import SingleAuthor from '@/views/SingleAuthor.vue';
 
 const routes = [
   {
@@ -173,6 +174,14 @@ const routes = [
     path: '/tag/:tag_id',
     name: 'single-tag',
     component: SingleTag,
+    meta: {
+      authRequired: 'false'
+    },
+  },
+  {
+    path: '/author/:author_id',
+    name: 'single-author',
+    component: SingleAuthor,
     meta: {
       authRequired: 'false'
     },

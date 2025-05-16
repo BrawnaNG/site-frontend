@@ -94,6 +94,7 @@
               v-for="(user, index) in chunk"
               :key="`user_${index}`"
               class="col-4 border"
+              @click="gotoAuthor(user.id)"
             >
               <div class="card-user-name font-weight-bold">
                 {{ user.alias }}
@@ -280,6 +281,10 @@ const advanceStorySearch = () =>
 
 const gotoTag = (id) => {
   router.push({name: 'single-tag', params: { tag_id: id } });
+}
+
+const gotoAuthor = (id) => {
+  router.push({name: 'single-author', params: { author_id: id } });
 }
 
 const authorSearch = async (page, append) => {
