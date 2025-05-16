@@ -14,11 +14,9 @@ import ShowStory from "@/views/Story/ShowStory.vue";
 import AddEditStory from "@/views/Story/AddEditStory.vue";
 import SearchResults from "@/views/SearchResults.vue";
 import { useAuthStore } from '@/stores';
-import SingleCategory from '@/views/SingleCategory.vue';
 import AllCategories from '@/views/AllCategories.vue';
-import SingleTag from '@/views/SingleTag.vue';
 import AllTags from '@/views/AllTags.vue';
-import SingleAuthor from '@/views/SingleAuthor.vue';
+import SingleParent from '@/views/SingleParent.vue';
 
 const routes = [
   {
@@ -155,9 +153,9 @@ const routes = [
     },
   },
   {
-    path: '/category/:category_id',
-    name: 'single-category',
-    component: SingleCategory,
+    path: '/single/:type/:id',
+    name: 'single-parent',
+    component: SingleParent,
     meta: {
       authRequired: 'false'
     },
@@ -166,22 +164,6 @@ const routes = [
     path: '/tags',
     name: 'all-tags',
     component: AllTags,
-    meta: {
-      authRequired: 'false'
-    },
-  },
-  {
-    path: '/tag/:tag_id',
-    name: 'single-tag',
-    component: SingleTag,
-    meta: {
-      authRequired: 'false'
-    },
-  },
-  {
-    path: '/author/:author_id',
-    name: 'single-author',
-    component: SingleAuthor,
     meta: {
       authRequired: 'false'
     },

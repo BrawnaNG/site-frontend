@@ -14,7 +14,7 @@
             class="pe-1 d-inline tag-cloud"
             :class="tagClass(tag.index,pos)"
           >
-              <router-link :to="{name: 'single-tag', params: {tag_id: tag.id}}">
+              <router-link :to="{name: 'single-parent', params: {type: 'tag', id: tag.id}}">
                 <span class="text-nowrap">{{ tag.name }} ({{  tag.story_count }})</span>
               </router-link>
               &nbsp;

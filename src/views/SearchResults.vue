@@ -280,11 +280,11 @@ const advanceStorySearch = () =>
 }
 
 const gotoTag = (id) => {
-  router.push({name: 'single-tag', params: { tag_id: id } });
+  router.push({name: 'single-parent', params: { type: 'tag', id: id } });
 }
 
 const gotoAuthor = (id) => {
-  router.push({name: 'single-author', params: { author_id: id } });
+  router.push({name: 'single-parent', params: { type: 'accounts', id: id } });
 }
 
 const authorSearch = async (page, append) => {
