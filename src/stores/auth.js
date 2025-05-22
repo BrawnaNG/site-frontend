@@ -2,11 +2,8 @@ import { defineStore } from 'pinia';
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    isRefreshing: false,
-    refreshingCall: null,
     token: null,
     isAuthenticated: false,
-    authenticationFailed: false,
     role: {
       isInit: false,
       isAdmin: false,
@@ -28,17 +25,7 @@ export const useAuthStore = defineStore('auth', {
       this.isAuthenticated = authenticated;
       return authenticated;
     },
-    
-    setRefreshingState(refreshingState) {
-      this.isRefreshing = refreshingState;
-      return refreshingState;
-    },
-    
-    setRefreshingCall(refreshingCall) {
-      this.refreshingCall = refreshingCall;
-      return refreshingCall;
-    },
-    
+        
     setRole(role) {
       this.role = {
         isInit: role ? true : false,
@@ -47,10 +34,5 @@ export const useAuthStore = defineStore('auth', {
       };
       return role;
     },
-    
-    setAuthenticationFailed(authenticationFailed) {
-      this.authenticationFailed = authenticationFailed;
-      return authenticationFailed;
-    }
   }
 });
