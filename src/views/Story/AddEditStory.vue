@@ -250,7 +250,7 @@
 </template>
 
 <script async setup>
-import { ref, reactive, computed, onMounted } from 'vue';
+import { ref, reactive, computed, onMounted, watch } from 'vue';
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import BreadCrumbs from "@/components/Dashboard/BreadCrumbs.vue";
@@ -260,6 +260,7 @@ import VueTagsInput from '@sipec/vue3-tags-input';
 import categorySort from "@/common/CategorySort";
 import api from '@/services/api';
 import { useRouter } from 'vue-router';
+import { debounce } from 'lodash-es';
 
 const router = useRouter();
 
@@ -294,15 +295,15 @@ const current_chapter = reactive({
 });
 
 const new_tag = ref('');
+const debounced_tag = ref('');
 const tags = ref([]);
-const autocomplete_tags = ref([]);
 const all_categories = ref([]);
 const expanded_categories = ref({});
 const selected_chapter = ref({});
 const chapter_guard = ref(false);
+const filteredTags = ref([]);
 
-
-const tag_validation = [
+const tag_validation = [ 
   {
     classes: 'no-special',
     rule: /^[a-zA-Z\d\s:]/,
@@ -310,21 +311,29 @@ const tag_validation = [
   },
 ];
 
+const handleTagInput = debounce( async() => {
+  debounced_tag.value = new_tag.value;
+  const res = await api.get(`/story/search/tag?tag=${debounced_tag.value}&page=1`);
+  filteredTags.value = res.data.results.map((tag) => {
+    return {
+      text: tag.name,
+      id: tag.id
+    }
+  });
+}, 500);
+
+watch(new_tag, () => {
+  handleTagInput();
+});
+
 // Lifecycle hooks
 onMounted( async () => {
   await getAllCategories();
-  await getAllTags();
   await loadStory();
   await loadChapter(story.chapter_summaries[0].id);
 });
 
 // Computed properties
-const filteredTags = computed(() => {
-  return autocomplete_tags.value.filter(i => {
-    return i.text.toLowerCase().indexOf(new_tag.value.toLowerCase()) !== -1;
-  });
-});
-
 const selected_categories = computed( {
   get() {
     return story.categories.reduce((cats, cat) => {
@@ -428,21 +437,10 @@ const makeCategory = (categories, root) => {
   }
 };
 
-const getAllTags = async () => {
-  try {
-    const res = await api.get(`/tag/`);
-    autocomplete_tags.value = res.data.results.map((tag) => {
-      return {
-        text: tag.name,
-        id: tag.id
-      }
-    });
-  } catch (error) {
-    console.error("Error fetching tags:", error);
-  }
-};
-
 const isDuplicate = (tagsArray, tag) => {
+  if (tagsArray.length == 0){
+    return false;
+  }
   return tagsArray.map(t => t.text.toLowerCase()).indexOf(tag.text.toLowerCase()) !== -1;
 };
 
