@@ -81,16 +81,16 @@
       </div>
       <div class="col-6">
         <div class="content-fluid">
-          <div class="row pb-4">
-            <div class="col-2">
+          <div class="row pb-3">
+            <div class="col-3">
               <label 
                 for="titleInput"
-                class="form-label"
+                class="form-label pt-2 pb-2"
               >
                 Story title
               </label>
             </div>
-            <div class="col-7">
+            <div class="col-9">
               <input 
                 id="titleInput"
                 v-model="story.title"
@@ -98,12 +98,32 @@
                 class="form-control"
               >
             </div>
+            <div class="row">
+              <div class="col-3">
+                <label>
+                  Status
+                </label>
+              </div>
+              <div class="col-9">
+                <span 
+                  v-if="!story.is_published"
+                  class="badge rounded-pill text-bg-warning"
+                >Draft</span>
+                <span 
+                  v-if="story.is_published"
+                  class="badge rounded-pill text-bg-success"
+                >Published</span>
+              </div>
+            </div>
           </div>
-          <div class="row pb-4 m-0 justify-content-between">
-            <div class="col-9">
-              <h6 class="m-0">
+          <div class="row pb-1">
+            <div class="col-3">
+              <label
+                for="flexSwitchCheckChecked"
+                class="form-label"
+              >
                 Multiple chapters?
-              </h6>
+              </label>
             </div>
             <div class="col-3">
               <div class="form-check form-switch">
@@ -119,18 +139,18 @@
             </div>
           </div>
           <div 
-            class="row pb-4"
+            class="row pb-2"
             v-if="story.has_chapters"
           >
-            <div class="col-2">
+            <div class="col-3">
               <label 
                 for="chapterTitleInput"
-                class="form-label"
+                class="form-label pt-2"
               >
                 Chapter title
               </label>
             </div>
-            <div class="col-7">
+            <div class="col-9">
               <input 
                 id="chapterTitleInput"
                 v-model="current_chapter.title"
@@ -429,6 +449,7 @@ const saveStory = async (is_published) => {
           }
         })
       });
+    await loadStory();
     await api.put(`/story/chapter-save/${current_chapter.id}/`,
     {
       title: current_chapter.title,
