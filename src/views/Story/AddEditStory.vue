@@ -212,8 +212,10 @@
           <div class="row">
             <TreeTable
               :value="all_categories"
-              selectionMode="multiple"
+              selectionMode="checkbox"
               v-model:selectionKeys="selected_categories"
+              v-model:expandedKeys="expanded_categories"
+              @node-select="handleNodeSelect"
             >
               <Column 
                 field="name"
@@ -295,9 +297,10 @@ const new_tag = ref('');
 const tags = ref([]);
 const autocomplete_tags = ref([]);
 const all_categories = ref([]);
-const selected_categories = ref({});
+const expanded_categories = ref({});
 const selected_chapter = ref({});
 const chapter_guard = ref(false);
+
 
 const tag_validation = [
   {
@@ -322,6 +325,19 @@ const filteredTags = computed(() => {
   });
 });
 
+const selected_categories = computed( {
+  get() {
+    return story.categories.reduce((cats, cat) => {
+      cats[cat.id] = {
+        checked: true
+      };
+      return cats;
+    }, {});
+  },
+  // Ignore sets
+  set(_newValue){}
+});
+
 const chapters = computed( () =>{
   if (!chapter_guard.value){
     return story.chapter_summaries.map((chap,index) => {
@@ -338,6 +354,13 @@ const chapters = computed( () =>{
 })
 
 // Methods
+const handleNodeSelect = (node) => 
+{
+  story.categories.push(node.data);
+  expanded_categories.value[node.key] = true;
+  return true;
+}
+
 const loadStory = async () => {
   const res = await api.get(`/story/detail/${props.id}`);
   Object.assign(story, res.data);
@@ -349,10 +372,11 @@ const loadStory = async () => {
     }
   });
 
-  selected_categories.value = story.categories.reduce((cats, cat) => {
+  expanded_categories.value = story.categories.reduce((cats, cat) => {
     cats[cat.id] = true;
     return cats;
   }, {});
+
 }
 
 const loadChapter = async (chapter_id) => {
