@@ -34,9 +34,9 @@
             <div class="row">
               <div class="rounded border p-1">
                 <input
-                  v-model="storyTitle"
+                  v-model="storytitle"
                   type="text"
-                  class="border-0 story-form-input form-control"      
+                  class="border-0 story-form-input"      
                   placeholder="Enter a title for your story"
                 >
               </div>
@@ -67,30 +67,25 @@
   </div>
 </template>
 
-<script setup>
-
-  import { ref } from 'vue';
-  import api from '@/services/api';
-  import { useRouter } from 'vue-router';
-
-  const storyTitle = ref("");
-  const router = useRouter();
-
-  const createStory = async() => {
-    const res = await api.post('/story/add/',{
-      title: storyTitle.value
-    });
-    if (res && res.data){
-      const story_id = res.data.id;
-      await api.post(`/story/${story_id}/chapter/add/`,
-        {
-          pos: 0
-        }).then(_ => {
+<script>
+  export default {
+    name: "AddStory",
+    data() {
+      return {
+        storytitle: ''
+      }
+    },
+    methods: {
+      createStory() {
+        this.axios.post('/story/add/',{
+          title: this.storytitle
+        }).then(res => {
           document.getElementById('storyModalClose').click();
-          router.push({name: 'addEditStory', params: {id: story_id}})
-        });
+          this.$router.push({name: 'addEditStory', params: {id: res.data.id }})
+        })
+      }
     }
-  };
+  }
 </script>
 
 <style scoped lang="scss">

@@ -64,7 +64,7 @@
 
             <div class="row">
               <h3>
-                {{ current_chapter.title }}
+                {{ chapter.title }}
               </h3>
             </div>
 
@@ -73,14 +73,13 @@
             >
               <div 
                 class="ql-editor"
-                v-html="current_chapter.body"
+                v-html="chapter.body"
               >
               </div>
             </div>
 
             <div 
               class="row p-2"
-              v-if="story.comments && story.comments.length > 0"
             >
               <h6>Comments</h6>
             </div>
@@ -116,8 +115,7 @@
                     <textarea 
                       v-model="comment_text"
                       class="form-control"
-                    >
-                    </textarea>
+                    />
                   </div>
                 </div>
                 
@@ -167,99 +165,113 @@
   </div>
 </template>
 
-<script setup>
-import { ref, reactive, computed, onMounted } from 'vue';
+<script>
+import { inject } from 'vue';
 import CommentsCard from "@/components/Card/CommentsCard.vue";
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { useAuthStore } from '@/stores/auth';
-import api from '@/services/api';
-import { inject } from 'vue';
-import { Collapse } from 'bootstrap';
 
-const moment = inject('moment');
-
-// Props
-const props = defineProps({
-  id: {
-    type: String,
-    default: null
-  }
-});
-
-// Reactive state
-const story = reactive({
-  title: "",
-  user: "",
-  created_at: null,
-  categories: [],
-  tags: [],
-  has_chapters: false,
-  chapter_summaries: [],
-  comments: []
-});
-
-const current_chapter = reactive({
-  id: props.chapterid,
-  index: -1,
-  title: "",
-  body: '\n'
-});
-
-const selected_chapter = ref({});
-const comment_text = ref("");
-
-// Lifecycle hooks
-onMounted( async () => {
-  await getStory();
-  const chapter_id = story.chapter_summaries[0].id;
-  await loadChapter(chapter_id);
-});
-
-// Computed properties
-const chapters = computed( () =>{
-  return story.chapter_summaries.map((chap) => {
-    return {
-      key: chap.id,
-      data: (current_chapter.id && current_chapter.id == chap.id) ? current_chapter : chap,
-      selectable: true,
-      leaf: true
+export default {
+  name: "ShowStory",
+  components: {
+    CommentsCard
+  },
+  props: {
+    id: {
+      type: String,
+      default: null
+    },
+    chapterid: {
+      type: String,
+      default: null
     }
-  });
-})
-
-const isAuthenticated = computed( () => {
+  },
+  setup() {
+      const moment = inject('moment');
+      return { moment };
+    },
+  data() {
+    return {
+      story:{
+          title : "",
+          user: "",
+          created_at: null,
+          categories: [],
+          tags: [],
+          has_chapters: false,
+          comments: [],
+          chapters:[
+            {
+              id : ""
+            }
+          ]
+      },
+      chapter: 
+      {
+        id: this.chapterid,
+        index: -1,
+        title : "",
+        body: '\n'
+      },
+      chapters: [],
+      selected_chapter: {},
+      comment_text: ""
+    }
+  },
+  computed: {
+    isAuthenticated() {
       const authStore = useAuthStore();
       return authStore.isAuthenticated;
-});
+    }
+  },
+  mounted() {
+    this.getStory();
+  },
+  methods: {
+    getStory() {
+      this.axios.get(`/story/detail/${this.id}`).then(
+        res => {
+          this.story = res.data;
+          if (this.story.chapters && this.story.chapters.length > 0){
+            if (!this.chapter.id) {
+              this.chapter.id = this.story.chapters[0].id;
+            }
+            this.axios.get(`/story/chapter/${this.chapter.id}`).then(
+              chap_res => {
+                this.chapter.body = chap_res.data.body;
+                this.chapter.title = chap_res.data.title;
+              }
+            );
+          }
+          if (this.story.has_chapters){
+            this.chapters = this.story.chapters.map( (chap) => {
+              return {
+                  key: chap.id,
+                  data: this.chapter.id == chap.id ? this.chapter : chap,
+                  selectable: true,
+                  leaf: true
+              }
+            });
+            this.selected_chapter = {};
+            this.selected_chapter[this.chapter.id] = true;
+          }
 
-// Methods
-const getStory = async () => {
-  const res = await api.get(`/story/detail/${props.id}`);
-  Object.assign(story, res.data);
-};
-
-const loadChapter = async (chapter_id) => {
-  selected_chapter.value = {};
-  const res = await api.get(`/story/chapter/${chapter_id}/`);
-  Object.assign(current_chapter, res.data);
-  selected_chapter.value[current_chapter.id] = true;
-}
-  
-const onChapterSelect = async (chap) => {
-  await loadChapter(chap.key)
-};
-
-const addComment = async () => {
-  const res = await api.post(`/comment/add/${props.id}/`,{
-    body: comment_text.value
-  });
-  story.comments.push(res.data);
-  comment_text.value = "";
-  const commentBox = document.querySelector('#commentBox');
-  if (commentBox) {
-      new Collapse(commentBox, {
-          toggle: false,
-      }).hide();
+        }
+      );
+    },
+    addComment() {
+      this.axios.post(`/comment/add/${this.id}/`,
+        {
+          body: this.comment_text
+        }).then(res => {
+          this.story.comments.push(res.data);
+          this.comment_text = "";
+        })
+    },
+    async onChapterSelect(chap){
+      this.chapter.id = chap.key;
+      this.getStory();
+    },
   }
 }
 </script>

@@ -17,7 +17,6 @@ import { useAuthStore } from '@/stores';
 import AllCategories from '@/views/AllCategories.vue';
 import AllTags from '@/views/AllTags.vue';
 import SingleParent from '@/views/SingleParent.vue';
-import AuthService from '../services/auth.service';
 
 const routes = [
   {
@@ -176,14 +175,11 @@ var router = createRouter({
   routes,
 });
 
-router.beforeEach(async (to, _from, next) => {
+router.beforeEach((to, _from, next) => {
 
   if (to.meta.authRequired === 'true'){
     const authStore = useAuthStore();
-    if (!authStore.role.isInit){
-      await AuthService.getRole(authStore);
-    }
-    const role = authStore.role;
+    let role = authStore.role;
     if (to.meta.roles.includes('admin') && role.isAdmin){
       return next()
     }
