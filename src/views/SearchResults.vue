@@ -28,7 +28,7 @@
             class="btn btn-secondary" 
             type="button"
             aria-label="Clear"
-            @click="clearSearch"
+            @click="clearSearch(true)"
           >
           Clear
           </button>
@@ -239,7 +239,7 @@ watch(
   () => route.params.search,
   (newSearchText, _oldSearchText) => {
     searchTextInput.value = newSearchText;
-    clearSearch();
+    clearSearch(false);
     initialSearch();
   }
 )
@@ -325,7 +325,7 @@ const advanceTagSearch = () => {
   authorSearch(tagPage.value+1, true);
 }
 
-const clearSearch = () => {
+const clearSearch = (clearInput) => {
   storyResults.value = [];
   storyResultsCount.value = 0;
   authorResults.value = [];
@@ -335,6 +335,8 @@ const clearSearch = () => {
   storyPage.value = 1;
   authorPage.value = 1;
   tagPage.value = 1;
+  if (clearInput)
+    searchTextInput.value = '';
 }
 
 const pushSearch = () => {
@@ -346,7 +348,7 @@ const pushSearch = () => {
   });
 }
 
-clearSearch();
+clearSearch(false);
 initialSearch();
 </script>
 

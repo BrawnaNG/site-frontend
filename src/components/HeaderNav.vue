@@ -176,7 +176,6 @@
 
 <script>
 import LoginForm from "@/components/LoginForm.vue";
-import MultiSearch from "@/components/MultiSearch.vue";
 import EventBus from "../common/EventBus";
 import AuthService from '../services/auth.service';
 import {Collapse} from "bootstrap";
@@ -184,7 +183,7 @@ import { useAuthStore } from '../stores/auth';
 
 export default {
   name: "HeaderNav",
-  components: {MultiSearch, LoginForm},
+  components: {LoginForm},
   data() {
     return {
       loginModal: {
