@@ -1,52 +1,55 @@
 <template>
-  <div class="search-result-page">
-      <div class="container-fluid search-result-page-content my-2 p-2">
-          <div class="row my-2 pb-3 col-12 mx-auto justify-content-between">
-              <h2 class="m-0 font-weight-bolder">
-                  {{ displayType }}: {{name}}
-              </h2>
+    <div class="search-result-page">
+
+        <div class="container-fluid search-result-page-content my-2 p-2">
+            <div class="row my-2 pb-3 col-12 mx-auto justify-content-between">
+                <h2 class="m-0 font-weight-bolder">
+                    {{ displayType }}: {{name}}
+                </h2>
+            </div>
+
+          <div class="row pb-4 px-3">
+            <h3 class="m-0">
+              {{resultsCount}} stories found
+            </h3>
           </div>
-        <div class="row pb-4 px-3">
-          <h3 class="m-0">
-            {{resultsCount}} stories found
-          </h3>
-        </div>
-        <template v-if="resultsCount > 0">
-          <div 
-            v-for="(chunk, row) in chunks"
-            :key="`chunk_${row}`"
-            class="row p-2"
-          >
-            <div
-              v-for="story in chunk"
-              :key="`story_${story.id}`"
-              class="col-4"
+          <template v-if="resultsCount > 0">
+            <div 
+              v-for="(chunk, row) in chunks"
+              :key="`chunk_${row}`"
+              class="row p-2"
             >
-              <story-mini-card 
-                :card-mode="'mini'"
-                :story-card="story"
-              />
+              <div
+                v-for="story in chunk"
+                :key="`story_${story.id}`"
+                class="col-4"
+              >
+                <story-mini-card 
+                  :card-mode="'mini'"
+                  :story-card="story"
+                />
+              </div>
+            </div>
+            <div class="row p-2">
+            <div 
+              v-if="results.length < resultsCount"
+              class="col-xl-2 mx-auto">
+              <button 
+                class="px-2 py-1 font-weight-bold rounded-pill home-default-btn"
+                @click="advance">
+                Show More
+              </button>
             </div>
           </div>
-          <div class="row p-2">
-          <div 
-            v-if="results.length < resultsCount"
-            class="col-xl-2 mx-auto">
-            <button 
-              class="px-2 py-1 font-weight-bold rounded-pill home-default-btn"
-              @click="advance">
-              Show More
-            </button>
-          </div>
+
+          </template>
+          <template v-else>
+            <div class="row m-0 w-100 h-100 font-size-8 font-weight-bold text-secondary justify-content-center align-items-center">
+              No Stories found.
+            </div>
+          </template>
         </div>
-        </template>
-        <template v-else>
-          <div class="row m-0 w-100 h-100 font-size-8 font-weight-bold text-secondary justify-content-center align-items-center">
-            No Stories found.
-          </div>
-        </template>
-      </div>
-  </div>
+    </div>
 </template>
 
 <script setup>
@@ -72,11 +75,11 @@ onMounted( async () => {
 const displayType = computed(() =>{
   switch(type.value){
     case 'tag':
-      return "Tag";
+      return "Tags";
     case 'accounts':
-      return "Author";
+      return "Authors";
     case 'category':
-      return "Category";
+      return "Categories";
     default:
       return null;
   }

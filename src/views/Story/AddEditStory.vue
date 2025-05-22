@@ -21,7 +21,7 @@
       <div class="col-3 pl-0">
         <div 
           class="container-fluid saved-stories-tags pt-2"
-          v-if="story.has_chapters"
+          v-if="has_chapters === 'true'"
           >
           <div class="row">
             <h6>Chapters</h6>
@@ -34,50 +34,14 @@
               @nodeSelect="onChapterSelect"
             >
               <Column 
-                field="index_1"
-                style="width:20%">
-              </Column>
-              <Column 
                 field="title"
-                style="width: 80%">
+                style="width: 100%">
               </Column>
             </TreeTable>
           </div>
         </div>
-        <div class="row justify-content-center pt-2 px-2">
-          <div class="col-9">
-            <button 
-              class="btn btn-secondary rounded m-2 p-2 w-100"
-              v-if="story.has_chapters && current_chapter.index > 0"
-              @click="newChapter(true)"
-            >
-              New Chapter Before
-            </button>
-          </div>
-        </div>
-        <div class="row justify-content-center px-2">
-          <div class="col-9">
-            <button 
-              class="btn btn-secondary rounded m-2 p-2 w-100"
-              v-if="story.has_chapters"
-              @click="newChapter(false)"
-            >
-              New Chapter After
-            </button>
-          </div>
-        </div>
-        <div class="row justify-content-center px-2">
-          <div class="col-9">
-            <button 
-              class="btn btn-danger rounded m-2 p-2 w-100"
-              v-if="story.has_chapters && story.chapter_summaries.length > 1"
-              data-bs-toggle="modal" 
-              data-bs-target="#deleteChapterModal"
-            >
-              Delete Chapter
-            </button>
-          </div>
-        </div>
+
+        <!--          <vue-tree-navigation :items="items"  :defaultOpenLevel="defaultOpenLevel"/>-->
       </div>
       <div class="col-6">
         <div class="content-fluid">
@@ -99,28 +63,9 @@
               >
             </div>
           </div>
-          <div class="row pb-4 m-0 justify-content-between">
-            <div class="col-9">
-              <h6 class="m-0">
-                Multiple chapters?
-              </h6>
-            </div>
-            <div class="col-3">
-              <div class="form-check form-switch">
-                <input 
-                  class="form-check-input" 
-                  type="checkbox" 
-                  id="flexSwitchCheckChecked"
-                  :checked="story.has_chapters"
-                  :disabled="story.has_chapters && story.chapter_summaries.length > 1"
-                  @click="toggleHasChapters"
-                >
-              </div>
-            </div>
-          </div>
           <div 
             class="row pb-4"
-            v-if="story.has_chapters"
+            v
           >
             <div class="col-2">
               <label 
@@ -133,38 +78,76 @@
             <div class="col-7">
               <input 
                 id="chapterTitleInput"
-                v-model="current_chapter.title"
+                v-model="chapter.title"
                 type="text"
                 class="form-control"
               >
             </div>
           </div>
+          <div class="row pb-4 m-0 justify-content-between">
+            <div class="col-9">
+              <h6 class="m-0">
+                Are there multiple chapters in your story?
+              </h6>
+            </div>
+            <div class="col-3">
+              <input 
+                id="chapters-yes"
+                type="radio"
+                v-model="has_chapters"
+                value="true">
+              <label for="chapters-yes">Yes</label>
+              <input 
+                id="chapters-no"
+                type="radio"
+                v-model="has_chapters"
+                value="false">
+              <label for="chapters-yes">No</label>
+            </div>
+          </div>
           <div class="row text-editor-chapter py-2 h-75">
               <QuillEditor 
                 id="qe-editor"
-                v-model:content="current_chapter.body"
+                v-model:content="chapter.body"
                 theme="snow" 
                 content-type="html"
               />
-          </div>
-          <div class="row pt-2 m-0">
-            <div class="col-12">
+            </div>
+          <div class="row pt-3 justify-content-between m-0">
+            <div class="col-2 p-0 px-4">
+              <button class="story-default-btn saved-stories-btn px-2 py-1 mr-2 font-weight-bold rounded-pill">
+                Cancel
+              </button>
+            </div>
+            <div class="col-3 p-0 px-4">
               <button 
-                class="btn btn-secondary rounded me-2"
+                class="story-default-btn saved-stories-btn px-2 py-1 font-weight-bold rounded-pill"
                 @click="saveToDrafts()"
               >
                 Save to Drafts
               </button>
+            </div>
+            <div class="col-2 p-0">
               <button 
-                class="btn btn-secondary rounded me-2"
-                @click="publish()"
+                class="story-default-btn saved-stories-btn px-2 py-1 mr-2 font-weight-bold rounded-pill"
+                v-if="has_chapters === 'true' && chapter.index > 0"
+                @click="prevChapter()"
               >
-                Publish
+                Prev Chapter
               </button>
+            </div>
+            <div class="col-2 p-0">
               <button 
-                class="btn btn-secondary rounded me-2"
-                @click="cancel()">
-                Cancel
+                class="story-default-btn saved-stories-btn px-2 py-1 mr-2 font-weight-bold rounded-pill"
+                v-if="has_chapters === 'true'"
+                @click="nextChapter()"
+              >
+                Next Chapter
+              </button>
+            </div>
+            <div class="col-2 p-0"> 
+              <button class="story-default-btn saved-stories-btn px-2 py-1 font-weight-bold rounded-pill">
+                Publish Story
               </button>
             </div>
           </div>
@@ -179,14 +162,14 @@
             <vue-tags-input
               v-model="new_tag"
               :tags="tags"
-              :autocomplete-items="filteredTags"
+              :autocomplete-items="filteredItems"
               :is-duplicate="isDuplicate"
               :validation="tag_validation"
               :placeholder="`Write and press enter to add`"
               @tags-changed="newTags => tags = newTags"
             />
           </div>
-          <div class="row mt-4">
+          <div class="row pt-2">
             <h6>Categories</h6>
           </div>
           <div class="row">
@@ -200,35 +183,16 @@
                 expander
                 style="width: 100%">
               </Column>
+
             </TreeTable>
           </div>
         </div>
       </div>
     </div>
   </div>
-
-<div class="modal fade" id="deleteChapterModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p class="mb-0">Are you sure you want to delete this chapter? This action cannot be undone.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" id="confirmDelete" data-bs-dismiss="modal" @click="deleteChapter()">Delete</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 </template>
 
-<script async setup>
-import { ref, reactive, computed, onMounted } from 'vue';
+<script>
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import BreadCrumbs from "@/components/Dashboard/BreadCrumbs.vue";
@@ -236,239 +200,269 @@ import UserMenu from "@/components/Dashboard/UserMenu.vue";
 import AddStory from "@/components/Dashboard/AddStory.vue";
 import VueTagsInput from '@sipec/vue3-tags-input';
 import categorySort from "@/common/CategorySort";
-import api from '@/services/api';
-import { useRouter } from 'vue-router';
 
-const router = useRouter();
-
-// Props
-const props = defineProps({
-  id: {
-    type: String,
-    default: null
+export default {
+  name: "AddEditStory",
+  components: {
+    QuillEditor, 
+    BreadCrumbs, 
+    UserMenu, 
+    AddStory, 
+    VueTagsInput,
   },
-  chapterid: {
-    type: String,
-    default: null
-  }
-});
-
-// Reactive state
-const story = reactive({
-  title: "",
-  user: "",
-  created_at: null,
-  categories: [],
-  tags: [],
-  has_chapters: false,
-  chapter_summaries: []
-});
-
-const current_chapter = reactive({
-  id: props.chapterid,
-  index: -1,
-  title: "",
-  body: '\n'
-});
-
-const new_tag = ref('');
-const tags = ref([]);
-const autocomplete_tags = ref([]);
-const all_categories = ref([]);
-const selected_categories = ref({});
-const selected_chapter = ref({});
-const chapter_guard = ref(false);
-
-const tag_validation = [
-  {
-    classes: 'no-special',
-    rule: /^[a-zA-Z\d\s:]/,
-    disableAdd: true
-  },
-];
-
-// Lifecycle hooks
-onMounted( async () => {
-  await getAllCategories();
-  await getAllTags();
-  await loadStory();
-  await loadChapter(story.chapter_summaries[0].id);
-});
-
-// Computed properties
-const filteredTags = computed(() => {
-  return autocomplete_tags.value.filter(i => {
-    return i.text.toLowerCase().indexOf(new_tag.value.toLowerCase()) !== -1;
-  });
-});
-
-const chapters = computed( () =>{
-  if (!chapter_guard.value){
-    return story.chapter_summaries.map((chap,index) => {
-      const item = {
-        key: chap.id,
-        data: (current_chapter.id && current_chapter.id == chap.id) ? current_chapter : chap,
-        selectable: true,
-        leaf: true
-      };
-      item.data.index_1 = index +1;
-      return item;
-    });
-  } 
-})
-
-// Methods
-const loadStory = async () => {
-  const res = await api.get(`/story/detail/${props.id}`);
-  Object.assign(story, res.data);
-
-  tags.value = story.tags.map((tag) => {
-    return {
-      text: tag.name,
-      id: tag.id
+  props: {
+    id: {
+      type: String,
+      default: null
+    },
+    chapterid: {
+      type: String,
+      default: null
     }
-  });
-
-  selected_categories.value = story.categories.reduce((cats, cat) => {
-    cats[cat.id] = true;
-    return cats;
-  }, {});
-}
-
-const loadChapter = async (chapter_id) => {
-  selected_chapter.value = {};
-  const res = await api.get(`/story/chapter/${chapter_id}/`);
-  Object.assign(current_chapter, res.data);
-  current_chapter.index = story.chapter_summaries.findIndex(cs => {
-    return cs.id === chapter_id;
-  });
-  if (!current_chapter.body)
-    current_chapter.body = '\n';
-  selected_chapter.value[current_chapter.id] = true;
-}
-
-const toggleHasChapters = async () => {
-  if (story.has_chapters){
-    story.has_chapters = false;
-    selected_chapter.value = {};
-  }
-  else{
-    story.has_chapters = true;
-    await loadChapter(story.chapter_summaries[0].id);
-  }
-};
-
-const getAllCategories = async () => {
-  try {
-    const res = await api.get(`/category/list/`);
-    const cats = res.data.sort(categorySort.sortCategories);
-    const top = cats.filter((cat) => !cat.parent);
-    all_categories.value = top.map((cat) => makeCategory(cats, cat));
-  } catch (error) {
-    console.error("Error fetching categories:", error);
-  }
-};
-
-const makeCategory = (categories, root) => {
-  const children = categories.filter((cat) => {
-    return cat.parent && cat.parent === root.id;
-  });
-  return {
-    key: root.id,
-    data: root,
-    selectable: true,
-    leaf: children && children.length > 0 ? false : true,
-    children: children && children.length > 0 ? children.map((child) => {
-      return makeCategory(categories, child);
-    }) : null
-  }
-};
-
-const getAllTags = async () => {
-  try {
-    const res = await api.get(`/tag/`);
-    autocomplete_tags.value = res.data.results.map((tag) => {
-      return {
-        text: tag.name,
-        id: tag.id
-      }
-    });
-  } catch (error) {
-    console.error("Error fetching tags:", error);
-  }
-};
-
-const isDuplicate = (tagsArray, tag) => {
-  return tagsArray.map(t => t.text.toLowerCase()).indexOf(tag.text.toLowerCase()) !== -1;
-};
-
-const saveToDrafts = () => {
-  saveStory(false);
-};
-
-const publish = () => {
-  saveStory(true);
-};
-
-const saveStory = async (is_published) => {
-  try {
-    await api.put(`/story/save-story/${props.id}/`,
+  },
+  data() {
+    return {
+      story:{
+          title : "",
+          user: "",
+          created_at: null,
+          categories: [],
+          tags: [],
+          has_chapters: false,
+          chapters:[
+            {
+              id : ""
+            }
+          ]
+      },
+      chapter: 
       {
-        title: story.title,
-        is_published: is_published,
-        has_chapters: story.has_chapters,
-        categories: Object.keys(selected_categories.value).map((k) => {
+        id: this.chapterid,
+        index: -1,
+        title : "",
+        body: '\n'
+      },
+      has_chapters: "false",
+      defaultOpenLevel: 1,
+      new_tag: '',
+      tags: [],
+      autocomplete_tags: [],
+      all_categories: [],
+      selected_categories: {},
+      selectedKey: "id",
+      chapters: [],
+      selected_chapter: {},
+      customToolbar: [
+        [{ font: [] }],
+        [{ header: [false, 1, 2, 3, 4, 5, 6] }],
+        ["bold", "italic", "underline", "strike"],
+        [{ color: [] }, { background: [] }],
+        [{align: ""}, {align: "center"}, {align: "right"}, {align: "justify"}],
+        [{ list: "ordered" }, { list: "bullet" }],
+        [{indent: "-1"}, {indent: "+1"}],
+        ["blockquote", "code-block"],
+        [{ 'script': 'sub'}, { 'script': 'super' }],
+      ],
+      tag_validation: [
+        {
+          classes: 'no-special',
+          rule: /^[a-zA-Z\d\s:]/,
+          disableAdd: true
+        },
+      ],
+    }
+  },
+  computed:{
+    filteredItems() {
+      return this.autocomplete_tags.filter(i => {
+        return i.text.toLowerCase().indexOf(this.new_tag.toLowerCase()) !== -1;
+      });
+    }
+  },
+  mounted() {
+    this.getAllCategories();
+    this.getAllTags();
+    this.getStory();
+  },
+  methods: {
+    getStory() {
+      this.axios.get(`/story/detail/${this.id}`).then(async (res) => {
+        this.story = res.data;
+        this.has_chapters = this.story.has_chapters ? "true" : "false";
+        this.tags = this.story.tags.map( (tag) => {
           return {
-            id: k
-          }
-        }),
-        tags: tags.value.map((tag) => {
-          return {
-            name: tag.text,
+            text: tag.name,
             id: tag.id
           }
-        })
+        });
+          this.selected_categories = this.story.categories.reduce( (cats, cat) => {
+            cats[cat.id] = true;
+            return cats;
+          }, {});
+          if (this.story.chapters &&this.story.chapters.length > 0){
+            var index = -1;
+            if (this.chapter.id){
+              index = this.story.chapters.findIndex( (c) => c.id === this.chapter.id);
+            }
+            else if (this.chapter.index > -1){
+              index = this.chapter.index;
+            }
+            if (index == -1){
+              index = 0;
+            }
+            this.chapter.index = index;
+            if (this.story.chapters.length > index){
+              this.chapter.id = this.story.chapters[index].id;
+              await this.axios.get(`/story/chapter/${this.chapter.id}`).then(chap_res => {
+                this.chapter.body = chap_res.data.body;
+                this.chapter.title = chap_res.data.title;
+              })
+            }
+            else{
+              this.chapter.id = null;
+              this.chapter.title = `Chapter ${this.chapter.index+1}`;
+              this.chapter.body = '\n';
+            }
+          }
+          if (this.story.has_chapters){
+            this.chapters = this.story.chapters.map( (chap) => {
+              return {
+                  key: chap.id,
+                  data: this.chapter.id == chap.id ? this.chapter : chap,
+                  selectable: true,
+                  leaf: true
+              }
+            });
+
+            if (!this.chapter.id){
+              this.chapters.push(
+                  {
+                    key: -1,
+                    data: this.chapter,
+                    selectable: true,
+                    leaf: true
+                  }
+                );
+                this.selected_chapter = {};
+                this.selected_chapter[-1] = true;
+            }
+            else{
+              this.selected_chapter = {};
+              this.selected_chapter[this.chapter.id] = true;
+            }
+          }
+        }
+      );
+    },
+    getAllCategories() {
+      this.axios.get(`/category/list/`).then(res =>{
+        var cats = res.data.sort(categorySort.sortCategories);
+        var top = cats.filter( (cat) => !cat.parent );
+        this.all_categories = top.map((cat) => this.makeCategory(cats, cat));
       });
-    await api.put(`/story/chapter-save/${current_chapter.id}/`,
-    {
-      title: current_chapter.title,
-      body: current_chapter.body
-    });    
-  } catch (error) {
-    console.error("Error saving story:", error);
+    },
+    makeCategory(categories, root){
+      var children = categories.filter( (cat) => {
+        return cat.parent && cat.parent === root.id;;
+      });
+      return {
+        key: root.id,
+        data: root,
+        selectable: true,
+        leaf: children && children.length > 0 ? false : true,
+        children: children && children.length > 0 ? children.map( (child) => {
+          return this.makeCategory(categories, child);
+        }) : null
+      }
+    },
+    getAllTags() {
+      this.axios.get(`/tag/`).then(res => {
+        this.autocomplete_tags = res.data.results.map( (tag) => {
+          return {
+            text: tag.name,
+            id: tag.id
+          }
+        });
+      });
+    },
+    isDuplicate(tags, tag) {
+      return tags.map(t => t.text.toLowerCase()).indexOf(tag.text.toLowerCase()) !== -1;
+    },
+    ciEquals(a, b) {
+      return typeof a === 'string' && typeof b === 'string'
+          ? a.localeCompare(b, undefined, { sensitivity: 'accent' }) === 0
+          : a === b;
+    },
+    saveToDrafts() {
+      this.saveStory(false, () => {
+        this.getStory();
+      })
+    },
+    publishStory() {
+      this.saveStory(true, () => {
+        this.getStory();
+      })
+    },
+    saveStory(is_published, callback){
+      this.axios.put(`/story/save-story/${this.id}/`,
+        {
+          title: this.story.title,
+          is_published: is_published,
+          has_chapters: this.has_chapters === "true",
+          categories: Object.keys(this.selected_categories).map( (k) => {
+            return {
+              id: k
+            }
+          }),
+          tags: this.tags.map( (tag) => {
+            return {
+              name: tag.text,
+              id: tag.id
+            }
+          })
+        }).then( () => {
+          if (!this.chapter.id){
+            this.axios.post(`/story/${this.id}/chapter/add/`,
+            {
+              title: this.chapter.title,
+              body: this.chapter.body   
+            }).then( () => {
+              callback();
+            });
+        }
+        else {
+          this.axios.put(`/story/save-chapter/${this.chapter.id}/`,
+          {
+            title: this.chapter.title,
+            body: this.chapter.body
+          }).then( () => {
+            callback()
+          });
+        }
+      });
+    },
+    async onChapterSelect(chap){
+      this.saveStory(this.story.is_published, () => {
+        this.chapter.id = chap.key;
+        this.getStory();
+      });
+    },
+    nextChapter(){
+      this.saveStory(this.story.is_published, () => {
+        this.chapter.index++;
+        this.chapter.id = null;
+        this.getStory();
+      });
+    },
+    prevChapter(){
+      this.saveStory(this.story.is_published, () => {
+        this.chapter.index--;
+        this.chapter.id = null;
+        this.getStory();
+      });
+    }
   }
-};
-
-const cancel = () => {
-  router.back();
-};
-
-const onChapterSelect = async (chap) => {
-  await saveStory(story.is_published);
-  await loadStory();
-  await loadChapter(chap.key)
-};
-
-const newChapter = async (before) => {
-  await saveStory(story.is_published);
-  const res = await api.post(`/story/${story.id}/chapter/add/`,{
-      pos: before ? current_chapter.index : current_chapter.index+1,
-      title: "New Chapter",
-      body: ""
-    });
-  chapter_guard.value = true;
-  await loadStory();
-  await loadChapter(res.data.id);
-  chapter_guard.value = false;
-};
-
-const deleteChapter = async (before) => {
-  await saveStory(story.is_published);
-  const res = await api.delete(`/story/chapter-delete/${current_chapter.id}/`)
-  await loadStory();
-  await loadChapter(story.chapter_summaries[0].id);
-};
-
+}
 </script>
 
 <style scoped lang="scss">
@@ -484,9 +478,26 @@ const deleteChapter = async (before) => {
   #qe-editor {
     height: 500px;
   }
-  .btn {
-    font-size: 0.8em;
-    font-weight: bold;
+  .saved-stories {
+    &-tags {
+      &-input {
+        font-size: .68em;
+      }
+    }
+    &-upload-file {
+      font-size: .7em;
+      border-bottom: 2.6px solid black;
+    }
+    &-title {
+      color: #707070;
+      font-size: .8em;
+      &-input {
+        font-size: .9em;
+      }
+    }
+    &-btn {
+      font-size: .7em;
+    }
   }
 }
 </style>
