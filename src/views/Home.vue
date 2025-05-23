@@ -58,55 +58,57 @@
     </div>
   </div>
 </template>
-<script>
-
+<script setup>
+import { ref, computed, onMounted, inject } from 'vue';
 import StoryMiniCard from "@/components/Card/StoryMiniCard.vue";
 import StoryLargeCard from "@/components/Card/StoryLargeCard.vue";
-export default {
-  name: 'HomeView',
-  components: {StoryMiniCard, StoryLargeCard},
-  data() {
-    return {
-      featuredStory: null,
-      recentStories: [],
-      cols: 3,
-      page: 1
-    }
-  },
-  computed:{
-    recent_story_chunks () {
-      let chunks = [];
-      for (let i = 0; i < this.recentStories.length; i+=this.cols){
-        chunks.push(this.recentStories.slice(i, i + this.cols));
-      }
-      return chunks;
-    }
-  },
-  mounted() {
-    this.getFeaturedStory();
-    this.getRecentStories();
-  },
-  methods: {
-    async getFeaturedStory() {
-      await this.axios.get(`/story/featured/`).then(res => {
-        this.featuredStory = res.data[0];
-      })
-    },
-    async getRecentStories(){
-      this.page = 1;
-      await this.axios.get(`/story/list/?page=1`).then(res => {
-        this.recentStories = res.data.results.slice(0,12);
-      })
-    },
-    async loadMore(){
-      this.page++;
-      await this.axios.get(`/story/list/?page=${this.page}`).then(res => {
-        let newstories = res.data.results.slice(0,12);
-        this.recentStories = this.recentStories.concat(newstories);
-      })
-    },
+import api from "@/services/api";
+
+const featuredStory = ref(null);
+const recentStories = ref([]);
+const cols = ref(3);
+const page = ref(1);
+
+const recent_story_chunks = computed(() => {
+  let chunks = [];
+  for (let i = 0; i < recentStories.value.length; i += cols.value) {
+    chunks.push(recentStories.value.slice(i, i + cols.value));
   }
+  return chunks;
+});
+
+async function getFeaturedStory() {
+  await api.get(`/story/featured/`).then( 
+    (res) => {
+      featuredStory.value = res.data[0];
+    }
+  );
 }
+
+async function getRecentStories() {
+  page.value = 1;
+  await api.get(`/story/list/?page=1`).then(
+    (res) => {
+      recentStories.value = res.data.results.slice(0, 12);
+    }
+  );
+}
+
+async function loadMore() {
+  page.value++;
+  await api.get(`/story/list/?page=${page.value}`).then(
+    (res) => {
+      const newstories = res.data.results.slice(0, 12);
+      recentStories.value = recentStories.value.concat(newstories);
+    }
+  );
+}
+
+onMounted(() => {
+  getFeaturedStory();
+  getRecentStories();
+});
+
 </script>
 <style scoped lang="scss">
 .home-wrapper {
