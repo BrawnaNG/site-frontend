@@ -382,6 +382,17 @@ const loadStory = async () => {
   });
 
   expanded_categories.value = story.categories.reduce((cats, cat) => {
+    let parent_id = cat.parent;
+    while (parent_id){
+      cats[parent_id] = true;
+      let parent = story.categories.find(c => c.id == parent_id);
+      if (parent){
+        parent_id = parent.parent;
+      }
+      else{
+        parent_id = null;
+      }
+    }
     cats[cat.id] = true;
     return cats;
   }, {});
