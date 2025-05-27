@@ -18,6 +18,7 @@ import AllCategories from '@/views/AllCategories.vue';
 import AllTags from '@/views/AllTags.vue';
 import SingleParent from '@/views/SingleParent.vue';
 import AuthService from '../services/auth.service';
+import api from "../services/api";
 
 const routes = [
   {
@@ -53,7 +54,8 @@ const routes = [
     component: AddEditStory,
     meta: {
       authRequired: 'true',
-      roles: ['admin','author']
+      roles: ['admin','author'],
+      isAuthor: 'true'
     },
   },
   {
@@ -184,16 +186,22 @@ router.beforeEach(async (to, _from, next) => {
       await AuthService.getRole(authStore);
     }
     const role = authStore.role;
-    if (to.meta.roles.includes('admin') && role.isAdmin){
-      return next()
+    let auth = (to.meta.roles.includes('admin') && role.isAdmin) || (to.meta.roles.includes('author') && role.isAuthor);
+    if (auth && to.meta.isAuthor === 'true'){
+      await api.get(`/story/check-author/${to.params.id}/`)
+        .then( 
+          (res) => { 
+            auth = res.data; 
+          },
+          (_error) => { 
+            auth = false;
+          });
     }
-    else if (to.meta.roles.includes('author') && role.isAuthor){
+    if (auth){
       return next()
     }
     else{
-      router.push({
-        name: 'home'
-      })
+      return next({ name: 'home' });
     }
   }
   else{

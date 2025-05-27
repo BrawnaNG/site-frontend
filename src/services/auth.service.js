@@ -32,10 +32,11 @@ class AuthService {
     )
   }
 
-  logout(authStore) {
-    TokenService.removeUser();
+  async logout(authStore) {
+    TokenService.clearRefreshToken();
     authStore.setToken(null);
     authStore.setAuthenticated(false);
+    await this.getRole(authStore);
   }
 
   async getRole(authStore) {
