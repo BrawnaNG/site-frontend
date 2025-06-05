@@ -483,7 +483,7 @@ const saveStory = async (is_published) => {
         })
       });
     await loadStory();
-    await api.put(`/story/chapter-save/${current_chapter.id}/`,
+    await api.put(`/story/${story.id}/chapter-save/${current_chapter.id}/`,
     {
       title: current_chapter.title,
       body: current_chapter.body
@@ -505,7 +505,7 @@ const onChapterSelect = async (chap) => {
 
 const newChapter = async (before) => {
   await saveStory(story.is_published);
-  const res = await api.post(`/story/${story.id}/chapter/add/`,{
+  const res = await api.post(`/story/${story.id}/chapter-add/`,{
       pos: before ? current_chapter.index : current_chapter.index+1,
       title: "New Chapter",
       body: ""
@@ -518,7 +518,7 @@ const newChapter = async (before) => {
 
 const deleteChapter = async (before) => {
   await saveStory(story.is_published);
-  const res = await api.delete(`/story/chapter-delete/${current_chapter.id}/`)
+  const res = await api.delete(`/story/${story.id}/chapter-delete/${current_chapter.id}/`)
   await loadStory();
   await loadChapter(story.chapter_summaries[0].id);
 };

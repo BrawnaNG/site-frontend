@@ -41,7 +41,8 @@ const setup = () => {
           originalRequest.headers['Authorization'] = `Bearer ${access}`;
           return axiosInstance(originalRequest);
         } catch (refreshError) {
-          authService.logout();
+          if (authStore.isAuthenticated)
+            authService.logout(authStore);
           return Promise.reject(refreshError);
         } 
       }
