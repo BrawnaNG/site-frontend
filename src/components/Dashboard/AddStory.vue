@@ -82,7 +82,7 @@
     });
     if (res && res.data){
       const story_id = res.data.id;
-      await api.post(`/story/${story_id}/chapter/add/`,
+      await api.post(`/story/${story_id}/chapter-add/`,
         {
           pos: 0
         }).then(_ => {
