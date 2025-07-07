@@ -26,23 +26,26 @@ const setup = () => {
     (response) => response,
     async (error) => {
       const originalRequest = error.config;
-      if (error.response.status === 401 && !originalRequest._retry) {
+      if (error.response.status === 401 && !originalRequest._retry && originalRequest.url !== 'token/refresh/') {
         originalRequest._retry = true;
         try{
           const refreshToken = tokenService.getLocalRefreshToken();
-          const res = await axiosInstance.post('token/refresh/', { refresh: refreshToken });
-          const { access, refresh } = res.data;
-          authStore.setToken(access);
-          authStore.setAuthenticated(true);
-          await authService.getRole(authStore);
-          if (refresh){
-            tokenService.updateRefreshToken(refresh);
+          if (refreshToken){
+            const res = await axiosInstance.post('token/refresh/', { refresh: refreshToken });
+            const { access, refresh } = res.data;
+            authStore.setToken(access);
+            authStore.setAuthenticated(true);
+            await authService.getRole(authStore);
+            if (refresh){
+              tokenService.updateRefreshToken(refresh);
+            }
+            originalRequest.headers['Authorization'] = `Bearer ${access}`;
+            return axiosInstance(originalRequest);
           }
-          originalRequest.headers['Authorization'] = `Bearer ${access}`;
-          return axiosInstance(originalRequest);
         } catch (refreshError) {
           if (authStore.isAuthenticated)
             authService.logout(authStore);
+          tokenService.clearRefreshToken();
           return Promise.reject(refreshError);
         } 
       }
