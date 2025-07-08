@@ -32,7 +32,7 @@
           title="show password"
           class="cursor-pointer"
           src="../assets/image/icon/Show.svg"
-          @click="showPassword = !showPassword "
+          @click="showPassword = !showPassword"
         >
       </div>
     </div>
@@ -41,7 +41,7 @@
         pill
         variant="dark"
         class="story-default-btn font-weight-bold w-50 py-2 my-3 mx-auto"
-        @click="loginUser()"
+        @click="loginUser"
       >
         Login
       </button>
@@ -51,7 +51,7 @@
       v-if="errorMessage"
       >
       <span class="text-danger">
-        {{  errorMessage }}
+        {{ errorMessage }}
       </span>
     </div>
     <div class="row login-form-sub-title text-center">
@@ -63,7 +63,7 @@
       <div class="col-6">
         <span
           class="cursor-pointer"
-          @click="view='signup'"
+          @click="view = 'signup'"
         >
           Sign up here.
         </span>
@@ -94,6 +94,15 @@
           placeholder="Enter your username"
         >
       </div>
+      <div class="p-0 pt-2"
+        v-if="signUp.error.username">
+        <div 
+          class="alert alert-danger p-1 ps-3"
+          v-for="error in signUp.error.username"
+        >
+          {{ cleanError(error) }}
+        </div>
+      </div>
     </div>
     <div class="row mt-3">
       <div class="rounded border p-1">
@@ -103,6 +112,16 @@
           type="email"
           placeholder="Enter your email"
         >
+      </div>
+      <div 
+        class="p-0 pt-2"
+        v-if="signUp.error.email">
+        <div 
+          class="alert alert-danger p-1 ps-3"
+          v-for="error in signUp.error.email"
+        >
+          {{ cleanError(error) }}
+        </div>
       </div>
     </div>
     <div class="row mt-3">
@@ -119,7 +138,7 @@
           title="show password"
           class="cursor-pointer"
           src="../assets/image/icon/Show.svg"
-          @click="showPassword = !showPassword "
+          @click="showPassword = !showPassword"
         >
       </div>
     </div>
@@ -137,17 +156,41 @@
           title="show password"
           class="cursor-pointer"
           src="../assets/image/icon/Show.svg"
-          @click="showRepeatPassword = !showRepeatPassword "
+          @click="showRepeatPassword = !showRepeatPassword"
         >
       </div>
+      <div 
+        class="p-0 pt-2"
+        v-if="signUp.error.password">
+        <div 
+          class="alert alert-danger p-1 ps-3"
+          v-for="error in signUp.error.password"
+        >
+          {{ cleanError(error) }}
+        </div>
+      </div>
+
     </div>
     <div class="row mt-3">
       <div class="login-form-sub-title text-center">
-        <input type="checkbox">
+        <input 
+          type="checkbox"
+          v-model="signUp.termsAgreed"
+          >
         I have read and I accept the
         <span class="cursor-pointer">terms</span>
         and
         <span class="cursor-pointer">conditions</span>.
+      </div>
+      <div 
+        class="p-0 pt-2 ps-4 pe-4"
+        v-if="signUp.error.terms">
+        <div 
+          class="alert alert-danger p-1 ps-4 pe-4"
+          v-for="error in signUp.error.terms"
+        >
+          {{ cleanError(error) }}
+        </div>
       </div>
     </div>
     <div class="row">
@@ -155,7 +198,7 @@
         pill
         variant="dark"
         class="story-default-btn w-100 py-2 my-3 font-weight-bold"
-        @click="signUpUser()"
+        @click="signUpUser"
       >
         Sign up
       </button>
@@ -170,85 +213,154 @@
       </div>
     </div>
     <div 
-      class="row"
+      class="row pt-1 pb-0"
       v-if="errorMessage"
       >
-      <span class="text-danger">
-        {{  errorMessage }}
+      <span class="alert alert-danger p-1 ps-3 pe-3">
+        {{ errorMessage }}
       </span>
     </div>
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, reactive, watch } from 'vue';
 import AuthService from '../services/auth.service';
 import { useAuthStore } from '../stores/auth';
+import debounce from 'lodash.debounce';
 
-export default {
-  name: "LoginForm",
-  emits: ['closeLogin','changeFormState'],
-  data() {
-    return {
-      login: {
-        username: '',
-        password: '',
-      },
-      signUp: {
-        alias: '',
-        username: '',
-        email: '',
-        password: '',
-        rePassword: ''
-      },
-      view: 'login',
-      showPassword: false,
-      showRepeatPassword: false,
-      errorMessage: ''
-    }
-  },
-  watch: {
-    'view'(val) {
-      this.$emit('changeFormState', val)
-    }
-  },
-  methods: {
-    loginUser() {
-      this.errorMessage = null;
-      let user = {
-        username: this.login.username,
-        password: this.login.password
-      };
-      const authStore = useAuthStore();
-      AuthService.login(authStore, user).then(
-        (_response) => {
-          this.$emit('closeLogin');
-        },
-        (_error) => {
-          this.errorMessage = "Login failed";
-        }
-      );
-    },
-    signUpUser() {
-      this.errorMessage = null;
-      let user = {
-        alias: this.signUp.alias,
-        username: this.signUp.username,
-        email: this.signUp.email,
-        password: this.signUp.password
-      };
-      const authStore = useAuthStore();
-      AuthService.register(authStore, user).then(
-        (_response) => {
-          //TODO DISPLAY SUCCESS / WAIT FOR VERIFICATION MESSAGE
-          this.$emit('closeLogin');
-        },
-        (_error) => {
-          this.errorMessage = "Sign up failed";
-        }
-      );
+const MISMATCH_PASSWORD_ERROR = "Passwords don't match";
+const TERMS_ERROR = "Please read and agree to the terms and conditions";
+const SIGNUP_ERROR = "Sign up failed";
+
+const emit = defineEmits(['closeLogin','changeFormState']);
+
+// Reactive state
+const login = reactive({
+  username: '',
+  password: '',
+});
+
+const signUp = reactive({
+  alias: '',
+  username: '',
+  email: '',
+  password: '',
+  rePassword: '',
+  error: {},
+  mismatch: false,
+  termsAgreed: false
+});
+
+const view = ref('login');
+const showPassword = ref(false);
+const showRepeatPassword = ref(false);
+const errorMessage = ref('');
+
+const checkPasswords = debounce(async (rePassword) => {
+  if (signUp.password != rePassword){
+    if (!signUp.mismatch){
+      if (!signUp.error["password"])
+        signUp.error["password"] = [MISMATCH_PASSWORD_ERROR];
+      else
+        signUp.error["password"].push(MISMATCH_PASSWORD_ERROR);
+      signUp.mismatch = true;
     }
   }
+  else{
+    if (signUp.mismatch){
+      signUp.error["password"].pop();
+      signUp.mismatch = false;
+    }
+  }
+}, 500); // Debounce for 500ms
+
+watch(signUp, (val) => {
+  checkPasswords(val.rePassword);
+  checkTerms();
+});
+
+watch(login, (val) => {
+  emit('changeFormState', val)
+});
+
+// Methods
+const checkTerms = () => {
+  if (signUp.termsAgreed){
+    signUp.error["terms"] = null;
+  }
 }
+
+const loginUser = () => {
+  errorMessage.value = null;
+  const user = {
+    username: login.username,
+    password: login.password
+  };
+  const authStore = useAuthStore();
+  AuthService.login(authStore, user).then(
+    (_response) => {
+      emit('closeLogin');
+    },
+    (_error) => {
+      errorMessage.value = "Login failed";
+    }
+  );
+};
+
+const signUpUser = () => {
+  if (signUp.mismatch){
+    return;
+  }
+
+  if (signUp.password != signUp.rePassword){
+    if (!signUp.mismatch){
+      if (!signUp.error["password"])
+        signUp.error["password"] = [MISMATCH_PASSWORD_ERROR];
+      else
+        signUp.error["password"].push(MISMATCH_PASSWORD_ERROR);
+      signUp.mismatch = true;
+    }
+    return;
+  }
+
+  if (!signUp.termsAgreed){
+    signUp.error["terms"] = [TERMS_ERROR]
+    return;
+  }
+
+  errorMessage.value = null;
+  signUp.error = {};
+  const user = {
+    alias: signUp.alias,
+    username: signUp.username,
+    email: signUp.email,
+    password: signUp.password
+  };
+  const authStore = useAuthStore();
+  AuthService.register(authStore, user).then(
+    (_response) => {
+      signUp.email = '';
+      signUp.alias = '';
+      signUp.username = '';
+      signUp.password = '';
+      signUp.rePassword = '';
+      signUp.error = {};
+      signUp.termsAgreed = false;
+      signUp.mismatch = false;
+      view.value = 'login';
+      emit('closeLogin');
+    },
+    (error) => {
+      signUp.error = error.response.data;
+      errorMessage.value = SIGNUP_ERROR;
+    }
+  );
+};
+
+const cleanError = (originalError) => {
+  return originalError.replace(/[\[\]\"\']/g, "");
+};
 </script>
 
 <style scoped lang="scss">
