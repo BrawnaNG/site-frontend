@@ -87,6 +87,17 @@
                   About
                 </router-link>
               </li>
+              <li 
+                class="nav-item"
+                v-if="isAuthenticated">
+                <router-link
+                  class="navbar-menu-item-link nav-link"
+                  :to="{name: 'home'}"
+                  @click="collapseNavbarAndLogout"
+                >
+                  Log out
+                </router-link>
+              </li>
             </ul>
           </div>
         </nav>
@@ -174,74 +185,79 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, onBeforeMount } from 'vue';
+import { useRouter } from 'vue-router';
 import LoginForm from "@/components/LoginForm.vue";
 import EventBus from "../common/EventBus";
 import AuthService from '../services/auth.service';
-import {Collapse} from "bootstrap";
+import { Collapse } from "bootstrap";
 import { useAuthStore } from '../stores/auth';
 
-export default {
-  name: "HeaderNav",
-  components: {LoginForm},
-  data() {
-    return {
-      loginModal: {
-        title: 'Login to the site'
-      },
-      searchForm: {
-        text: ""
-      }
+// Data properties
+const loginModal = ref({
+  title: 'Login to the site'
+});
+const searchForm = ref({
+  text: ""
+});
+
+// Router
+const router = useRouter();
+
+// Store
+const authStore = useAuthStore();
+
+// Computed properties
+const role = computed(() => authStore.role);
+const isAuthenticated = computed(() => authStore.isAuthenticated);
+
+// Lifecycle hooks
+onBeforeMount(() => {
+  checkUser();
+});
+
+// Methods converted to functions
+function collapseNavbarAndLogout() {
+  collapseNavbar();
+  logOut();
+}
+
+function searchStories() {
+  router.push({
+    name: 'searchResults',
+    params: {
+      search: searchForm.value.text
     }
-  },
-  computed: {
-    role() {
-      const authStore = useAuthStore();
-      return authStore.role;
-    },
-    isAuthenticated() {
-      const authStore = useAuthStore();
-      return authStore.isAuthenticated;
-    }
-  },
-  beforeMount() {
-    this.checkUser();
-  },
-  methods: {
-    searchStories(){
-      this.$router.push( {
-        name: 'searchResults', 
-        params: {
-          search: this.searchForm.text
-        }
-      });
-    },
-    changeModalTitle(mode) {
-      this.loginModal.title = (mode === 'login' ? 'Login to the site' : 'Sign up');
-    },
-    closeLogin(){
-      document.getElementById('loginModalClose').click();
-    },
-    checkUser(){
-      if (!this.role.isInit){
-        const authStore = useAuthStore();
-        AuthService.getRole(authStore);
-      }
-    },
-    logOut(){
-      EventBus.dispatch("logout");
-    },
-    collapseNavbar() {
-      const navbar = document.querySelector('.navbar-collapse.show');
-        if (navbar) {
-            new Collapse(navbar, {
-                toggle: false,
-            }).hide();
-        }
-    },
+  });
+}
+
+function changeModalTitle(mode) {
+  loginModal.value.title = (mode === 'login' ? 'Login to the site' : 'Sign up');
+}
+
+function closeLogin() {
+  document.getElementById('loginModalClose').click();
+}
+
+function checkUser() {
+  if (!role.value.isInit) {
+    AuthService.getRole(authStore);
   }
 }
 
+function logOut() {
+  EventBus.dispatch("logout");
+}
+
+function collapseNavbar() {
+  const navbar = document.querySelector('.navbar-collapse.show');
+  if (navbar) {
+    new Collapse(navbar, {
+      toggle: false,
+    }).hide();
+  }
+}
 </script>
 
 <style lang="scss">
