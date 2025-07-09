@@ -6,10 +6,22 @@
           <h2 class="m-0 pt-1">
             {{ story.title }}
           </h2>
-          <div class="pt-3">
-            {{ story.user }} • {{ moment(story.created_at).format('MMM YY') }} 
-            | 
-            {{ (story.categories.length ? story.categories[0].name : '') }}
+          <div class="pt-3 text-nowrap">
+            <RouterLink
+              :to="{name: 'single-parent', params: {type: 'accounts', id: story.user_id}}"
+            >
+              {{ story.user }}
+            </RouterLink>
+             • {{ moment(story.created_at).format('MMM YY') }} 
+            <span class="text-nowrap"
+              v-if="story.categories.length">
+              |
+              <RouterLink
+                :to="{name: 'single-parent', params: {type: 'category', id: story.categories[0].id}}"
+              >
+              {{ story.categories[0].name }}
+              </RouterLink>
+            </span>
           </div>
         </div>
         <div class="col pt-4 px-0">
@@ -156,6 +168,7 @@
                       v-for="tag in story.tags"
                       :value="`${tag.name}`"
                       class="mb-2 me-2"
+                      @click="gotoTag(tag.id)"
                     >
                     </Tag>
                 </div>
@@ -175,7 +188,9 @@ import { useAuthStore } from '@/stores/auth';
 import api from '@/services/api';
 import { inject } from 'vue';
 import { Collapse } from 'bootstrap';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const moment = inject('moment');
 
 // Props
@@ -190,6 +205,7 @@ const props = defineProps({
 const story = reactive({
   title: "",
   user: "",
+  user_id: null,
   created_at: null,
   categories: [],
   tags: [],
@@ -262,6 +278,11 @@ const addComment = async () => {
       }).hide();
   }
 }
+
+const gotoTag = (id) => {
+  router.push({name: 'single-parent', params: { type: 'tag', id: id } });
+}
+
 </script>
 
 <style scoped lang="scss">
