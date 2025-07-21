@@ -226,14 +226,17 @@
 <script setup>
 import { ref, reactive, watch } from 'vue';
 import AuthService from '../services/auth.service';
+import api from '@/services/api';
 import { useAuthStore } from '../stores/auth';
 import debounce from 'lodash.debounce';
-
+import { useReCaptcha } from 'vue-recaptcha-v3';
 const MISMATCH_PASSWORD_ERROR = "Passwords don't match";
 const TERMS_ERROR = "Please read and agree to the terms and conditions";
 const SIGNUP_ERROR = "Sign up failed";
+const RECAPTCHA_ERROR = "ReCaptcha failed";
 
 const emit = defineEmits(['closeLogin','changeFormState']);
+const { executeRecaptcha, recaptchaLoaded } = useReCaptcha();
 
 // Reactive state
 const login = reactive({
@@ -249,7 +252,9 @@ const signUp = reactive({
   rePassword: '',
   error: {},
   mismatch: false,
-  termsAgreed: false
+  termsAgreed: false,
+  recaptcha: false,
+  recaptchaThreshold: import.meta.env.VITE_RECAPTCHA_THRESHOLD
 });
 
 const view = ref('login');
@@ -284,7 +289,6 @@ watch(login, (val) => {
   emit('changeFormState', val)
 });
 
-// Methods
 const checkTerms = () => {
   if (signUp.termsAgreed){
     signUp.error["terms"] = null;
@@ -308,7 +312,7 @@ const loginUser = () => {
   );
 };
 
-const signUpUser = () => {
+const signUpUser = async () => {
   if (signUp.mismatch){
     return;
   }
@@ -326,6 +330,44 @@ const signUpUser = () => {
 
   if (!signUp.termsAgreed){
     signUp.error["terms"] = [TERMS_ERROR]
+    return;
+  }
+
+  try {
+    // Wait for reCAPTCHA script to load (optional but recommended)
+    await recaptchaLoaded(); 
+
+    // Execute reCAPTCHA with a specific action (e.g., 'submit_form')
+    const token = await executeRecaptcha('submit_form'); 
+
+    await api.post("verify-recaptcha/",{
+      token: token
+    }).then(
+      (response) => {
+        if (!response.data || !response.data.success){
+          errorMessage.value = response.error;
+          signUp.recaptcha = false;
+        }
+        else{
+          if (response.data.score < signUp.recaptchaThreshold){
+            errorMessage.value = RECAPTCHA_ERROR;
+            signUp.recaptcha = false;
+          }
+          else{
+            signUp.recaptcha = true;
+          }
+        }
+      },
+      (_error) => {
+        errorMessage.value = RECAPTCHA_ERROR;
+        signUp.recaptcha = false;
+    });
+  } catch (error) {
+    errorMessage.value = RECAPTCHA_ERROR;
+    signUp.recaptcha = false;
+  }
+
+  if (!signUp.recaptcha){
     return;
   }
 
