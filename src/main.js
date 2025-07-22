@@ -15,6 +15,7 @@ import Toast from 'primevue/toast';
 import ToastService from 'primevue/toastservice';
 import Aura from '@primevue/themes/aura';
 import Tag from 'primevue/tag';
+import { VueReCaptcha } from 'vue-recaptcha-v3';
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap";
@@ -36,6 +37,9 @@ var app = createApp(App)
     }
   })
   .use(ToastService)
+  .use(VueReCaptcha, {
+    siteKey: import.meta.env.VITE_RECAPTCHA_SITE_KEY,
+  })
   .component('TreeTable', TreeTable)
   .component('Column', Column)
   .component('DataTable', DataTable)
