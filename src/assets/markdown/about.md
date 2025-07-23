@@ -13,7 +13,7 @@ Note that you'll have to have access to the email you used to originally signup
 with.
 
 #### I no longer have access to the email I used to signup
-Reach out to FfejL on our Discord for help
+Reach out to FfejL on our [Discord](https://discord.gg/WhZYbGMYXX) for help
 
 #### Who wrote all these stories?
 Each story has it's own author, although many authors have writeen multiple
