@@ -1,7 +1,7 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
-name: Node.js CI
+name: Brawna Frontend
 
 on:
   push:
@@ -36,6 +36,7 @@ jobs:
         echo "VITE_API_URL=https://stage.brawna.org/api/v1/" >> .env
         echo "VITE_CORS_ORIGIN=https:/stage.brawna.org/" >> .env
         echo "VITE_ALLOWED_HOSTS=stage.brawna.org" >> .env
+        echo "VITE_RECAPTCHA_SITE_KEY=6Lfx_YIrAAAAACQXg0hNm-3_0XL8uAlF3LpX6U0L" >> .env
 
 
     - name: Build Node.js site
