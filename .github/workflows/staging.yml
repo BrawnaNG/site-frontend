@@ -47,14 +47,19 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '22.x'
+      env:
+        VITE_API_URL: ${{ vars.VITE_API_URL }}
+        VITE_CORS_ORIGIN: ${{ vars.VITE_CORS_ORIGIN }}
+        VITE_ALLOWED_HOSTS: ${{ vars.VITE_ALLOWED_HOSTS }}
+        VITE_RECAPTCHA_SITE_KEY: ${{ secrets.VITE_RECAPTCHA_SITE_KEY }}
     - run: yarn
     - run: npm run build --if-present
 
     - name: Deploy
       env:
-        PRIVATE_KEY: ${{ secrets.SSH_STAGE_PRIVATE_KEY }}
-        HOSTNAME: ${{ secrets.SSH_STAGE_HOST }}
-        USER_NAME: ${{ secrets.SSH_STAGE_USER_NAME }}
+        PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        HOSTNAME: ${{ secrets.SSH_HOST }}
+        USER_NAME: ${{ secrets.SSH_USER_NAME }}
       run: |
         echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
         scp -o StrictHostKeyChecking=no -i private_key -r dist ${USER_NAME}@${HOSTNAME}:dist-new
