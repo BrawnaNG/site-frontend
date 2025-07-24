@@ -13,7 +13,7 @@ permissions:
     contents: read  # This is required for actions/checkout
 
 jobs:
-  build:
+  build-and-deploy:
 
     runs-on: ubuntu-latest
     environment: staging
@@ -29,6 +29,9 @@ jobs:
         aws-region: us-east-1
 
     - name: Open SG
+      env:
+        SEC_GROUP_ID: ${{ vars.SEC_GROUP_ID }}
+        SEC_GROUP_RULE_ID: ${{ vars.SEC_GROUP_RULE_ID }}
       run: bash devops/open-sg.sh
 
     - name: Create env file
@@ -64,4 +67,7 @@ jobs:
 
     - name: Close Security Group
       if: always()
+      env:
+        SEC_GROUP_ID: ${{ vars.SEC_GROUP_ID }}
+        SEC_GROUP_RULE_ID: ${{ vars.SEC_GROUP_RULE_ID }}
       run: bash devops/close-sg.sh
