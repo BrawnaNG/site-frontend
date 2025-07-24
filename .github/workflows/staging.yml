@@ -28,20 +28,6 @@ jobs:
         role-session-name: github-deploy
         aws-region: us-east-1
 
-    - name: Open SG
-      env:
-        SEC_GROUP_ID: ${{ vars.SEC_GROUP_ID }}
-        SEC_GROUP_RULE_ID: ${{ vars.SEC_GROUP_RULE_ID }}
-      run: bash devops/open-sg.sh
-
-    - name: Create env file
-      run: |
-        touch .env
-        echo "VITE_API_URL=https://stage.brawna.org/api/v1/" >> .env
-        echo "VITE_CORS_ORIGIN=https:/stage.brawna.org/" >> .env
-        echo "VITE_ALLOWED_HOSTS=stage.brawna.org" >> .env
-        echo "VITE_RECAPTCHA_SITE_KEY=6Lfx_YIrAAAAACQXg0hNm-3_0XL8uAlF3LpX6U0L" >> .env
-
 
     - name: Build Node.js site
       uses: actions/setup-node@v4
@@ -55,11 +41,17 @@ jobs:
     - run: yarn
     - run: npm run build --if-present
 
+    - name: Open SG
+      env:
+        SEC_GROUP_ID: ${{ vars.SEC_GROUP_ID }}
+        SEC_GROUP_RULE_ID: ${{ vars.SEC_GROUP_RULE_ID }}
+      run: bash devops/open-sg.sh
+
     - name: Deploy
       env:
         PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         HOSTNAME: ${{ secrets.SSH_HOST }}
-        USER_NAME: ${{ secrets.SSH_USER_NAME }}
+        USER_NAME: ${{ secrets.SSH_USER }}
       run: |
         echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
         scp -o StrictHostKeyChecking=no -i private_key -r dist ${USER_NAME}@${HOSTNAME}:dist-new
