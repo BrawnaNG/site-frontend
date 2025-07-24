@@ -33,15 +33,19 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '22.x'
+
+    - name: install deps
+      run: yarn
+
+    - name: build dist
       env:
         VITE_API_URL: ${{ vars.VITE_API_URL }}
         VITE_CORS_ORIGIN: ${{ vars.VITE_CORS_ORIGIN }}
         VITE_ALLOWED_HOSTS: ${{ vars.VITE_ALLOWED_HOSTS }}
         VITE_RECAPTCHA_SITE_KEY: ${{ secrets.VITE_RECAPTCHA_SITE_KEY }}
-    - run: yarn
-    - run: npm run build --if-present
-    - run: |
+      run: |
         env | grep VITE
+        npm run build --if-present
 
     - name: Open SG
       env:
