@@ -124,7 +124,7 @@
         Search
         </button>
       </div>
-      <div class="col-1 my-2 pt-2">  
+      <div class="col-1 my-2 pt-1">  
         <div class="d-flex float-end"></div>
           <div 
             v-if="!isAuthenticated"
@@ -135,6 +135,8 @@
               class="story-header-action"
               data-bs-toggle="modal"
               data-bs-target="#loginModal"
+              @click="setLoginView"
+              title="Login to site"
             >
           </div>
         </div>
@@ -193,6 +195,9 @@ import EventBus from "../common/EventBus";
 import AuthService from '../services/auth.service';
 import { Collapse } from "bootstrap";
 import { useAuthStore } from '../stores/auth';
+const TITLE_LOGIN = "Login to the site";
+const TITLE_SIGNUP = "Sign up";
+const TITLE_RESET = "Reset password";
 
 // Data properties
 const loginModal = ref({
@@ -218,6 +223,10 @@ onBeforeMount(() => {
 });
 
 // Methods converted to functions
+function setLoginView(){
+  authStore.setView("login");
+}
+
 function collapseNavbarAndLogout() {
   collapseNavbar();
   logOut();
@@ -233,11 +242,25 @@ function searchStories() {
 }
 
 function changeModalTitle(mode) {
-  loginModal.value.title = (mode === 'login' ? 'Login to the site' : 'Sign up');
+  
+  switch (mode) {
+  case "login":
+    loginModal.value.title = TITLE_LOGIN;
+    break;
+  case "signup":
+    loginModal.value.title = TITLE_SIGNUP;
+    break;
+  case "reset":
+    loginModal.value.title = TITLE_RESET;
+    break;
+  default:
+    break;
+  }
 }
 
 function closeLogin() {
   document.getElementById('loginModalClose').click();
+  router.push({name: 'home'});
 }
 
 function checkUser() {

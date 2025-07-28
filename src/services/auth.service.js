@@ -17,25 +17,19 @@ class AuthService {
           return Promise.resolve();
         }
         else{
-          TokenService.clearRefreshToken();
-          authStore.setToken(null);
-          authStore.setAuthenticated(false);
+          this.clear(authStore);
           return Promise.reject();
         }
       },
       (_error) => {
-        TokenService.clearRefreshToken();
-        authStore.setToken(null);
-        authStore.setAuthenticated(false);
+      this.clear(authStore);
         return Promise.reject();
       }
     )
   }
 
   async logout(authStore) {
-    TokenService.clearRefreshToken();
-    authStore.setToken(null);
-    authStore.setAuthenticated(false);
+    this.clear(authStore);
     await this.getRole(authStore);
   }
 
@@ -47,9 +41,16 @@ class AuthService {
       },
       (_error) => {
         authStore.setRole("reader");
+        this.clear(authStore);
         return Promise.resolve();
       }
     );
+  }
+
+  clear(authStore){
+    TokenService.clearRefreshToken();
+    authStore.setToken(null);
+    authStore.setAuthenticated(false);
   }
 
   async register(_authStore, user) {
@@ -60,6 +61,23 @@ class AuthService {
       alias: user.alias
     });
   }  
+
+  async resetPassword(_authStore, email) {
+    return await axiosInstance.post('accounts/reset-password/', {
+      email: email
+    });
+  }
+
+  async setNewPassword(resetToken, password){
+    return await axiosInstance.post(`accounts/apply-reset-password/`, {
+      token: resetToken,
+      password: password
+    });
+  }
+
+  async activateUser(activationToken) {
+    return await axiosInstance.get(`accounts/activation/${activationToken}/`);
+  }
 }
 
 export default new AuthService();

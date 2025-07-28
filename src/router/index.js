@@ -18,6 +18,8 @@ import AllCategories from '@/views/AllCategories.vue';
 import AllTags from '@/views/AllTags.vue';
 import SingleParent from '@/views/SingleParent.vue';
 import AuthService from '../services/auth.service';
+import ResetPassword from '@/views/Users/ResetPassword.vue';
+import Activation from '@/views/Users/Activation.vue';
 import api from "../services/api";
 
 const routes = [
@@ -171,6 +173,22 @@ const routes = [
       authRequired: 'false'
     },
   },
+  {
+    path: '/password/reset/:token',
+    name: 'password-reset',
+    component: ResetPassword,
+    meta: {
+      authRequired: 'false'
+    },
+  },
+  {
+    path: '/activation/:token',
+    name: 'activation',
+    component: Activation,
+    meta: {
+      authRequired: 'false'
+    },
+  }
 ]
 
 var router = createRouter({
