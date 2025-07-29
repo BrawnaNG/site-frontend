@@ -18,7 +18,6 @@
             class="col-4"
           >
             <story-large-card 
-              :card-mode="'mini'"
               :story-card="story"
             />
           </div>

@@ -8,14 +8,12 @@
       </div>
     </div>
     <template v-if="featuredStory">
-      <div class="row">
-        <div class="col big-card-head-title">
-          <h6>
+      <div class="row pb-2">
+        <div class="col home-section-title">
             Featured Story
-          </h6>
         </div>
       </div>
-      <div class="row pb-4">
+      <div class="row pb-2">
         <div class="col">
           <story-large-card 
             :card-mode="'read'"
@@ -24,17 +22,15 @@
         </div> 
       </div>
     </template>
-    <div class="row">
+    <div class="row pb-2">
       <div class="col home-section-title">
-        <h6>
           Recent Stories
-        </h6>
       </div>
     </div>
     <div 
       v-for="(chunk, row) in recent_story_chunks"
       :key="`recentStoriesRow_${row}`"
-      class="row p-2"
+      class="row pb-4"
     >
       <div 
         v-for="storyCard in chunk"
@@ -42,7 +38,6 @@
         class="col-4"
       >
         <story-mini-card 
-          :card-mode="'mini'"
           :story-card="storyCard"
         />
       </div>
@@ -125,23 +120,9 @@ onMounted(() => {
     }
   }
 
-  .big-card {
-    &-head-title {
-      color: #A7A7A7;
-    }
-    &-content {
-      font-size: .9em;
-      color: #363636;
-    }
-    &-footer {
-      font-size: .74em;
-      color: #A7A7A7;
-    }
-  }
-
   .home-section {
     &-title {
-      color: #A7A7A7;
+      color: #808080;
     }
     &-view-all {
       text-decoration: underline;

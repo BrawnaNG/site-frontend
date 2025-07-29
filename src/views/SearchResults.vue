@@ -1,9 +1,11 @@
 <template>
   <div class="search-result-page">
+
+    <!-- Header -->
     <div class="container-flex search-result-page-head border-bottom py-4">
-      <div class="row my-0 col-10 mx-auto justify-content-between">
-        <div class="col-4 p-0">
-          <h2 class="m-0 font-weight-bolder">
+      <div class="row my-0 mx-auto justify-content-start">
+        <div class="col-md-auto p-0">
+          <h2 class="m-0 pe-4 font-weight-bolder">
             Results for "{{ searchTextDisplay }}"
           </h2>
         </div>
@@ -15,7 +17,7 @@
                 @keydown.enter="pushSearch"
               >
         </div>
-        <div class="col-2">
+        <div class="col-md-auto">
           <button 
             class="btn btn-primary mx-2" 
             type="button"
@@ -35,17 +37,20 @@
         </div>
       </div>
     </div>
-    <div class="container-fluid search-result-page-content my-2 p-2">
-      <div class="row pb-4 px-3">
-        <h3 class="m-0">
+    <!-- End header -->
+
+    <!-- Story Results -->
+    <div class="container-fluid search-result-page-content mt-4">
+      <div class="row">
+        <h3 class="mb-2">
           Stories: {{storyResultsCount}} found
         </h3>
       </div>
-      <template v-if="storyResultsCount > 0">
+      <div v-if="storyResultsCount > 0">
         <div 
           v-for="(chunk, row) in storyChunks"
           :key="`storySearch_${row}`"
-          class="row p-2"
+          class="row py-2"
         >
           <div
             v-for="story in chunk"
@@ -53,7 +58,6 @@
             class="col-4"
           >
             <story-mini-card 
-              :card-mode="'mini'"
               :story-card="story"
             />
           </div>
@@ -69,52 +73,38 @@
           </button>
         </div>
       </div>
+      <!-- End Story Results -->
 
-      </template>
-      <template v-else>
+      </div>
+      <div v-else>
         <div class="row m-0 w-100 h-100 font-size-8 font-weight-bold text-secondary justify-content-center align-items-center">
           No Stories found.
         </div>
-      </template>
+      </div>
     </div>
-    <div class="container-flex search-result-page-content my-2 p-2">
+
+    <!-- Author Results -->
+    <div class="container-flex search-result-page-content mT-4">
       <div class="row mx-auto my-0">
-        <div class="pb-4">
+        <div class="mb-2">
           <h3 class="m-0">
-            Authors
+            Authors: {{authorResultsCount}} found
           </h3>
         </div>
-        <template v-if="authorResultsCount > 0">
+        <div v-if="authorResultsCount > 0">
           <div 
             v-for="(chunk, row) in authorChunks"
             :key="`authorSearch_${row}`"
-            class="row p-2"
+            class="row py-2"
           >
             <div
-              v-for="(user, index) in chunk"
-              :key="`user_${index}`"
-              class="col-4 border"
-              @click="gotoAuthor(user.id)"
+              v-for="author in chunk"
+              :key="`author_${author.id}`"
+              class="col-4"
             >
-              <div class="card-user-name font-weight-bold">
-                {{ user.alias }}
-              </div>
-              <div class="card-user-email">
-                {{ user.email }}
-              </div>            
-              <div class="col-3 m-0 justify-content-end align-items-center p-0">
-                <span class="mr-2">
-                  {{ user.story_count }} stories
-                </span>
-                <span 
-                  class="cursor-pointer"
-                  v-if="user.story_count > 0">
-                  <img
-                    src="../assets/image/icon/Show.svg"
-                    alt="show"
-                  >
-                </span>
-              </div>
+              <author-mini-card 
+                :author-card="author"
+              />
             </div>
           </div>
           <div 
@@ -126,51 +116,37 @@
               Show More
             </button>
           </div>
-        </template>
-        <template v-else>
+        </div>
+        <div v-else>
           <div class="row m-0 h-100 font-size-8 font-weight-bold text-secondary justify-content-center align-items-center">
             No Authors found.
           </div>
-        </template>
+        </div>
       </div>
     </div>
+    <!-- End Author results-->
 
-    <div class="container-flex search-result-page-content my-2 p-2">
+    <div class="container-flex search-result-page-content pt-4">
       <div class="row mx-auto my-0">
-        <div class="pb-4">
+        <div class="mb-2">
           <h3 class="m-0">
-            Tags
+            Tags: {{ tagResultsCount }} found
           </h3>
         </div>
         <template v-if="tagResultsCount > 0">
           <div 
             v-for="(chunk, row) in tagChunks"
             :key="`tagSearch_${row}`"
-            class="row p-2"
+            class="row py-2"
           >
             <div
-              v-for="(tag, index) in chunk"
-              :key="`tag_${index}`"
-              class="col-4 border"
-              @click="gotoTag(tag.id)"
-            >
-              <div class="card-user-name font-weight-bold">
-                {{ tag.name }}
-              </div>          
-              <div class="col-3 m-0 justify-content-end align-items-center p-0">
-                <span class="mr-2">
-                  {{ tag.story_count }} stories
-                </span>
-                <span 
-                  v-if="tag.story_count > 0"
-                  class="cursor-pointer"
-                  >
-                  <img
-                    src="../assets/image/icon/Show.svg"
-                    alt="show"
-                  >
-                </span>
-              </div>
+                v-for="tag in chunk"
+                :key="`tag_${tag.id}`"
+                class="col-4"
+              >
+                <tag-mini-card 
+                  :tag-card="tag"
+                />
             </div>
           </div>
           <div 
@@ -195,6 +171,8 @@
 
 <script setup>
 import StoryMiniCard from "@/components/Card/StoryMiniCard.vue";
+import AuthorMiniCard from "@/components/Card/AuthorMiniCard.vue";
+import TagMiniCard from "@/components/Card/TagMiniCard.vue";
 import {ref, computed, watch} from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '@/services/api';
@@ -279,14 +257,6 @@ const advanceStorySearch = () =>
   storySearch(storyPage.value + 1, true);
 }
 
-const gotoTag = (id) => {
-  router.push({name: 'single-parent', params: { type: 'tag', id: id } });
-}
-
-const gotoAuthor = (id) => {
-  router.push({name: 'single-parent', params: { type: 'accounts', id: id } });
-}
-
 const authorSearch = async (page, append) => {
   if (searchTextInput.value){
     authorPage.value = page;
@@ -354,6 +324,11 @@ initialSearch();
 
 <style scoped lang="scss">
 .search-result-page {
+  padding-right: 5%;
+  padding-left: 5%;
+  padding-top: 2%;
+  font-family: NotoSerif-Regular;
+
   &-content {
     &-story {
       height: 570px;
@@ -366,7 +341,7 @@ initialSearch();
     }
   }
 }
-.card-user {
+.card-author-card {
   border-bottom: .8px solid #EFEFEF;
   &:last-child {
     border-bottom: none;
@@ -385,6 +360,13 @@ initialSearch();
     img {
       width: 1.3vw;
     }
+  }
+}
+.home-default-btn {
+  background-color: black;
+  color: white;
+  img {
+    width: 2vw;
   }
 }
 </style>

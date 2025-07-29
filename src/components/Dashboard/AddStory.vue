@@ -95,8 +95,6 @@
 
 <style scoped lang="scss">
   .story-default-btn {
-    background-color: black;
-    color: white;
     img {
       width: 2.4vw;
     }

@@ -52,7 +52,8 @@
 </template>
 
 <script>
-import { inject } from 'vue';
+import { inject, getCurrentInstance } from 'vue';
+
 export default {
   name: "StoryLargeCard",
   props: {
@@ -74,24 +75,30 @@ export default {
       default: 'read'
     }
   },
-  setup() {
-      const moment = inject('moment');
-      return { moment };
-    },
-  methods: {
-    gotoStory: function() {
-      this.$router.push({name: 'story', params: { id: this.storyCard.id } });
-    },
-    editStory: function() {
-      this.$router.push({name: 'addEditStory', params: { id: this.storyCard.id } });
-    }
+  setup(props) {
+    const { proxy } = getCurrentInstance();
+    const moment = inject('moment');
+
+    const gotoStory = () => {
+      proxy.$router.push({name: 'story', params: { id: props.storyCard.id } });
+    };
+
+    const editStory = () => {
+      proxy.$router.push({name: 'addEditStory', params: { id: props.storyCard.id } });
+    };
+
+    return { 
+      moment,
+      gotoStory,
+      editStory
+    };
   }
 }
 </script>
 
 <style scoped lang="scss">
 .story-large-card {
-  border: .8px solid #EFEFEF;
+  background-color: #F6F6F6;
   &-title {
     font-size: 1.8em;
     font-weight: bolder;

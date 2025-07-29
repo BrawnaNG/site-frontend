@@ -559,9 +559,6 @@ const cleanError = (originalError) => {
 </script>
 
 <style scoped lang="scss">
-  .cursor-pointer {
-    cursor: pointer;
-  }
   .login-form {
     &-title {
       font-size: .8em;
