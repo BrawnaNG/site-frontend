@@ -153,9 +153,6 @@ function resetPassword() {
 
 
 <style scoped lang="scss">
-  .cursor-pointer {
-    cursor: pointer;
-  }
   .reset-form {
     &-input {
       font-size: 1em;
@@ -167,8 +164,6 @@ function resetPassword() {
     }
 }
   .story-default-btn {
-    background-color: black;
-    color: white;
     img {
       width: 2.4vw;
     }

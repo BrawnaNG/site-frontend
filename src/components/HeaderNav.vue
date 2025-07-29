@@ -318,6 +318,7 @@ function collapseNavbar() {
   .navbar-collapse {
     margin-top: 5px;
     background-color: black !important;
+    z-index: 1000;
   }
   .navbar-menu-item-link {
     color: white !important;

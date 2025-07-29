@@ -11,35 +11,6 @@ body {
     cursor: pointer;
   }
 
-  .pagination-custom-style {
-    .page-item {
-      .page-link {
-        color: black !important;
-        border: none;
-        font-family: NotoSerif-Bold;
-        font-size: 1.2em;
-        &:focus {
-          box-shadow: 0 0 0 0.2rem rgba(100, 100, 100, 0.25);
-        }
-      }
-
-      &.disabled {
-        .page-link {
-          color: #A7A7A7 !important;
-        }
-      }
-
-      &.active {
-        .page-link {
-          color: white !important;
-          background-color: black !important;
-          border-color: black !important;
-        }
-      }
-
-    }
-  }
-
   .breadcrumb-item {
     font-size: .8em;
     a {
@@ -69,15 +40,17 @@ body {
     font-family: NotoSerif-Bold;
   }
 
-  .color-gray {
-    color: #707070;
-  }
-
   .font-size-8 {
     font-size: .8em;
   }
 
-  .font-size-7 {
-    font-size: .7em;
+  .story-default-btn {
+    background-color: black;
+    color: white;
+    border: none;
+    
+    &:hover {
+      background-color: #333;
+    }
   }
 }

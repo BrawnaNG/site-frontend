@@ -23,7 +23,6 @@
               class="col-4"
             >
               <story-mini-card 
-                :card-mode="'mini'"
                 :story-card="story"
               />
             </div>
