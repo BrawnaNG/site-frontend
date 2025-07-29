@@ -1,19 +1,15 @@
 <template>
-  <div class="container-flex comments-card">
-    <div class="row card-content">
+  <div class="container-flex comments-card border">
+    <div class="row card-content my-2">
       <div class="col-10">
-        <div class="container-flex">
-          <div class="row">
-            <h6>
-              {{ commentCard.user }}
-              {{ moment(commentCard.created_at).format(' - MMM YY') }}
-            </h6>
-          </div>
-          <div class="row ps-4">
-              {{ commentCard.body }}
-          </div>
+        <h6>
+          {{ commentCard.user }}
+          {{ moment(commentCard.created_at).format(' - MMM YY') }}
+        </h6>
         </div>
-      </div>
+        <div class="row ps-4">
+          {{ commentCard.body }}
+        </div>
     </div>
   </div>
 </template>
@@ -50,7 +46,11 @@ export default {
 
 <style scoped lang="scss">
 .comments-card {
-  border: .8px solid #EFEFEF;
+
+  border: 1em;
+  border-color: #707070;
+  background-color: beige;
+
   &-title {
     color: #707070;
   }

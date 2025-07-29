@@ -1,12 +1,19 @@
 <template>
-  <div class="saved-stories-page">
-    <div class="container-fluid saved-stories-head border-bottom">
-      <div class="row m-0 py-3 justify-content-between col-10 my-0 mx-auto">
-        <div class="col px-0">
+  <div>
+    <!-- Header  -->
+    <div class="container-fluid border-bottom">
+
+      <div class="row m-3 justify-content-md-start">
+        <div class="col-md-auto">
           <h2 class="m-0 pt-1">
             {{ story.title }}
           </h2>
-          <div class="pt-3 text-nowrap">
+        </div>
+      </div>
+
+      <div class="row m-3 justify-content-md-start">
+        <div class="col-md-auto">
+          <div class="text-nowrap">
             <RouterLink
               :to="{name: 'single-parent', params: {type: 'accounts', id: story.user_id}}"
             >
@@ -24,32 +31,18 @@
             </span>
           </div>
         </div>
-        <div class="col pt-4 px-0">
-          <div class="float-end">
-            <span class="pr-3">
-              <img
-                class="pt-1 cursor-pointer"
-                src="../../assets/image/icon/Bookmark.svg"
-                alt=""
-              >
-            </span>
-            <span>
-              <img
-                class="pt-1 cursor-pointer"
-                src="../../assets/image/icon/Send.svg"
-                alt=""
-              >
-            </span>
-          </div>
-        </div>
       </div>
     </div>
-    <div class="container-fluid border border-warning mx-auto pt-5 px-4 py-4">
-      <div class="row">
+    <!-- End Header -->
 
-        <div class="col-3">
+    <!-- Story Container-->
+    <div class="container-fluid border border-warning mx-auto pt-4 px-4">
+      <div class="row justify-content-md-start">
+
+        <!-- Chapters -->
+        <div class="col-md-auto mb-4">
           <div 
-          class="container-fluid saved-stories-tags pt-2"
+          class="container-fluid pt-2"
             v-if="story.has_chapters"
           >
             <div class="row">
@@ -70,8 +63,10 @@
             </div>
           </div>
         </div>
+        <!-- End Chapters-->
 
-        <div class="col-6">
+        <!-- Story Content-->
+        <div class="col-lg">
           <div class="container-fluid">
 
             <div class="row">
@@ -81,7 +76,7 @@
             </div>
 
             <div 
-              class="row pb-4 border-bottom"
+              class="row"
             >
               <div 
                 class="ql-editor"
@@ -89,94 +84,116 @@
               >
               </div>
             </div>
-
-            <div 
-              class="row p-2"
-              v-if="story.comments && story.comments.length > 0"
-            >
-              <h6>Comments</h6>
-            </div>
-            <div
-              v-for="comment in story.comments"
-              :key="`comment_${comment}`"
-              class="row comments-stories-content-card pb-2"
-            >
-              <comments-card 
-                :comment-card="comment"
-              />
-            </div>
-
-            <div
-              v-if="isAuthenticated" 
-              class="row py-4"
-            >
-            <button 
-              class="btn btn-primary" 
-              type="button" 
-              data-bs-toggle="collapse" 
-              data-bs-target="#commentBox" 
-              aria-expanded="false" 
-              aria-controls="#commentBox">
-              Add Comment
-            </button>
-              <div 
-                class="container-fluid collapse pt-4"
-                id="commentBox"
-              >
-                <div class="row  pb-2">
-                  <div class="col-10">
-                    <textarea 
-                      v-model="comment_text"
-                      class="form-control"
-                    >
-                    </textarea>
-                  </div>
-                </div>
-                
-                <div class="row">
-                  <div class="col-10">
-                    &nbsp;
-                  </div>
-                  <div class="col-2">
-                    <button 
-                      class="float-end rounded-pill m-1"
-                      @click="addComment()"
-                    >
-                      Post
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
           </div>
         </div>
+        <!-- End Story Content-->
 
-        <div
-          class="col-3"
-        >
+        <!-- Tags -->
+        <div class="col-2">
           <div 
-            class="container-fluid saved-stories-tags pt-2"
+            class="container-fluid"
             v-if="story.tags && story.tags.length > 0"
           >
-              <div class="row">
-                <h6>Tags</h6>
+            <div class="row">
+              <h6>Tags</h6>
+            </div>
+            <div class="row">
+              <div>
+                <Tag
+                  v-for="tag in story.tags"
+                  :value="`${tag.name}`"
+                  class="mb-2 me-2"
+                  @click="gotoTag(tag.id)"
+                >
+                </Tag>
               </div>
-              <div class="row">
-                <div>
-                    <Tag
-                      v-for="tag in story.tags"
-                      :value="`${tag.name}`"
-                      class="mb-2 me-2"
-                      @click="gotoTag(tag.id)"
-                    >
-                    </Tag>
-                </div>
-              </div>
+            </div>
+          </div>
+        </div>
+        <!-- End Tags-->
+      </div>
+    </div>
+    <!-- End Story Container -->
+
+    <!-- Comments Container-->
+    <div class="container-fluid w-75 pb-4">
+      <!-- Old Comments -->
+      <div class="row m-3 justify-content-md-start mt-4">
+        <h4>Comments</h4>
+      </div>
+      <div 
+        class="row m-3 ms-4 justify-content-md-start"
+        v-if="!story.comments || story.comments.length === 0"
+      >
+        There are no comments on this story
+      </div>
+      <div
+        v-for="comment in story.comments"
+        :key="`comment_${comment}`"
+        class="row comments-stories-content-card m-3"
+      >
+        <comments-card 
+          :comment-card="comment"
+        />
+      </div>
+
+      <!-- End Old Comments -->
+
+      <!-- Add new comment -->
+      <div v-if="isAuthenticated">
+        <div 
+          id="addCommentRow"
+          class="row justify-content-md-center collapse show">
+          <div class="col-md-auto my-3">
+            <button 
+              class="btn btn-primary" 
+              type="button"
+              @click="toggleCommentControls"
+            >
+              Add Comment
+            </button>
+          </div>
+        </div>
+        <div 
+          class="container-fluid collapse pt-4"
+          id="commentBox"
+        >
+          <div class="row justify-content-md-center">
+            <div class="col-9">
+              <textarea 
+                v-model="comment_text"
+                class="form-control border-primary"
+                rows="4"
+              >
+              </textarea>
+            </div>
+          </div>
+          <div class="row justify-content-md-end">
+            <div class="col-md-auto mt-2">
+              <button
+                  class="btn btn-secondary rounded"
+                  @click="cancelComment"
+              >
+                  Cancel
+              </button>
+            </div>
+            <div class="col col-2 mt-2">
+              <button
+                  class="btn btn-primary rounded active"
+                  @click="addComment"
+              >
+                  Comment
+              </button>
+            </div>
+            <div class="col-1">
+              &nbsp;
+            </div>
           </div>
         </div>
       </div>
+      <!-- End Add new comment-->
     </div>
+    <!-- End Comment Container -->
   </div>
 </template>
 
@@ -224,6 +241,31 @@ const current_chapter = reactive({
 const selected_chapter = ref({});
 const comment_text = ref("");
 
+const addCommentCollapse = ref(null);
+const commentBoxCollapse = ref(null);
+
+const toggleCommentControls = () => {
+  if (!addCommentCollapse.value){
+    addCommentCollapse.value = new Collapse(document.getElementById('addCommentRow'),
+    {
+      toggle: true
+    });
+  }
+  if (!commentBoxCollapse.value){
+    commentBoxCollapse.value = new Collapse(document.getElementById('commentBox'),
+    {
+      toggle: true
+    });
+  }
+  addCommentCollapse.value.toggle();
+  commentBoxCollapse.value.toggle();
+}
+
+const cancelComment = () => {
+  comment_text.value = "";
+  toggleCommentControls();
+}
+
 // Lifecycle hooks
 onMounted( async () => {
   await getStory();
@@ -266,17 +308,17 @@ const onChapterSelect = async (chap) => {
 };
 
 const addComment = async () => {
-  const res = await api.post(`/comment/add/${props.id}/`,{
+  if (!comment_text.value)
+    return;
+  await api.post(`/comment/add/${props.id}/`,{
     body: comment_text.value
-  });
-  story.comments.push(res.data);
-  comment_text.value = "";
-  const commentBox = document.querySelector('#commentBox');
-  if (commentBox) {
-      new Collapse(commentBox, {
-          toggle: false,
-      }).hide();
-  }
+  }).then(
+    (res) => {
+      story.comments.push(res.data);
+      comment_text.value = "";
+    toggleCommentControls();
+    }
+  );
 }
 
 const gotoTag = (id) => {
@@ -284,6 +326,3 @@ const gotoTag = (id) => {
 }
 
 </script>
-
-<style scoped lang="scss">
-</style>
