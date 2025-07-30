@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="view === 'login'"
-    class="login-form container p-3"
+    class="login-form container p-"
   >
     <div class="row">
       <p class="login-form-title m-0 pb-3 p-1">
@@ -54,19 +54,85 @@
         {{ errorMessage }}
       </span>
     </div>
-    <div class="row login-form-sub-title text-center">
-      <div class="col c-6">
-        <span>
-          Don't have an account?
-        </span>
-      </div>
-      <div class="col-6">
+    <div class="row pb-2">
+      <div class="login-form-sub-title text-center">
+        Don't have an account?
         <span
           class="cursor-pointer"
-          @click="view = 'signup'"
+          @click="goTo('signup')"
+        >Sign up here</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="login-form-sub-title text-center">
+        Forgot your password?
+        <span
+          class="cursor-pointer"
+          @click="goTo('reset')"
+        >Reset it here</span>
+      </div>
+    </div>
+  </div>
+
+  <div
+    v-if="view === 'reset'"
+    class="login-form container"
+  >
+    <div class="row mt-3">
+      <div class="rounded border p-1">
+        <input
+          v-model="reset.email"
+          type="text"
+          class="border-0 login-form-input form-control"
+          placeholder="Enter your email"
         >
-          Sign up here.
-        </span>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="rounded border p-1">
+        <input
+          v-model="reset.reEmail"
+          type="text"
+          class="border-0 login-form-input form-control"
+          placeholder="Enter your email again"
+        >
+      </div>
+    </div>
+    <div 
+      class="p-0 pt-2"
+      v-if="reset.error">
+      <div class="alert alert-danger p-1 ps-3">
+        {{ reset.error }}
+      </div>
+    </div>
+    <div class="row">
+      <button
+        pill
+        variant="dark"
+        class="story-default-btn font-weight-bold w-50 py-2 my-3 mx-auto"
+        @click="resetPassword"
+      >
+        Reset password
+      </button>
+    </div>
+  </div>
+
+  <div
+    v-if="view === 'success'"
+    class="login-form container"
+  >
+    <div 
+      class="p-0 pt-2"
+      v-if="reset.success">
+      <div class="alert alert-success p-1 ps-3">
+        {{ reset.success }}
+      </div>
+    </div>
+    <div 
+      class="p-0 pt-2"
+      v-if="signUp.success">
+      <div class="alert alert-success p-1 ps-3">
+        {{ signUp.success }}
       </div>
     </div>
   </div>
@@ -197,7 +263,7 @@
       <button
         pill
         variant="dark"
-        class="story-default-btn w-100 py-2 my-3 font-weight-bold"
+        class="story-default-btn font-weight-bold w-50 py-2 my-3 mx-auto"
         @click="signUpUser"
       >
         Sign up
@@ -208,7 +274,7 @@
         Are you a member?
         <span
           class="cursor-pointer"
-          @click="view = 'login'"
+          @click="goTo('login')"
         >Login here</span>
       </div>
     </div>
@@ -219,21 +285,24 @@
       <span class="alert alert-danger p-1 ps-3 pe-3">
         {{ errorMessage }}
       </span>
+      </div>
     </div>
-  </div>
 </template>
 
 <script setup>
-import { ref, reactive, watch } from 'vue';
+import { ref, reactive, watch, computed } from 'vue';
 import AuthService from '../services/auth.service';
 import api from '@/services/api';
 import { useAuthStore } from '../stores/auth';
 import debounce from 'lodash.debounce';
 import { useReCaptcha } from 'vue-recaptcha-v3';
 const MISMATCH_PASSWORD_ERROR = "Passwords don't match";
+const MISMATCH_EMAIL_ERROR = "Emails don't match";
 const TERMS_ERROR = "Please read and agree to the terms and conditions";
 const SIGNUP_ERROR = "Sign up failed";
 const RECAPTCHA_ERROR = "ReCaptcha failed";
+const SUCCESS_RESET_PASSWORD = "Password reset submitted - check your email";
+const SUCCESS_SIGNUP = "Sign up request submitted - check your email";
 
 const emit = defineEmits(['closeLogin','changeFormState']);
 const { executeRecaptcha, recaptchaLoaded } = useReCaptcha();
@@ -254,16 +323,58 @@ const signUp = reactive({
   mismatch: false,
   termsAgreed: false,
   recaptcha: false,
-  recaptchaThreshold: import.meta.env.VITE_RECAPTCHA_THRESHOLD
+  recaptchaThreshold: import.meta.env.VITE_RECAPTCHA_THRESHOLD,
+  success: null
 });
 
-const view = ref('login');
+const reset = reactive({
+  email: '',
+  reEmail: '',
+  error: '',
+  mismatch: false,
+  success: null
+});
+
 const showPassword = ref(false);
 const showRepeatPassword = ref(false);
 const errorMessage = ref('');
 
+// Store
+const authStore = useAuthStore();
+
+// Computed properties
+const view = computed(() => authStore.view);
+
+// functions
+
+const goTo = (mode) => {
+  clearForms();
+  authStore.setView(mode);
+  emit('changeFormState', mode);
+}
+
+const clearForms = () => {
+  signUp.alias = '';
+  signUp.username = '';
+  signUp.email = '';
+  signUp.password = '';
+  signUp.rePassword = '';
+  signUp.error = {};
+  signUp.mismatch = false;
+  signUp.termsAgreed = false;
+  signUp.recaptcha = false
+  signUp.success = null;
+  login.username = '';
+  login.password = '';
+  reset.email = '';
+  reset.reEmail = '';
+  reset.error = '';
+  reset.mismatch = false;
+  reset.success =  null;
+}
+
 const checkPasswords = debounce(async (rePassword) => {
-  if (signUp.password != rePassword){
+  if (rePassword && signUp.password && signUp.password != rePassword){
     if (!signUp.mismatch){
       if (!signUp.error["password"])
         signUp.error["password"] = [MISMATCH_PASSWORD_ERROR];
@@ -280,9 +391,28 @@ const checkPasswords = debounce(async (rePassword) => {
   }
 }, 500); // Debounce for 500ms
 
+const checkResetEmails = debounce(async (reEmail) => {
+  if (reEmail && reset.email && reset.email != reEmail){
+    if (!reset.mismatch){
+      reset.error = MISMATCH_EMAIL_ERROR;
+      reset.mismatch = true;
+    }
+  }
+  else{
+    if (reset.mismatch){
+      reset.error = '';
+      reset.mismatch = false;
+    }
+  }
+}, 500); // Debounce for 500ms
+
 watch(signUp, (val) => {
   checkPasswords(val.rePassword);
   checkTerms();
+});
+
+watch(reset, (val) => {
+  checkResetEmails(val.reEmail);
 });
 
 watch(login, (val) => {
@@ -301,13 +431,33 @@ const loginUser = () => {
     username: login.username,
     password: login.password
   };
-  const authStore = useAuthStore();
   AuthService.login(authStore, user).then(
-    (_response) => {
+    (_) => {
+      clearForms();
       emit('closeLogin');
     },
     (_error) => {
       errorMessage.value = "Login failed";
+    }
+  );
+};
+
+const resetPassword = async () => {
+  if (reset.mismatch){
+    return;
+  }
+
+  if (reset.email != reset.reEmail){
+    if (!reset.mismatch){
+      reset.error = MISMATCH_EMAIL_ERROR;
+      reset.mismatch = true;
+    }
+    return;
+  }
+  AuthService.resetPassword(authStore, reset.email).then(
+    (_) => {
+      authStore.setView("success");
+      reset.success = SUCCESS_RESET_PASSWORD;
     }
   );
 };
@@ -379,7 +529,6 @@ const signUpUser = async () => {
     email: signUp.email,
     password: signUp.password
   };
-  const authStore = useAuthStore();
   AuthService.register(authStore, user).then(
     (_response) => {
       signUp.email = '';
@@ -390,8 +539,8 @@ const signUpUser = async () => {
       signUp.error = {};
       signUp.termsAgreed = false;
       signUp.mismatch = false;
-      view.value = 'login';
-      emit('closeLogin');
+      signUp.success = SUCCESS_SIGNUP;
+      authStore.setView('success');
     },
     (error) => {
       signUp.error = error.response.data;

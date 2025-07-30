@@ -35,7 +35,6 @@ const setup = () => {
             const { access, refresh } = res.data;
             authStore.setToken(access);
             authStore.setAuthenticated(true);
-            await authService.getRole(authStore);
             if (refresh){
               tokenService.updateRefreshToken(refresh);
             }
