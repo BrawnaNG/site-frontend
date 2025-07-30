@@ -1,33 +1,35 @@
 <template>
-  <div id="app">
+  <div id="app" class="app">
     <header-nav />
     <router-view />
   </div>
 </template>
 
-<script>
+<script setup>
+import { onMounted, onBeforeUnmount } from 'vue';
 import HeaderNav from "@/components/HeaderNav.vue";
-import SiteFooter from "@/components/SiteFooter.vue";
 import EventBus from "./common/EventBus";
 import AuthService from "./services/auth.service";
 import { useAuthStore } from './stores/auth';
 
-export default {
-  components: {SiteFooter, HeaderNav},
-  mounted() {
-    document.title = 'Stories',
-    EventBus.on("logout", () => {
-      this.logOut();
-    });
-  },
-  beforeUnmount() {
-    EventBus.remove("logout");
-  },
-  methods: {
-    logOut() {
-      const authStore = useAuthStore();
-      AuthService.logout(authStore);
-    }
-  }
+const authStore = useAuthStore();
+
+function logOut() {
+  AuthService.logout(authStore);
 }
+
+onMounted(() => {
+  document.title = 'Stories';
+  EventBus.on("logout", () => {
+    logOut();
+  });
+});
+
+onBeforeUnmount(() => {
+  EventBus.remove("logout");
+});
 </script>
+
+<style lang="scss">
+  @use '@/assets/style/main.scss' as *;
+</style>

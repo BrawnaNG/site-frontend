@@ -16,7 +16,7 @@
                 <img
                 title="show password"
                 class="cursor-pointer"
-                src="../../assets/image/icon/Show.svg"
+                src="@/assets/image/icon/Show.svg"
                 @click="showPassword = !showPassword"
                 >
             </div>
@@ -35,7 +35,7 @@
                 <img
                 title="show password"
                 class="cursor-pointer"
-                src="../../assets/image/icon/Show.svg"
+                src="@/assets/image/icon/Show.svg"
                 @click="showRepeatPassword = !showRepeatPassword"
                 >
             </div>
@@ -52,9 +52,7 @@
         <div class="row row mt-0 justify-content-md-center">
             <div class="col-md-auto w-25">
                 <button
-                    pill
-                    variant="dark"
-                    class="story-default-btn font-weight-bold w-50 py-2 my-3 mx-auto"
+                    class="story-default-btn w-50 px-4 py-2 my-3 mx-auto"
                     @click="resetPassword"
                 >
                     Set new password
@@ -153,19 +151,14 @@ function resetPassword() {
 
 
 <style scoped lang="scss">
-  .reset-form {
+.reset-form {
     &-input {
-      font-size: 1em;
-      min-width: 25%;
-      &:focus {
+        font-size: 1em;
+        min-width: 25%;
+        &:focus {
         outline: unset;
         box-shadow: unset;
-      }
+        }
     }
 }
-  .story-default-btn {
-    img {
-      width: 2.4vw;
-    }
-  }
 </style>

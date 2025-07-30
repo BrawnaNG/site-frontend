@@ -14,15 +14,15 @@
                 v-model="searchTextInput"
                 class="form-control"
                 placeholder="Search story, author or tags"
-                @keydown.enter="pushSearch"
+                @keydown.enter="updateSearch"
               >
         </div>
         <div class="col-md-auto">
           <button 
-            class="btn btn-primary mx-2" 
+            class="btn btn-dark mx-2" 
             type="button"
             aria-label="Search"
-            @click="pushSearch"
+            @click="updateSearch"
           >
           Search
           </button>
@@ -30,7 +30,7 @@
             class="btn btn-secondary" 
             type="button"
             aria-label="Clear"
-            @click="clearSearch(true)"
+            @click="clearSearch"
           >
           Clear
           </button>
@@ -63,19 +63,18 @@
           </div>
         </div>
         <div class="row p-2">
-        <div 
-          v-if="storyResults.length < storyResultsCount"
-          class="col-xl-2 mx-auto">
-          <button 
-            class="px-2 py-1 font-weight-bold rounded-pill home-default-btn"
-            @click="advanceStorySearch">
-            Show More
-          </button>
+          <div 
+            v-if="storyResults.length < storyResultsCount"
+            class="col-xl-2 mx-auto">
+            <button 
+              class="px-4 py-2 rounded-pill story-default-btn"
+              @click="advanceStorySearch">
+              Show More
+            </button>
+          </div>
         </div>
-      </div>
+      </div>  
       <!-- End Story Results -->
-
-      </div>
       <div v-else>
         <div class="row m-0 w-100 h-100 font-size-8 font-weight-bold text-secondary justify-content-center align-items-center">
           No Stories found.
@@ -84,7 +83,7 @@
     </div>
 
     <!-- Author Results -->
-    <div class="container-flex search-result-page-content mT-4">
+    <div class="container-flex search-result-page-content mt-4">
       <div class="row mx-auto my-0">
         <div class="mb-2">
           <h3 class="m-0">
@@ -111,7 +110,7 @@
             v-if="authorResults.length < authorResultsCount"
             class="col-xl-2 mx-auto">
             <button 
-              class="px-2 py-1 font-weight-bold rounded-pill home-default-btn"
+              class="px-4 py-2 rounded-pill story-default-btn"
               @click="advanceAuthorSearch">
               Show More
             </button>
@@ -153,7 +152,7 @@
             v-if="tagResults.length < tagResultsCount"
             class="col-xl-2 mx-auto">
             <button 
-              class="px-2 py-1 font-weight-bold rounded-pill home-default-btn"
+              class="px-4 py-2 rounded-pill story-default-btn"
               @click="advanceTagSearch">
               Show More
             </button>
@@ -173,24 +172,33 @@
 import StoryMiniCard from "@/components/Card/StoryMiniCard.vue";
 import AuthorMiniCard from "@/components/Card/AuthorMiniCard.vue";
 import TagMiniCard from "@/components/Card/TagMiniCard.vue";
-import {ref, computed, watch} from 'vue';
+import {ref, computed, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '@/services/api';
+import { useSearchStore } from "@/stores/search";
+import { storeToRefs } from 'pinia';
 
 const route = useRoute();
 const router = useRouter();
-const searchTextInput = ref(route.params.search);
-const searchTextDisplay = ref(route.params.search);
+const searchStore = useSearchStore();
+
+const searchTextDisplay = ref();
+const searchTextInput = ref();
+
 const storyResults = ref([]);
 const storyResultsCount = ref(0);
 const authorResults = ref([]);
 const authorResultsCount = ref(0);
 const tagResults = ref([]);
 const tagResultsCount = ref(0)
+const searchTextProps = ref(route.params.search);
+
 const cols = 3;
 const storyPage = ref(1);
 const authorPage = ref(1);
 const tagPage = ref(1);
+
+const { searchText } = storeToRefs(searchStore);
 
 const storyChunks = computed( () => {
   if (storyResultsCount.value > 0){
@@ -215,15 +223,33 @@ const tagChunks = computed( () => {
 
 watch(
   () => route.params.search,
-  (newSearchText, _oldSearchText) => {
-    searchTextInput.value = newSearchText;
-    clearSearch(false);
-    initialSearch();
+  (newSearchText, oldSearchText) => {
+    if (newSearchText && newSearchText != oldSearchText){
+      searchStore.setSearchText(newSearchText);
+      initialSearch();
+    }
   }
 )
 
+onMounted( () => {
+  searchStore.setSearchText(searchTextProps.value);
+  initialSearch();
+});
+
+// Methods
+
+const updateSearch = () => {
+  searchStore.setSearchText(searchTextInput.value);
+  router.push({name: 'searchResults',
+    params: {
+      search: searchTextInput.value
+    }});
+  initialSearch();  
+}
+
 const initialSearch = () => {
-  searchTextDisplay.value = searchTextInput.value;
+  searchTextDisplay.value = searchText.value;
+  searchTextInput.value = searchText.value;
   storySearch(1, false);
   authorSearch(1, false);
   tagSearch(1, false);
@@ -238,9 +264,9 @@ const chunkResults = (results) => {
 }
 
 const storySearch = async (page, append) => {
-  if (searchTextInput.value){
+  if (searchText.value){
     storyPage.value = page;
-    await api.get(`/story/search/story?q=${searchTextInput.value}&page=${page}`).then(res => {
+    await api.get(`/story/search/story?q=${searchText.value}&page=${page}`).then(res => {
       if (append){
         storyResults.value = storyResults.value.concat(res.data.results);
       }
@@ -258,9 +284,9 @@ const advanceStorySearch = () =>
 }
 
 const authorSearch = async (page, append) => {
-  if (searchTextInput.value){
+  if (searchText.value){
     authorPage.value = page;
-    await api.get(`/story/search/author?author=${searchTextInput.value}&page=${page}`).then(res => {
+    await api.get(`/story/search/author?author=${searchText.value}&page=${page}`).then(res => {
       if (append){
         authorResults.value = authorResults.value.concat(res.data.results);
       }
@@ -277,9 +303,9 @@ const advanceAuthorSearch = () => {
 }
 
 const tagSearch = async (page, append)  => {
-  if (searchTextInput.value){
+  if (searchText.value){
     tagPage.value = page;
-    await api.get(`/story/search/tag?tag=${searchTextInput.value}&page=${page}`).then(res => {
+    await api.get(`/story/search/tag?tag=${searchText.value}&page=${page}`).then(res => {
       if (append){
         tagResults.value = tagResults.value.concat(res.data.results);
       }
@@ -295,7 +321,7 @@ const advanceTagSearch = () => {
   authorSearch(tagPage.value+1, true);
 }
 
-const clearSearch = (clearInput) => {
+const clearSearch = () => {
   storyResults.value = [];
   storyResultsCount.value = 0;
   authorResults.value = [];
@@ -305,21 +331,11 @@ const clearSearch = (clearInput) => {
   storyPage.value = 1;
   authorPage.value = 1;
   tagPage.value = 1;
-  if (clearInput)
-    searchTextInput.value = '';
+  searchTextDisplay.value = "";
+  searchTextInput.value = '';
+  searchStore.setSearchText("");
 }
 
-const pushSearch = () => {
-  router.push( {
-    name: 'searchResults', 
-        params: {
-        search: searchTextInput.value
-    }
-  });
-}
-
-clearSearch(false);
-initialSearch();
 </script>
 
 <style scoped lang="scss">
@@ -327,7 +343,6 @@ initialSearch();
   padding-right: 5%;
   padding-left: 5%;
   padding-top: 2%;
-  font-family: NotoSerif-Regular;
 
   &-content {
     &-story {
@@ -360,13 +375,6 @@ initialSearch();
     img {
       width: 1.3vw;
     }
-  }
-}
-.home-default-btn {
-  background-color: black;
-  color: white;
-  img {
-    width: 2vw;
   }
 }
 </style>

@@ -38,16 +38,11 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import RecentStories from "@/components/Admin/RecentStories.vue";
 import LastRegisteredUser from "@/components/Admin/LastRegisteredUser.vue";
 import AdminBreadCrumbs from "@/components/Admin/AdminBreadCrumbs.vue";
 import AdminMenu from "@/components/Admin/AdminMenu.vue";
-
-export default {
-  name: "AdminPage",
-  components: {LastRegisteredUser, RecentStories, AdminBreadCrumbs, AdminMenu },
-}
 </script>
 
 <style scoped lang="scss">

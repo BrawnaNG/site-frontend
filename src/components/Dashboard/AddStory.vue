@@ -1,12 +1,12 @@
 <template>
   <div>
     <button
-      class="story-default-btn pr-2 py-2 px-4 font-weight-bold rounded-pill"
+      class="story-default-btn px-4 py-2 rounded-pill"
     >
       Create Story
       <img
-        src="../../assets/image/icon/add.svg"
-        class="mx-2 px-0"
+        src="@/assets/image/icon/add.svg"
+        class="ms-2 px-0 add-story-icon"
         data-bs-toggle="modal"
         data-bs-target="#storyModal"
       >
@@ -24,41 +24,43 @@
           <div class="modal-header">
             <h5 
               id="storyModalLabel"
-              class="modal-title"
+              class="modal-title bold"
             >
               Create Story
             </h5>
           </div>
 
-          <div class="story-form container p-3">
-            <div class="row">
-              <div class="rounded border p-1">
-                <input
-                  v-model="storyTitle"
-                  type="text"
-                  class="border-0 story-form-input form-control"      
-                  placeholder="Enter a title for your story"
-                >
+          <div class="story-form container-fluid p-3">
+            <div class="row justify-content-start">
+              <div class="col-md-auto w-100">
+                <div class="rounded border w-100">
+                  <input
+                    v-model="storyTitle"
+                    type="text"
+                    class="border-0 story-form-input form-control"      
+                    placeholder="Enter a title for your story"
+                  >
+                </div>
               </div>
             </div>
-            <div class="row">
-              <button
-                pill
-                variant="dark"
-                class="story-default-btn btn-primary font-weight-bold w-50 py-2 my-3 mx-auto"
-                @click="createStory()"
-              >
-                Create Story
-              </button>
-              <button
-                id="storyModalClose"
-                pill
-                variant="dark"
-                class="story-default-btn font-weight-bold w-50 py-2 my-3 mx-auto"
-                data-bs-dismiss="modal"
-              >
-                Cancel
-              </button>
+            <div class="row justify-content-end pt-3">
+              <div class="col-md-auto">
+                <button
+                  class="btn btn-dark"
+                  @click="createStory()"
+                >
+                  Create Story
+                </button>
+              </div>
+              <div class="col-md-auto">
+                <button
+                  id="storyModalClose"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -94,9 +96,8 @@
 </script>
 
 <style scoped lang="scss">
-  .story-default-btn {
-    img {
-      width: 2.4vw;
-    }
-  }
+.add-story-icon {
+  height: 2em;
+  width: 2em;
+}
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid py-3 menu-bar-wrapper px-0">
     <div class="row mx-auto my-0">
-      <div class="col-6 .me-auto">
+      <div class="col-9 .me-auto">
         <ul class="list-group list-group-horizontal">
           <li class="list-group-item menu-bar-item cursor-pointer text-white text-center mr-3 px-4 pb-2">
             <router-link
@@ -19,7 +19,7 @@
           </li>
           <li class="list-group-item menu-bar-item cursor-pointer text-white text-center mr-3 px-4 pb-2">
             <router-link
-              :to="{name: 'commentsStory'}"
+              :to="{name: 'userComments'}"
             >
               Comments
             </router-link>
@@ -35,7 +35,7 @@
       </div>
       <div 
         v-if="isAuthenticated"
-        class="col-6 menu-bar-item cursor-pointer text-white text-right mr-3 px-4 pb-2 py-2"
+        class="col-3 menu-bar-item cursor-pointer text-white text-right mr-3 px-4 pb-2 py-2"
       >
         <span
           class="float-end"
@@ -48,24 +48,20 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
 import EventBus from "../../common/EventBus";
 import { useAuthStore } from '@/stores/auth';
 
-export default {
-  name: "UserMenu",
-  computed: {
-    isAuthenticated() {
-      const authStore = useAuthStore();
-      return authStore.isAuthenticated;
-    }
-  },
-  methods: {
-    logOut(){
-      EventBus.dispatch("logout");
-      this.$router.push({name: 'home'});
-    }
-  }
+const router = useRouter();
+const authStore = useAuthStore();
+
+const isAuthenticated = computed(() => authStore.isAuthenticated);
+
+function logOut() {
+  EventBus.dispatch("logout");
+  router.push({name: 'home'});
 }
 </script>
 
@@ -87,13 +83,8 @@ export default {
   .menu-bar-item {
     a,span{
       color: white !important;
-      font-size: 1.2em;
-      font-family: NotoSerif-Bold;
+      font-size: 1em;
       text-decoration: none;
-    }
-    .router-link-active 
-    {
-      text-decoration: underline;
     }
   }
 }

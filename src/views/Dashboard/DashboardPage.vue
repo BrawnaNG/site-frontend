@@ -3,7 +3,7 @@
     <div class="container-fluid dashboard-page-head mx-auto py-3">
       <div class="row h-100 m-0">
         <div class="col-8 px-4 dashboard-page-head-title">
-          <h4 class="m-0 px-4 font-weight-bolder">
+          <h4 class="m-0 px-4 bold">
             Dashboard
           </h4>
           <bread-crumbs 
@@ -36,6 +36,7 @@
           >
             <story-large-card
               :story-card="storyCard"
+              :card-mode='"edit"'
             />
           </div>
         </div>

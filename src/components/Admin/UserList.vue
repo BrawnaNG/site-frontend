@@ -18,16 +18,16 @@
           <template #body="slotProps">
             <span class="cursor-pointer">
               <img
-                src="../../assets/image/icon/Delete.svg"
+                src="@/assets/image/icon/Delete.svg"
                 @click="showDisabledUserModal(slotProps.data)"
               >
             </span>
             <span class="cursor-pointer">
-              <img src="../../assets/image/icon/Edit.svg">
+              <img src="@/assets/image/icon/Edit.svg">
             </span>
             <span class="cursor-pointer">
               <router-link :to="{name: 'userStories', params: {username: slotProps.data.alias}}">
-                <img src="../../assets/image/icon/Show.svg">
+                <img src="@/assets/image/icon/Show.svg">
               </router-link>
             </span>
           </template>
@@ -64,17 +64,13 @@
             </div>
             <div class="row m-0 px-4 pt-4 justify-content-between">
               <button
-                pill
-                variant="outline-dark"
-                class="story-default-btn saved-stories-btn px-3 py-2 font-weight-bold"
+                class="story-default-btn saved-stories-btn px-4 py-2"
                 @click="closeUserDisableDialog()"
               >
                 Cancel
               </button>
               <button
-                pill
-                variant="dark"
-                class="story-default-btn saved-stories-btn px-3 py-2 font-weight-bold"
+                class="story-default-btn saved-stories-btn px-4 py-2"
                 @click="UserDisabled()"
               >
                 Disable User
@@ -87,101 +83,94 @@
   </div>
 </template>
 
-<script>
-import { inject } from 'vue';
-export default {
-  name: "UserList",
-  setup() {
-      const moment = inject('moment');
-      return { moment };
+<script setup>
+import { ref, reactive, inject, onMounted, getCurrentInstance } from 'vue';
+import api from '@/services/api';
+
+const { proxy } = getCurrentInstance();
+const moment = inject('moment');
+
+const userList = reactive({
+  data: [],
+  fields: [
+    { key: 'alias',
+      label: 'Name',
+      sortable: true,
+      sortDirection: 'desc',
+      class: 'user-table',
     },
-  data() {
-    return {
-      userList: {
-        data: [],
-        fields: [
-          { key: 'alias',
-            label: 'Name',
-            sortable: true,
-            sortDirection: 'desc',
-            class: 'user-table',
-          },
-          { key: 'email',
-            label: 'Email Address',
-            sortable: true,
-            sortDirection: 'desc',
-            class: 'user-table'
-          },
-          { key: 'story_count',
-            label: 'Stories',
-            sortable: true,
-            sortDirection: 'desc',
-            class: 'user-table'
-          },
-          { key: 'date_joined',
-            label: 'Joined Date',
-            sortable: true,
-            sortDirection: 'desc',
-            class: 'user-table'
-          }
-        ],
-        total: 0,
-        page: 1
-      },
-      disabledUserModal: {
-        show: false,
-        data: null
-      }
+    { key: 'email',
+      label: 'Email Address',
+      sortable: true,
+      sortDirection: 'desc',
+      class: 'user-table'
+    },
+    { key: 'story_count',
+      label: 'Stories',
+      sortable: true,
+      sortDirection: 'desc',
+      class: 'user-table'
+    },
+    { key: 'date_joined',
+      label: 'Joined Date',
+      sortable: true,
+      sortDirection: 'desc',
+      class: 'user-table'
     }
-  },
-  mounted() {
-    this.getAccountList()
-  },
-  methods: {
+  ],
+  total: 0,
+  page: 1
+});
 
-    getAccountList() {
-      this.axios.get('/accounts/list/').then((res) =>{
-        this.userList.data = res.data.results
-      })
-    },
+const disabledUserModal = reactive({
+  show: false,
+  data: null
+});
 
-    showDisabledUserModal(user) {
-      this.disabledUserModal = {
-        show: true,
-        data: user
-      }
-    },
-
-    closeUserDisableDialog() {
-      this.disabledUserModal = {
-        show: false,
-        data: null
-      }
-    },
-
-    UserDisabled() {
-      this.UserDisabledSave(this.disabledUserModal.data.email, this.disabledUserModal.data.alias)
-      this.closeUserDisableDialog()
-    },
-
-    UserDisabledSave(email, alias) {
-
-      this.axios.get(`/accounts/disable-user-admin/${email}`).then( () => {
-        this.$toasted.show(`user ${alias} successfully disabled`, {
-          duration: 3000,
-          type: 'dark',
-        });
-        this.getAccountList()
-      }).catch(err => {
-        this.$toasted.show(`Failed`, {
-          duration: 3000,
-          type: 'error',
-        });
-        console.log(err);
-      })
-    }
+async function getAccountList() {
+  try {
+    const res = await api.get('/accounts/list/');
+    userList.data = res.data.results;
+  } catch (error) {
+    console.error('Error fetching account list:', error);
   }
 }
+
+function showDisabledUserModal(user) {
+  disabledUserModal.show = true;
+  disabledUserModal.data = user;
+}
+
+function closeUserDisableDialog() {
+  disabledUserModal.show = false;
+  disabledUserModal.data = null;
+}
+
+function UserDisabled() {
+  UserDisabledSave(disabledUserModal.data.email, disabledUserModal.data.alias);
+  closeUserDisableDialog();
+}
+
+async function UserDisabledSave(email, alias) {
+  try {
+    await api.get(`/accounts/disable-user-admin/${email}`);
+    proxy.$toasted.show(`user ${alias} successfully disabled`, {
+      duration: 3000,
+      type: 'dark',
+    });
+    getAccountList();
+  } catch (err) {
+    proxy.$toasted.show(`Failed`, {
+      duration: 3000,
+      type: 'error',
+    });
+    console.log(err);
+  }
+}
+
+onMounted(() => {
+  getAccountList();
+});
 </script>
 
 <style lang="scss">
@@ -210,7 +199,6 @@ table {
     line-height: 2vw;
     &:first-child {
       font-size: .9em;
-      font-family: NotoSerif-Bold;
     }
   }
   tr:last-child {

@@ -170,13 +170,13 @@
           <div class="row pt-2 m-0">
             <div class="col-12">
               <button 
-                class="btn btn-secondary rounded me-2"
+                class="btn btn-dark rounded me-2"
                 @click="saveToDrafts()"
               >
                 Save to Drafts
               </button>
               <button 
-                class="btn btn-secondary rounded me-2"
+                class="btn btn-dark rounded me-2"
                 @click="publish()"
               >
                 Publish
