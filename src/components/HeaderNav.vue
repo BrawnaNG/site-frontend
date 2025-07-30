@@ -136,7 +136,7 @@
               data-bs-toggle="modal"
               data-bs-target="#loginModal"
               @click="setLoginView"
-              title="Login to site"
+              v-bind:title="TITLE_LOGIN"
             >
           </div>
         </div>
