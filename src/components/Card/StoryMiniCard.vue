@@ -58,7 +58,7 @@ const gotoStory = () => {
 
   &-title {
     font-weight: 600;
-    color: #404040;
+    color: #505050;
   }
   &-content {
     font-size: .8em;

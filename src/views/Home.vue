@@ -2,9 +2,9 @@
   <div class="container-fluid home-wrapper">
     <div class="row">
       <div class="col">
-        <h1 class="home-head-title">
+        <div class="home-head-title bold">
           Stories
-        </h1>
+        </div>
       </div>
     </div>
     <template v-if="featuredStory">
@@ -45,7 +45,7 @@
     <div class="row p-2">
       <div class="col-xl-2 mx-auto">
         <button 
-          class="px-2 py-1 font-weight-bold rounded-pill home-default-btn"
+          class="px-4 py-2 rounded-pill story-default-btn"
           @click="loadMore">
           Show More
         </button>
@@ -111,12 +111,11 @@ onMounted(() => {
   padding-right: 5%;
   padding-left: 5%;
   padding-top: 2%;
-  font-family: NotoSerif-Regular;
 
   .home-head {
     &-title {
-      font-family: NotoSerif-Bold;
-      font-size: 6em;
+      font-size: 3.5em;
+      font-weight: 600;
     }
   }
 
@@ -126,14 +125,6 @@ onMounted(() => {
     }
     &-view-all {
       text-decoration: underline;
-    }
-  }
-
-  .home-default-btn {
-    background-color: black;
-    color: white;
-    img {
-      width: 2vw;
     }
   }
 

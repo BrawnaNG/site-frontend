@@ -2,7 +2,7 @@
   <div class="tags-result-page">
     <div class="container-fluid">
       <div class="row p-2 col-12 mx-auto justify-content-between">
-          <h2 class="m-0 font-weight-bolder">
+          <h2 class="m-0 bold">
               {{ results.length }} / {{ resultsCount }} Tags
           </h2>
       </div>
@@ -116,10 +116,6 @@ const loadMore = async () => {
 </script>
 
 <style scoped lang="scss">
-.tags-result-page {
-  font-family: NotoSerif-Bold;
-}
-
 .tag-cloud {
   line-height: 30px;
   a {

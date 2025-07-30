@@ -1,13 +1,13 @@
 <template>
   <div>
     <!-- Header  -->
-    <div class="container-fluid border-bottom">
+    <div class="container-fluid pb-2 story-header">
 
       <div class="row m-3 justify-content-md-start">
         <div class="col-md-auto">
-          <h2 class="m-0 pt-1">
+          <div class="m-0 pt-1 story-title">
             {{ story.title }}
-          </h2>
+          </div>
         </div>
       </div>
 
@@ -19,7 +19,7 @@
             >
               {{ story.user }}
             </RouterLink>
-             • {{ moment(story.created_at).format('MMM YY') }} 
+             | {{ moment(story.created_at).format('MMM YY') }} 
             <span class="text-nowrap"
               v-if="story.categories.length">
               |
@@ -36,13 +36,13 @@
     <!-- End Header -->
 
     <!-- Story Container-->
-    <div class="container-fluid border border-warning mx-auto pt-4 px-4">
+    <div class="container-fluid mx-auto pt-4 px-4">
       <div class="row justify-content-md-start">
 
         <!-- Chapters -->
         <div class="col-md-auto mb-4">
           <div 
-          class="container-fluid pt-2"
+            class="container-fluid pt-2"
             v-if="story.has_chapters"
           >
             <div class="row">
@@ -69,16 +69,18 @@
         <div class="col-lg">
           <div class="container-fluid">
 
-            <div class="row">
-              <h3>
-                {{ current_chapter.title }}
-              </h3>
+            <div 
+              class="row chapter-title ps-2"
+              v-if="story.has_chapters"
+            >
+              {{ current_chapter.title }}
             </div>
 
             <div 
-              class="row"
+              class="row story-content"
             >
               <div 
+                id="show-story"
                 class="ql-editor"
                 v-html="current_chapter.body"
               >
@@ -198,7 +200,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue';
+import { ref, reactive, computed, onMounted, watch } from 'vue';
 import CommentsCard from "@/components/Card/CommentsCard.vue";
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { useAuthStore } from '@/stores/auth';
@@ -266,6 +268,18 @@ const cancelComment = () => {
   toggleCommentControls();
 }
 
+watch(current_chapter, (val) => {
+  if (!containsHtmlRegex(val.body)){
+    // A bit of a hack. But for older stories that are just text, paragraph breaks are often missing.
+    // This looks for those and adds another line-end to space them out.
+    let newText = val.body.replace(/(?<=\S)(?<!\r?\n)(\r?\n)(?!\r?\n)/gm, '\n\n');
+    val.body = newText;
+    const editor = document.getElementById("show-story");
+    if (editor)
+      editor.innerText = val.body;
+  }
+});
+
 // Lifecycle hooks
 onMounted( async () => {
   await getStory();
@@ -325,4 +339,24 @@ const gotoTag = (id) => {
   router.push({name: 'single-parent', params: { type: 'tag', id: id } });
 }
 
+function containsHtmlRegex(text) {
+  // This regex checks for the presence of opening or closing HTML tags.
+  // It's a general check and might not catch all valid HTML or differentiate from malformed tags.
+  return /<\/?[a-z][\s\S]*>/i.test(text); 
+}
+
 </script>
+
+<style scoped lang="scss">
+
+.chapter-title {
+  font-size: 1.4em;
+  font-weight: 600;
+}
+
+.story-title {
+  font-size: 2em;
+  font-weight: 600;
+}
+
+</style>

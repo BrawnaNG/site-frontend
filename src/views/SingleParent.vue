@@ -2,9 +2,9 @@
   <div class="search-result-page">
       <div class="container-fluid search-result-page-content my-2 p-2">
           <div class="row my-2 pb-3 col-12 mx-auto justify-content-between">
-              <h2 class="m-0 font-weight-bolder">
-                  {{ displayType }}: {{name}}
-              </h2>
+              <div class="m-0 title">
+                  <span class="bold">{{ displayType }}:</span> {{name}}
+              </div>
           </div>
         <div class="row pb-4 px-3">
           <h3 class="m-0">
@@ -32,7 +32,7 @@
             v-if="results.length < resultsCount"
             class="col-xl-2 mx-auto">
             <button 
-              class="px-2 py-1 font-weight-bold rounded-pill home-default-btn"
+              class="px-4 py-2 rounded-pill story-default-btn"
               @click="advance">
               Show More
             </button>
@@ -147,6 +147,9 @@ const advance = () =>
 
 <style scoped lang="scss">
     .search-result-page {
+      .title {
+        font-size: 2em;
+      }
     &-content {
         &-story {
         height: 570px;

@@ -18,13 +18,13 @@
           class="mr-3 cursor-pointer edit-btn"
           @click="editCategory(category.id, category.name)"
         >
-          <img src="../../assets/image/icon/Edit.svg">
+          <img src="@/assets/image/icon/Edit.svg">
         </span>
         <span 
           class="mr-3 cursor-pointer delete-btn"
           @click="deleteCategory(category.id)"
         >
-          <img src="../../assets/image/icon/Delete.svg">
+          <img src="@/assets/image/icon/Delete.svg">
         </span>
       </div>
     </div>
@@ -36,13 +36,11 @@
           class="add-btn col-8 spacer"
           v-if="category.depth < 2">
         <button
-          pill
-          variant="dark"
           class="pr-1 py-1 px-2 font-weight-bold rounded-pill"
           @click="addSubCategory(category.id, category.name)"
         >
           <img
-            src="../../assets/image/icon/add.svg"
+            src="@/assets/image/icon/add.svg"
             class="mr-1"
             alt="go"
           >
@@ -67,43 +65,44 @@
 
 </template>
 
-<script>
-export default {
-  name: "CategoryCard",
-  emits: ['editCategory','addSubCategory','deleteCategory'],
-  props: {
-    category: {
-      type: Object,
-      default: () =>({
-        title: "",
-        name: "",
-        id: null,
-        parent: null,
-        depth: 0,
-        description: "",
-        children: []
-      })
-    }
-  },
-  computed: {
-    getClass() {
-      return `category-card-content-depth-${this.category.depth}`;
-    },
-    isRoot() {
-      return this.category.depth === 0;
-    }
-  },
-  methods:{
-    editCategory(id, name) {
-      this.$emit('editCategory', id, name);
-    },
-    addSubCategory(parent_id, parent_name){
-      this.$emit('addSubCategory', parent_id, parent_name);
-    },
-    deleteCategory(id){
-      this.$emit('deleteCategory', id);
-    }
+<script setup>
+import { computed } from 'vue';
+
+const emit = defineEmits(['editCategory','addSubCategory','deleteCategory']);
+
+const props = defineProps({
+  category: {
+    type: Object,
+    default: () =>({
+      title: "",
+      name: "",
+      id: null,
+      parent: null,
+      depth: 0,
+      description: "",
+      children: []
+    })
   }
+});
+
+const getClass = computed(() => {
+  return `category-card-content-depth-${props.category.depth}`;
+});
+
+const isRoot = computed(() => {
+  return props.category.depth === 0;
+});
+
+function editCategory(id, name) {
+  emit('editCategory', id, name);
+}
+
+function addSubCategory(parent_id, parent_name) {
+  emit('addSubCategory', parent_id, parent_name);
+}
+
+function deleteCategory(id) {
+  emit('deleteCategory', id);
 }
 </script>
 

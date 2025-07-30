@@ -1,148 +1,160 @@
 <template>
-
-  <div class="story-header container-fluid bg-light">
-    <div class="row">
-      <div class="col-2 pt-2">
-        <nav class="navbar navbar-expand-xs navbar-light">
-          <button 
-            class="navbar-toggler"
-            type="button" 
-            data-bs-toggle="collapse" 
-            data-bs-target="#navbarSupportedContent" 
-            aria-controls="navbarSupportedContent" 
-            aria-expanded="false" 
-            aria-label="Toggle menu"
-          >
-            <img 
-              src="../assets/image/icon/menu.svg" 
-              alt="" 
-              width="30" 
-              height="24" 
-              class="d-inline-block align-text-top"
+  <!-- Drop-down menu -->
+  <div class="position-relative">
+    <div class="container position-absolute w-25">
+      <div class="row justify-content-start">
+        <div class="col-md-auto">
+          <nav class="navbar navbar-expand-xs navbar-light">
+            <button 
+              class="navbar-toggler"
+              type="button" 
+              data-bs-toggle="collapse" 
+              data-bs-target="#navbarSupportedContent" 
+              aria-controls="navbarSupportedContent" 
+              aria-expanded="false" 
+              aria-label="Toggle menu"
             >
-          </button>
-          <div 
-            id="navbarSupportedContent"
-            class="collapse navbar-collapse"
-          >
-            <ul class="navbar-nav me-auto mx-3 mt-2 px-2">
-              <li class="nav-item"
+              <img 
+                src="@/assets/image/icon/menu.svg" 
+                alt="" 
+                width="30" 
+                height="24" 
+                class="d-inline-block align-text-top"
               >
-                <router-link
-                  class="navbar-menu-item-link nav-link active"
-                  :to="{name: 'home'}"
-                  @click="collapseNavbar"
+            </button>
+            <div 
+              id="navbarSupportedContent"
+              class="collapse navbar-collapse"
+            >
+              <ul class="navbar-nav me-auto mx-3 mt-2 px-2 pb-2">
+                <li class="nav-item"
                 >
-                  Home
-                </router-link>
-              </li>
-              <li 
-                v-if="role.isAuthor || role.isAdmin"
-                class="nav-item"
-              >
-                <router-link
-                  class="navbar-menu-item-link nav-link"
-                  :to="{name: 'dashboard'}"
-                  @click="collapseNavbar"
+                  <router-link
+                    class="navbar-menu-item-link nav-link active"
+                    :to="{name: 'home'}"
+                    @click="collapseNavbar"
+                  >
+                    Home
+                  </router-link>
+                </li>
+                <li 
+                  v-if="role.isAuthor || role.isAdmin"
+                  class="nav-item"
                 >
-                  Dashboard
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link
-                  class="navbar-menu-item-link nav-link"
-                  :to="{name: 'all-categories'}"
-                  @click="collapseNavbar"
+                  <router-link
+                    class="navbar-menu-item-link nav-link"
+                    :to="{name: 'dashboard'}"
+                    @click="collapseNavbar"
+                  >
+                    Dashboard
+                  </router-link>
+                </li>
+                <li class="nav-item">
+                  <router-link
+                    class="navbar-menu-item-link nav-link"
+                    :to="{name: 'all-categories'}"
+                    @click="collapseNavbar"
+                  >
+                    Categories
+                  </router-link>
+                </li>
+                <li class="nav-item">
+                  <router-link
+                    class="navbar-menu-item-link nav-link"
+                    :to="{name: 'all-tags'}"
+                    @click="collapseNavbar"
+                  >
+                    Tags
+                  </router-link>
+                </li>
+                <li 
+                  v-if="role.isAdmin"
+                  class="nav-item"
                 >
-                  Categories
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link
-                  class="navbar-menu-item-link nav-link"
-                  :to="{name: 'all-tags'}"
-                  @click="collapseNavbar"
-                >
-                  Tags
-                </router-link>
-              </li>
-              <li 
-                v-if="role.isAdmin"
-                class="nav-item"
-              >
-                <router-link
-                  class="navbar-menu-item-link nav-link"
-                  :to="{name: 'admin'}"
-                  @click="collapseNavbar"
-                >
-                  Admin
-                </router-link>
-              </li>  
-              <li class="nav-item">
-                <router-link
-                  class="navbar-menu-item-link nav-link"
-                  :to="{name: 'about'}"
-                  @click="collapseNavbar"
-                >
-                  About
-                </router-link>
-              </li>
-              <li 
-                class="nav-item"
-                v-if="isAuthenticated">
-                <router-link
-                  class="navbar-menu-item-link nav-link"
-                  :to="{name: 'home'}"
-                  @click="collapseNavbarAndLogout"
-                >
-                  Log out
-                </router-link>
-              </li>
-            </ul>
-          </div>
-        </nav>
+                  <router-link
+                    class="navbar-menu-item-link nav-link"
+                    :to="{name: 'admin'}"
+                    @click="collapseNavbar"
+                  >
+                    Admin
+                  </router-link>
+                </li>  
+                <li class="nav-item">
+                  <router-link
+                    class="navbar-menu-item-link nav-link"
+                    :to="{name: 'about'}"
+                    @click="collapseNavbar"
+                  >
+                    About
+                  </router-link>
+                </li>
+                <li 
+                  class="nav-item"
+                  v-if="isAuthenticated">
+                  <router-link
+                    class="navbar-menu-item-link nav-link"
+                    :to="{name: 'home'}"
+                    @click="collapseNavbarAndLogout"
+                  >
+                    Log out
+                  </router-link>
+                </li>
+              </ul>
+            </div>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End drop-down menu -->
+
+  <!-- Main header -->
+  <div class="story-header container-fluid bg-light">
+    <div class="row align-items-center">
+      <div class="col-2">
+        &nbsp;
       </div>
       <div class="col-6 text-center site-title">
-        <p class="lh-1">Brawna</p>
+        <div class="bold lh-1">Brawna</div>
       </div>
-      <div class="col-2 my-2 pt-3">
+      <div class="col-2">
         <input
           v-model="searchForm.text"
-          class="form-control"
+          class="form-control search-text"
           placeholder="Search story, author or tags"
           @keydown.enter="searchStories"
         >
       </div>
-      <div class="col-1 my-2 pt-3">
+      <div class="col-1">
         <button 
-          pill
-          variant="dark"
-          class="pr-1 py-2 px-3 font-weight-bold rounded-pill btn-search"
+          class="px-4 py-2 rounded-pill btn-search"
           aria-label="Search"
           @click="searchStories"
         >
         Search
         </button>
       </div>
-      <div class="col-1 my-2 pt-1">  
+      <div class="col-1">  
         <div class="d-flex float-end"></div>
           <div 
             v-if="!isAuthenticated"
             class="p-2"
           >
             <img
-              src="../assets/image/icon/profile-circle.svg"
+              src="@/assets/image/icon/profile-circle.svg"
               class="story-header-action"
               data-bs-toggle="modal"
               data-bs-target="#loginModal"
               @click="setLoginView"
               v-bind:title="TITLE_LOGIN"
             >
-          </div>
-        </div>
+         </div>
       </div>
     </div>
-  
+  </div>
+  <!-- End Main header -->
+
+  <!-- Login Modal-->
   <div 
     id="loginModal"
     class="modal" 
@@ -188,13 +200,14 @@
 </template>
 
 <script setup>
-import { ref, computed, onBeforeMount } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, computed, onBeforeMount, watch } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import LoginForm from "@/components/LoginForm.vue";
-import EventBus from "../common/EventBus";
-import AuthService from '../services/auth.service';
+import EventBus from "@/common/EventBus";
+import AuthService from '@/services/auth.service';
 import { Collapse } from "bootstrap";
-import { useAuthStore } from '../stores/auth';
+import { useAuthStore } from '@/stores/auth';
+import { useSearchStore } from '@/stores/search';
 const TITLE_LOGIN = "Login to the site";
 const TITLE_SIGNUP = "Sign up";
 const TITLE_RESET = "Reset password";
@@ -210,12 +223,25 @@ const searchForm = ref({
 // Router
 const router = useRouter();
 
-// Store
+// Route
+const route = useRoute();
+watch(() => route.path, (_new, _old) => {
+  collapseNavbar();
+});
+
+// Stores
 const authStore = useAuthStore();
+const searchStore = useSearchStore();
 
 // Computed properties
 const role = computed(() => authStore.role);
 const isAuthenticated = computed(() => authStore.isAuthenticated);
+const searchText = computed(() => searchStore.searchText);
+
+watch( () => searchText, (newSearchText, oldSearchText) => {
+  if (newSearchText != oldSearchText)
+    searchForm.value.text = newSearchText;
+});
 
 // Lifecycle hooks
 onBeforeMount(() => {
@@ -224,6 +250,7 @@ onBeforeMount(() => {
 
 // Methods converted to functions
 function setLoginView(){
+  collapseNavbar();
   authStore.setView("login");
 }
 
@@ -233,12 +260,12 @@ function collapseNavbarAndLogout() {
 }
 
 function searchStories() {
-  router.push({
-    name: 'searchResults',
+  searchStore.setSearchText(searchForm.value.text);
+  searchForm.value.text = "";
+  router.push({name: 'searchResults',
     params: {
-      search: searchForm.value.text
-    }
-  });
+      search: searchStore.searchText
+    }});
 }
 
 function changeModalTitle(mode) {
@@ -283,11 +310,10 @@ function collapseNavbar() {
 }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
   .site-title {
     font-size: 5em;
-    font-weight: bolder;
-    font-family: NotoSerif-Bold;
+    font-weight: 600;
     margin: 0%;
   }
 
@@ -300,7 +326,8 @@ function collapseNavbar() {
       cursor: pointer;
     }
     &-action {
-      width: 2vw;
+      width: 3em;
+      height: 3em;
       cursor: pointer;
       display: flex;
     }
@@ -308,10 +335,17 @@ function collapseNavbar() {
 
   .btn-search {
     font-size: .8em;
+    font-weight: 600;
     background-color: black;
     color: white;
     img {
       width: 1.6vw;
+    }
+  }
+
+  .search-text {
+    input {
+      font-size: .8em;
     }
   }
 
@@ -325,9 +359,8 @@ function collapseNavbar() {
   }
   .nav-item {
     a {
-      font-size: 1.2em;
+      font-size: 1em;
       font-weight: bolder;
-      font-family: NotoSerif-Bold;
     }
   }
 </style>

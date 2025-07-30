@@ -1,6 +1,6 @@
 <template>
   <div 
-    class="container-flex story-large-card p-4 mb-4"
+    class="container-flex story-large-card p-3 mb-4"
   >
     <div class="row">
       <div 
@@ -22,21 +22,21 @@
         </div>
       </div>
 
-      <div class="col-sm-3 py-4">
+      <div class="col-sm-3 py-2">
         <template v-if="cardMode === 'edit'">
           <span class="mr-3 cursor-pointer">
-            <img src="../../assets/image/icon/Delete.svg">
+            <img src="@/assets/image/icon/Delete.svg">
           </span>
           <span 
             class="mr-3 cursor-pointer"
             @click="editStory">
-            <img src="../../assets/image/icon/Edit.svg">
+            <img src="@/assets/image/icon/Edit.svg">
           </span>
           <span 
             class="cursor-pointer"
             @click="gotoStory"
           >
-            <img src="../../assets/image/icon/Show.svg">
+            <img src="@/assets/image/icon/Show.svg">
           </span>
         </template>
       </div>
@@ -51,49 +51,40 @@
   </div>
 </template>
 
-<script>
-import { inject, getCurrentInstance } from 'vue';
+<script setup>
+import { inject } from 'vue';
+import { useRouter } from 'vue-router';
 
-export default {
-  name: "StoryLargeCard",
-  props: {
-    storyCard: {
-      type: Object,
-      default: () => ({
-            id : "",
-            title : "",
-            brief : "",
-            user: "",
-            created_at: null,
-            categories: [],
-            first_category: "",
-            excerpt: ""
-        })
-    },
-    cardMode:{
-      type: String,
-      default: 'read'
-    }
+const props = defineProps({
+  storyCard: {
+    type: Object,
+    default: () => ({
+          id : "",
+          title : "",
+          brief : "",
+          user: "",
+          created_at: null,
+          categories: [],
+          first_category: "",
+          excerpt: ""
+      })
   },
-  setup(props) {
-    const { proxy } = getCurrentInstance();
-    const moment = inject('moment');
-
-    const gotoStory = () => {
-      proxy.$router.push({name: 'story', params: { id: props.storyCard.id } });
-    };
-
-    const editStory = () => {
-      proxy.$router.push({name: 'addEditStory', params: { id: props.storyCard.id } });
-    };
-
-    return { 
-      moment,
-      gotoStory,
-      editStory
-    };
+  cardMode:{
+    type: String,
+    default: 'read'
   }
-}
+});
+
+const router = useRouter();
+const moment = inject('moment');
+
+const gotoStory = () => {
+  router.push({name: 'story', params: { id: props.storyCard.id } });
+};
+
+const editStory = () => {
+  router.push({name: 'addEditStory', params: { id: props.storyCard.id } });
+};
 </script>
 
 <style scoped lang="scss">

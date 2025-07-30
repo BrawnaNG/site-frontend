@@ -1,19 +1,19 @@
 @font-face {
-  font-family: "NotoSerif-Bold";
-  src: url("./NotoSerif-Bold.ttf");
+  font-family: "Lato-Bold";
+  src: url("./Lato-Bold.ttf");
 }
 
 @font-face {
-  font-family: "NotoSerif-BoldItalic";
-  src: url("./NotoSerif-BoldItalic.ttf");
+  font-family: "Lato-BoldItalic";
+  src: url("./Lato-BoldItalic.ttf");
 }
 
 @font-face {
-  font-family: "NotoSerif-Italic";
-  src: url("./NotoSerif-Italic.ttf");
+  font-family: "Lato-Italic";
+  src: url("./Lato-Italic.ttf");
 }
 
 @font-face {
-  font-family: "NotoSerif-Regular";
-  src: url("./NotoSerif-Regular.ttf");
+  font-family: "Lato-Regular";
+  src: url("./Lato-Regular.ttf");
 }

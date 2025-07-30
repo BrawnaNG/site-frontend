@@ -31,5 +31,12 @@ export default defineConfig(({ mode }) => {
           'top-level-await': true //browsers can handle top-level-await features
         },
       },
+      css: {
+        preprocessorOptions: {
+          scss: {
+            quietDeps: true,
+          },
+        },
+      },
    }
 })

@@ -23,39 +23,34 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, reactive, watch, onMounted } from 'vue';
 import StoryLargeCard from "@/components/Card/StoryLargeCard.vue";
+import api from '@/services/api';
 
-export default {
-  name: "RecentStories",
-  components: {StoryLargeCard},
-  data() {
-    return {
-      recentStories: {
-        data: [],
-        page: 1,
-        total: 0
-      }
-    }
-  },
-  watch: {
-    'recentStories.page'() {
-      this.getRecentStories()
-    }
-  },
-  mounted() {
-    this.getRecentStories()
-  },
-  methods: {
+const recentStories = reactive({
+  data: [],
+  page: 1,
+  total: 0
+});
 
-    getRecentStories() {
-      this.axios.get(`/story/list/?page=${this.recentStories.page}`).then(res => {
-        this.recentStories.total = res.data.count
-        this.recentStories.data = res.data.results
-      })
-    }
+async function getRecentStories() {
+  try {
+    const res = await api.get(`/story/list/?page=${recentStories.page}`);
+    recentStories.total = res.data.count;
+    recentStories.data = res.data.results;
+  } catch (error) {
+    console.error('Error fetching recent stories:', error);
   }
 }
+
+watch(() => recentStories.page, () => {
+  getRecentStories();
+});
+
+onMounted(() => {
+  getRecentStories();
+});
 </script>
 
 <style scoped lang="scss">

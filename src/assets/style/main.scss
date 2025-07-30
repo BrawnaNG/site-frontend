@@ -1,11 +1,17 @@
 //bootstrap style file
-@use 'node_modules/bootstrap/scss/bootstrap.scss' as *;
+@use '../../../node_modules/bootstrap/scss/bootstrap.scss' as *;
 
 //font face
 @use "../fonts/font-face.css" as *;
 
 body {
-  font-family: NotoSerif-Regular;
+  .app{
+    font-family: Lato-Regular;
+  }
+
+  .bold {
+    font-family: Lato-Bold;
+  }
 
   .cursor-pointer {
     cursor: pointer;
@@ -36,10 +42,6 @@ body {
     }
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    font-family: NotoSerif-Bold;
-  }
-
   .font-size-8 {
     font-size: .8em;
   }
@@ -48,6 +50,7 @@ body {
     background-color: black;
     color: white;
     border: none;
+    font-weight: 600;
     
     &:hover {
       background-color: #333;
