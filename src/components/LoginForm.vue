@@ -458,6 +458,10 @@ const resetPassword = async () => {
     (_) => {
       authStore.setView("success");
       reset.success = SUCCESS_RESET_PASSWORD;
+    },
+    (_) => {
+      authStore.setView("success");
+      reset.success = SUCCESS_RESET_PASSWORD;
     }
   );
 };
