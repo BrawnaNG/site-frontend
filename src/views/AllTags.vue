@@ -28,7 +28,7 @@
         <div class="col-2">
           <button 
             type = "button"
-            class="btn btn-secondary rounded"
+            class="btn btn-dark rounded"
             @click="loadMore">
             Load More Tags
           </button>
