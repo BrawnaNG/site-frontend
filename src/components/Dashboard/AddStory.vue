@@ -2,13 +2,13 @@
   <div>
     <button
       class="story-default-btn px-4 py-2 rounded-pill"
+      data-bs-toggle="modal"
+      data-bs-target="#storyModal"
     >
       Create Story
       <img
         src="@/assets/image/icon/add.svg"
         class="ms-2 px-0 add-story-icon"
-        data-bs-toggle="modal"
-        data-bs-target="#storyModal"
       >
     </button>
 

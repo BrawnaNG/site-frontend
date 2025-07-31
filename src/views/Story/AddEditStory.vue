@@ -47,7 +47,7 @@
         <div class="row justify-content-center pt-2 px-2">
           <div class="col-9">
             <button 
-              class="btn btn-secondary rounded m-2 p-2 w-100"
+              class="btn btn-dark rounded m-2 p-2 w-100"
               v-if="story.has_chapters && current_chapter.index > 0"
               @click="newChapter(true)"
             >
@@ -58,7 +58,7 @@
         <div class="row justify-content-center px-2">
           <div class="col-9">
             <button 
-              class="btn btn-secondary rounded m-2 p-2 w-100"
+              class="btn btn-dark rounded m-2 p-2 w-100"
               v-if="story.has_chapters"
               @click="newChapter(false)"
             >
@@ -167,19 +167,40 @@
                 content-type="html"
               />
           </div>
+          <div class="row py-2">
+            <div 
+              class="alert alert-danger"
+              v-if="current_chapter.dirty || story.dirty">
+              You have unsaved changes
+            </div>
+            <div 
+              class="alert alert-success"
+              v-if="save_message">
+              {{ save_message }}
+            </div>
+          </div>
           <div class="row pt-2 m-0">
             <div class="col-12">
               <button 
                 class="btn btn-dark rounded me-2"
+                v-if="!story.is_published"
                 @click="saveToDrafts()"
               >
                 Save to Drafts
               </button>
               <button 
                 class="btn btn-dark rounded me-2"
+                v-if="!story.is_published"
                 @click="publish()"
               >
                 Publish
+              </button>
+              <button 
+                class="btn btn-dark rounded me-2"
+                v-if="story.is_published"
+                @click="publish()"
+              >
+                Save
               </button>
               <button 
                 class="btn btn-secondary rounded me-2"
@@ -203,7 +224,7 @@
               :is-duplicate="isDuplicate"
               :validation="tag_validation"
               :placeholder="`Write and press enter to add`"
-              @tags-changed="newTags => tags = newTags"
+              @tags-changed="tagsChanged"
             />
           </div>
           <div class="row mt-4">
@@ -216,6 +237,7 @@
               v-model:selectionKeys="selected_categories"
               v-model:expandedKeys="expanded_categories"
               @node-select="handleNodeSelect"
+              @node-unselect="handleNodeUnselect"
             >
               <Column 
                 field="name"
@@ -284,6 +306,7 @@ const story = reactive({
   categories: [],
   tags: [],
   has_chapters: false,
+  dirty: false,
   chapter_summaries: []
 });
 
@@ -291,7 +314,8 @@ const current_chapter = reactive({
   id: props.chapterid,
   index: -1,
   title: "",
-  body: '\n'
+  body: '\n',
+  dirty: false
 });
 
 const new_tag = ref('');
@@ -302,6 +326,8 @@ const expanded_categories = ref({});
 const selected_chapter = ref({});
 const chapter_guard = ref(false);
 const filteredTags = ref([]);
+const save_message = ref("");
+const loading_guard = ref(true);
 
 const tag_validation = [ 
   {
@@ -311,6 +337,7 @@ const tag_validation = [
   },
 ];
 
+// Tag lookup
 const handleTagInput = debounce( async() => {
   debounced_tag.value = new_tag.value;
   const res = await api.get(`/story/search/tag?tag=${debounced_tag.value}&page=1`);
@@ -322,15 +349,42 @@ const handleTagInput = debounce( async() => {
   });
 }, 500);
 
+const tagsChanged = (newTags) => {
+  newTags => tags = newTags;
+  story.dirty = true;
+};
+
 watch(new_tag, () => {
   handleTagInput();
 });
 
+watch( () => current_chapter.body, (_new, _old) => {
+  if (!loading_guard.value)
+    current_chapter.dirty = true;
+});
+
+watch( () => current_chapter.title, (_new, _old) => {
+  if (!loading_guard.value)
+    current_chapter.dirty = true;
+});
+
+watch( () => story.title, (_new, _old) => {
+  if (!loading_guard.value)
+    story.dirty = true;
+});
+
+watch( () => story.categories, (_new, _old) => {
+  if (!loading_guard.value)
+    story.dirty = true;
+});
+
 // Lifecycle hooks
 onMounted( async () => {
+  loading_guard.value = true;
   await getAllCategories();
   await loadStory();
   await loadChapter(story.chapter_summaries[0].id);
+  loading_guard.value = false;
 });
 
 // Computed properties
@@ -370,8 +424,16 @@ const handleNodeSelect = (node) =>
   return true;
 }
 
+const handleNodeUnselect = (node) => 
+{
+  story.categories = story.categories.filter(c => c.id != node.data.id);
+  expanded_categories.value[node.key] = false;
+  return true;
+}
+
 const loadStory = async () => {
   const res = await api.get(`/story/detail/${props.id}`);
+  story.dirty = false;
   Object.assign(story, res.data);
 
   tags.value = story.tags.map((tag) => {
@@ -396,13 +458,13 @@ const loadStory = async () => {
     cats[cat.id] = true;
     return cats;
   }, {});
-
 }
 
 const loadChapter = async (chapter_id) => {
   selected_chapter.value = {};
   const res = await api.get(`/story/chapter/${chapter_id}/`);
   Object.assign(current_chapter, res.data);
+  current_chapter.dirty = false;
   current_chapter.index = story.chapter_summaries.findIndex(cs => {
     return cs.id === chapter_id;
   });
@@ -419,6 +481,9 @@ const toggleHasChapters = async () => {
   else{
     story.has_chapters = true;
     await loadChapter(story.chapter_summaries[0].id);
+    if (!current_chapter.title){
+      current_chapter.title = "New Chapter";
+    }
   }
 };
 
@@ -456,14 +521,19 @@ const isDuplicate = (tagsArray, tag) => {
 };
 
 const saveToDrafts = () => {
+  loading_guard.value = true;
   saveStory(false);
+  loading_guard.value = false;
 };
 
 const publish = () => {
+  loading_guard.value = true;
   saveStory(true);
+  loading_guard.value = false;
 };
 
 const saveStory = async (is_published) => {
+  loading_guard.value = true;
   try {
     await api.put(`/story/save-story/${props.id}/`,
       {
@@ -487,9 +557,19 @@ const saveStory = async (is_published) => {
     {
       title: current_chapter.title,
       body: current_chapter.body
-    });    
+    });
+    if (is_published)
+      save_message.value = "Story saved and published"
+    else
+      save_message.value = "Story saved to drafts"
+
   } catch (error) {
+    save_message.value = "Error saving story";
     console.error("Error saving story:", error);
+  } finally {
+    story.dirty = false;
+    current_chapter.dirty = false;
+    loading_guard.value = false;
   }
 };
 
@@ -498,9 +578,12 @@ const cancel = () => {
 };
 
 const onChapterSelect = async (chap) => {
-  await saveStory(story.is_published);
+  if (chap.dirty)
+    await saveStory(story.is_published);
+  loading_guard.value = true;
   await loadStory();
   await loadChapter(chap.key)
+  loading_guard.value = false;
 };
 
 const newChapter = async (before) => {
