@@ -1,24 +1,16 @@
 <template>
   <div 
-    class="container story-card p-2"
-    @click="gotoStory"
+    class="container author-card p-2"
+    @click="gotoAuthor"
   >
-    <div class="row story-card-title">
-      <p>
-        {{ storyCard.title }}
-      </p>
+    <div class="row author-card-title ps-3">
+        {{ authorCard.alias }}
     </div>
-    <div class="row story-card-content">
-      <p>
-        {{ storyCard.excerpt }}
-      </p>
+    <div class="row author-card-content ps-3">
+        {{ authorCard.email }}
     </div>
-    <div class="row story-card-footer ps-3 pt-2">
-      {{ storyCard.user }}
-      |
-      {{ moment(storyCard.created_at).format('MMM YY') }}
-      |
-      {{ storyCard.first_category }}
+    <div class="row author-card-footer ps-3">  
+        {{ authorCard.story_count }} stories
     </div>
   </div>
 </template>
@@ -29,15 +21,13 @@ import { useRouter } from 'vue-router';
 
 // Define props
 const props = defineProps({
-  storyCard: {
+  authorCard: {
     type: Object,
     default: () => ({
-      title: "",
-      user: "",
-      excerpt: "",
-      created_at: null,
-      first_category: "",
-      categories: []
+      alias: "",
+      email: "",
+      story_count: 0,
+      id: null,
     })
   }
 });
@@ -47,14 +37,20 @@ const moment = inject('moment');
 const router = useRouter();
 
 // Methods
-const gotoStory = () => {
-  router.push({ name: 'story', params: { id: props.storyCard.id } });
+const gotoAuthor = () => {
+  router.push({
+    name: 'single-parent', 
+    params: { 
+      type: 'accounts', 
+      id: props.authorCard.id 
+    }
+  });
 };
 </script>
 
 <style scoped lang="scss">
-.story-card {
-  background-color: #F6F6f0;
+.author-card {
+  background-color: #F6f0f0;
 
   &-title {
     font-weight: 600;

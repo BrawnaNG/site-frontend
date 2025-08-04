@@ -32,53 +32,47 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed } from 'vue';
 import EventBus from "../../common/EventBus";
-export default {
-  name: "AdminMenu",
-  props: {
-    current: {
-      type: String,
-      default: 'admin'
-    }
-  },
-  data() {
-    return {
-      items:{
-        "admin": {
-          label: "Recent Stories",
-          target: {name: 'admin'}
-        },
-        "users": {
-          label: "Users",
-          target: {name: 'users'}
-        },
-        "comments": {
-          label: "Comments",
-          target: {name: 'comments'}
-        },
-        "categories":{
-          label: "Categories",
-          target: {name: 'categories'}
-        }
-      }
-    }
-  },
-  computed: {
-    menuItems() {
-      let menuItems = [];
-      for (const key in this.items){
-        this.items[key]["isActive"] = key === this.current;
-        menuItems.push(this.items[key]);
-      }
-      return menuItems;
-    }
-  },
-  methods : {
-    logOut(){
-      EventBus.dispatch("logout");
-    },
+
+const props = defineProps({
+  current: {
+    type: String,
+    default: 'admin'
   }
+});
+
+const items = ref({
+  "admin": {
+    label: "Recent Stories",
+    target: {name: 'admin'}
+  },
+  "users": {
+    label: "Users",
+    target: {name: 'users'}
+  },
+  "comments": {
+    label: "Comments",
+    target: {name: 'comments'}
+  },
+  "categories":{
+    label: "Categories",
+    target: {name: 'categories'}
+  }
+});
+
+const menuItems = computed(() => {
+  let menuItems = [];
+  for (const key in items.value){
+    items.value[key]["isActive"] = key === props.current;
+    menuItems.push(items.value[key]);
+  }
+  return menuItems;
+});
+
+function logOut() {
+  EventBus.dispatch("logout");
 }
 </script>
 
@@ -109,9 +103,8 @@ export default {
     &-item{
       padding-right: 2em;
       color: white;
-      font-family: "NotoSerif-Bold";
-        font-weight: bolder;
-        font-size: 1.5m;
+      font-weight: bolder;
+      font-size: 1.5m;
       a {
         color:white;
         text-decoration: none;

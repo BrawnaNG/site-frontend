@@ -26,7 +26,7 @@
             </span>
             <span class="cursor-pointer">
               <img
-                src="../../assets/image/icon/Show.svg"
+                src="@/assets/image/icon/Show.svg"
                 alt="show"
               >
             </span>
@@ -37,30 +37,25 @@
   </div>
 </template>
 
-<script>
-import { inject } from 'vue';
-export default {
-  name: "LastRegisteredUser",
-  setup() {
-    const moment = inject('moment');
-    return { moment };
-  },
-  data() {
-    return {
-      userList: []
-    }
-  },
-  mounted() {
-    this.getLastRegisteredUserList()
-  },
-  methods: {
-    getLastRegisteredUserList() {
-      this.axios.get('/accounts/last-user').then(res => {
-        this.userList = res.data
-      })
-    }
+<script setup>
+import { ref, inject, onMounted } from 'vue';
+import api from '@/services/api';
+
+const moment = inject('moment');
+const userList = ref([]);
+
+async function getLastRegisteredUserList() {
+  try {
+    const res = await api.get('/accounts/last-user');
+    userList.value = res.data;
+  } catch (error) {
+    console.error('Error fetching last registered users:', error);
   }
 }
+
+onMounted(() => {
+  getLastRegisteredUserList();
+});
 </script>
 
 <style scoped lang="scss">

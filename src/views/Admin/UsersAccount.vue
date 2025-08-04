@@ -26,14 +26,10 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import UserList from "@/components/Admin/UserList.vue";
 import AdminBreadCrumbs from "@/components/Admin/AdminBreadCrumbs.vue";
 import AdminMenu from "@/components/Admin/AdminMenu.vue";
-export default {
-  name: "UserAccount",
-  components: {UserList, AdminBreadCrumbs, AdminMenu },
-}
 </script>
 
 <style scoped lang="scss">

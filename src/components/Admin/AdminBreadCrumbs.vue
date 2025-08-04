@@ -29,16 +29,13 @@
   </div>
 </template>
   
-<script>
-export default {
-  name: "BreadCrumbs",
-  props: {
-    label: {
-      type: String,
-      default: 'Recent Stories'
-    }
-  },
-}
+<script setup>
+const props = defineProps({
+  label: {
+    type: String,
+    default: 'Recent Stories'
+  }
+});
 </script>
 
 <style scoped lang="scss">

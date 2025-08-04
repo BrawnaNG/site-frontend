@@ -1,24 +1,13 @@
 <template>
   <div 
-    class="container story-card p-2"
-    @click="gotoStory"
+    class="container tag-card p-2"
+    @click="gotoTag"
   >
-    <div class="row story-card-title">
-      <p>
-        {{ storyCard.title }}
-      </p>
+    <div class="row tag-card-title ps-3">
+        {{ tagCard.name }}
     </div>
-    <div class="row story-card-content">
-      <p>
-        {{ storyCard.excerpt }}
-      </p>
-    </div>
-    <div class="row story-card-footer ps-3 pt-2">
-      {{ storyCard.user }}
-      |
-      {{ moment(storyCard.created_at).format('MMM YY') }}
-      |
-      {{ storyCard.first_category }}
+    <div class="row tag-card-footer ps-3">  
+        {{ tagCard.story_count }} stories
     </div>
   </div>
 </template>
@@ -27,34 +16,34 @@
 import { inject } from 'vue';
 import { useRouter } from 'vue-router';
 
-// Define props
 const props = defineProps({
-  storyCard: {
+  tagCard: {
     type: Object,
     default: () => ({
-      title: "",
-      user: "",
-      excerpt: "",
-      created_at: null,
-      first_category: "",
-      categories: []
+      name: "",
+      story_count: 0,
+      id: null,
     })
   }
 });
 
-// Inject dependencies
 const moment = inject('moment');
 const router = useRouter();
 
-// Methods
-const gotoStory = () => {
-  router.push({ name: 'story', params: { id: props.storyCard.id } });
+const gotoTag = () => {
+  router.push({
+    name: 'single-parent', 
+    params: { 
+      type: 'tag', 
+      id: props.tagCard.id 
+    }
+  });
 };
 </script>
 
 <style scoped lang="scss">
-.story-card {
-  background-color: #F6F6f0;
+.tag-card {
+  background-color: #f0f0F6;
 
   &-title {
     font-weight: 600;

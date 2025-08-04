@@ -1,183 +1,146 @@
 <template>
   <div class="search-result-page">
-    <div class="container-flex search-result-page-head border-bottom py-4">
-      <div class="row my-0 col-10 mx-auto justify-content-between">
-        <div class="col-4 p-0">
-          <h2 class="m-0 font-weight-bolder">
+
+    <!-- Header -->
+    <div class="container-flex search-result-page-head border-bottom pb-4">
+      <div class="row my-0 mx-auto justify-content-start">
+        <div class="col-md-auto p-2">
+          <h2 class="m-0 pe-4 font-weight-bolder">
             Results for "{{ searchTextDisplay }}"
           </h2>
         </div>
-        <div class="col-6">
+        <div class="col-md-auto ps-1">
           <input
                 v-model="searchTextInput"
                 class="form-control"
                 placeholder="Search story, author or tags"
-                @keydown.enter="pushSearch"
+                @keydown.enter="updateSearch"
               >
         </div>
-        <div class="col-2">
+        <div class="col-md-auto mt-2 ps-0">
           <button 
-            class="btn btn-primary mx-2" 
+            class="btn btn-dark mx-2 mt-1"
             type="button"
             aria-label="Search"
-            @click="pushSearch"
+            @click="updateSearch"
           >
           Search
           </button>
           <button 
-            class="btn btn-secondary" 
+            class="btn btn-secondary mx-2 mt-1"
             type="button"
             aria-label="Clear"
-            @click="clearSearch(true)"
+            @click="clearSearch"
           >
           Clear
           </button>
         </div>
       </div>
     </div>
-    <div class="container-fluid search-result-page-content my-2 p-2">
-      <div class="row pb-4 px-3">
-        <h3 class="m-0">
-          Stories: {{storyResultsCount}} found
+    <!-- End header -->
+
+    <!-- Story Results -->
+    <div class="container-fluid mt-4">
+      <div class="row">
+        <h3 class="mb-2">
+          Stories: {{stories.count}} found
         </h3>
       </div>
-      <template v-if="storyResultsCount > 0">
-        <div 
-          v-for="(chunk, row) in storyChunks"
-          :key="`storySearch_${row}`"
-          class="row p-2"
-        >
+      <div v-if="stories.count > 0">
+        <div class="row py-2">
           <div
-            v-for="story in chunk"
+            v-for="story in stories.results"
             :key="`story_${story.id}`"
-            class="col-4"
+            class="col-md-12 col-lg-4 pb-3"
           >
             <story-mini-card 
-              :card-mode="'mini'"
               :story-card="story"
             />
           </div>
         </div>
         <div class="row p-2">
-        <div 
-          v-if="storyResults.length < storyResultsCount"
-          class="col-xl-2 mx-auto">
-          <button 
-            class="px-2 py-1 font-weight-bold rounded-pill home-default-btn"
-            @click="advanceStorySearch">
-            Show More
-          </button>
+          <div 
+            v-if="stories.results.length < stories.count"
+            class="col-xl-2 mx-auto">
+            <button 
+              class="px-4 py-2 rounded-pill story-default-btn"
+              @click="advanceStorySearch">
+              Show More
+            </button>
+          </div>
         </div>
-      </div>
-
-      </template>
-      <template v-else>
+      </div>  
+      <!-- End Story Results -->
+      <div v-else>
         <div class="row m-0 w-100 h-100 font-size-8 font-weight-bold text-secondary justify-content-center align-items-center">
           No Stories found.
         </div>
-      </template>
+      </div>
     </div>
-    <div class="container-flex search-result-page-content my-2 p-2">
+
+    <!-- Author Results -->
+    <div class="container-flex mt-4">
       <div class="row mx-auto my-0">
-        <div class="pb-4">
+        <div class="mb-2">
           <h3 class="m-0">
-            Authors
+            Authors: {{authors.count}} found
           </h3>
         </div>
-        <template v-if="authorResultsCount > 0">
-          <div 
-            v-for="(chunk, row) in authorChunks"
-            :key="`authorSearch_${row}`"
-            class="row p-2"
-          >
+        <div v-if="authors.count > 0">
+          <div class="row py-2">
             <div
-              v-for="(user, index) in chunk"
-              :key="`user_${index}`"
-              class="col-4 border"
-              @click="gotoAuthor(user.id)"
+              v-for="author in authors.results"
+              :key="`author_${author.id}`"
+              class="col-md-12 col-lg-4 pb-3"
             >
-              <div class="card-user-name font-weight-bold">
-                {{ user.alias }}
-              </div>
-              <div class="card-user-email">
-                {{ user.email }}
-              </div>            
-              <div class="col-3 m-0 justify-content-end align-items-center p-0">
-                <span class="mr-2">
-                  {{ user.story_count }} stories
-                </span>
-                <span 
-                  class="cursor-pointer"
-                  v-if="user.story_count > 0">
-                  <img
-                    src="../assets/image/icon/Show.svg"
-                    alt="show"
-                  >
-                </span>
-              </div>
+              <author-mini-card 
+                :author-card="author"
+              />
             </div>
           </div>
           <div 
-            v-if="authorResults.length < authorResultsCount"
+            v-if="authors.results.length < authors.count"
             class="col-xl-2 mx-auto">
             <button 
-              class="px-2 py-1 font-weight-bold rounded-pill home-default-btn"
+              class="px-4 py-2 rounded-pill story-default-btn"
               @click="advanceAuthorSearch">
               Show More
             </button>
           </div>
-        </template>
-        <template v-else>
+        </div>
+        <div v-else>
           <div class="row m-0 h-100 font-size-8 font-weight-bold text-secondary justify-content-center align-items-center">
             No Authors found.
           </div>
-        </template>
+        </div>
       </div>
     </div>
+    <!-- End Author results-->
 
-    <div class="container-flex search-result-page-content my-2 p-2">
+    <div class="container-flex pt-4">
       <div class="row mx-auto my-0">
-        <div class="pb-4">
+        <div class="mb-2">
           <h3 class="m-0">
-            Tags
+            Tags: {{ tags.count }} found
           </h3>
         </div>
-        <template v-if="tagResultsCount > 0">
-          <div 
-            v-for="(chunk, row) in tagChunks"
-            :key="`tagSearch_${row}`"
-            class="row p-2"
-          >
+        <template v-if="tags.count > 0">
+          <div class="row py-2">
             <div
-              v-for="(tag, index) in chunk"
-              :key="`tag_${index}`"
-              class="col-4 border"
-              @click="gotoTag(tag.id)"
-            >
-              <div class="card-user-name font-weight-bold">
-                {{ tag.name }}
-              </div>          
-              <div class="col-3 m-0 justify-content-end align-items-center p-0">
-                <span class="mr-2">
-                  {{ tag.story_count }} stories
-                </span>
-                <span 
-                  v-if="tag.story_count > 0"
-                  class="cursor-pointer"
-                  >
-                  <img
-                    src="../assets/image/icon/Show.svg"
-                    alt="show"
-                  >
-                </span>
-              </div>
+                v-for="tag in tags.results"
+                :key="`tag_${tag.id}`"
+                class="col-md-12 col-lg-4 pb-3"
+              >
+                <tag-mini-card 
+                  :tag-card="tag"
+                />
             </div>
           </div>
           <div 
-            v-if="tagResults.length < tagResultsCount"
+            v-if="tags.results.length < tags.count"
             class="col-xl-2 mx-auto">
             <button 
-              class="px-2 py-1 font-weight-bold rounded-pill home-default-btn"
+              class="px-4 py-2 rounded-pill story-default-btn"
               @click="advanceTagSearch">
               Show More
             </button>
@@ -195,128 +158,127 @@
 
 <script setup>
 import StoryMiniCard from "@/components/Card/StoryMiniCard.vue";
-import {ref, computed, watch} from 'vue';
+import AuthorMiniCard from "@/components/Card/AuthorMiniCard.vue";
+import TagMiniCard from "@/components/Card/TagMiniCard.vue";
+import {ref, watch, onMounted, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '@/services/api';
+import { useSearchStore } from "@/stores/search";
+import { storeToRefs } from 'pinia';
+
 
 const route = useRoute();
 const router = useRouter();
-const searchTextInput = ref(route.params.search);
-const searchTextDisplay = ref(route.params.search);
-const storyResults = ref([]);
-const storyResultsCount = ref(0);
-const authorResults = ref([]);
-const authorResultsCount = ref(0);
-const tagResults = ref([]);
-const tagResultsCount = ref(0)
-const cols = 3;
-const storyPage = ref(1);
-const authorPage = ref(1);
-const tagPage = ref(1);
+const searchStore = useSearchStore();
 
-const storyChunks = computed( () => {
-  if (storyResultsCount.value > 0){
-    return chunkResults(storyResults.value);
-  }
-  return [];
+const searchTextDisplay = ref();
+const searchTextInput = ref();
+
+const stories = reactive({
+  results: [],
+  count: 0,
+  page: 1
 });
 
-const authorChunks = computed( () => {
-  if (authorResultsCount.value > 0){
-    return chunkResults(authorResults.value);
-  }
-  return [];
+const authors = reactive({
+  results: [],
+  count: 0,
+  page: 1
 });
 
-const tagChunks = computed( () => {
-  if (tagResultsCount.value > 0){
-    return chunkResults(tagResults.value);
-  }
-  return [];
+const tags = reactive({
+  results: [],
+  count: 0,
+  page: 1
 });
+
+const searchTextProps = ref(route.params.search);
+
+const { searchText } = storeToRefs(searchStore);
 
 watch(
   () => route.params.search,
-  (newSearchText, _oldSearchText) => {
-    searchTextInput.value = newSearchText;
-    clearSearch(false);
-    initialSearch();
+  (newSearchText, oldSearchText) => {
+    if (newSearchText && newSearchText != oldSearchText){
+      searchStore.setSearchText(newSearchText);
+      initialSearch();
+    }
   }
 )
 
+onMounted( () => {
+  searchStore.setSearchText(searchTextProps.value);
+  initialSearch();
+});
+
+// Methods
+const updateSearch = () => {
+  searchStore.setSearchText(searchTextInput.value);
+  router.push({name: 'searchResults',
+    params: {
+      search: searchTextInput.value
+    }});
+  initialSearch();  
+}
+
 const initialSearch = () => {
-  searchTextDisplay.value = searchTextInput.value;
+  searchTextDisplay.value = searchText.value;
+  searchTextInput.value = searchText.value;
   storySearch(1, false);
   authorSearch(1, false);
   tagSearch(1, false);
 }
 
-const chunkResults = (results) => {
-  let chunks = [];
-  for (let i = 0; i < results.length; i+=cols){
-    chunks.push(results.slice(i, i + cols));
-  }
-  return chunks;
-}
-
 const storySearch = async (page, append) => {
-  if (searchTextInput.value){
-    storyPage.value = page;
-    await api.get(`/story/search/story?q=${searchTextInput.value}&page=${page}`).then(res => {
+  if (searchText.value){
+    stories.page = page;
+    await api.get(`/story/search/story?q=${searchText.value}&page=${page}`).then(res => {
       if (append){
-        storyResults.value = storyResults.value.concat(res.data.results);
+        stories.results = stories.results.concat(res.data.results);
       }
       else{
-        storyResults.value = res.data.results;
+        stories.results = res.data.results;
       }
-      storyResultsCount.value = res.data.count;
+      stories.count = res.data.count;
     });
   }
 }
 
 const advanceStorySearch = () =>
 {
-  storySearch(storyPage.value + 1, true);
-}
-
-const gotoTag = (id) => {
-  router.push({name: 'single-parent', params: { type: 'tag', id: id } });
-}
-
-const gotoAuthor = (id) => {
-  router.push({name: 'single-parent', params: { type: 'accounts', id: id } });
+  storySearch(stories.page + 1, true);
 }
 
 const authorSearch = async (page, append) => {
-  if (searchTextInput.value){
-    authorPage.value = page;
-    await api.get(`/story/search/author?author=${searchTextInput.value}&page=${page}`).then(res => {
+  if (searchText.value){
+    authors.page = page;
+    await api.get(`/story/search/author?author=${searchText.value}&page=${page}`).then(res => {
       if (append){
-        authorResults.value = authorResults.value.concat(res.data.results);
+        authors.results = authors.results.concat(res.data.results);
       }
       else{
-        authorResults.value = res.data.results;
+        authors.results = res.data.results;
       }
-      authorResultsCount.value = res.data.count;
+      authors.count = res.data.count;
     });
   }
 }
 
 const advanceAuthorSearch = () => {
-  authorSearch(authorPage.value+1, true);
+  authorSearch(authors.page+1, true);
 }
 
 const tagSearch = async (page, append)  => {
-  if (searchTextInput.value){
-    tagPage.value = page;
-    await api.get(`/story/search/tag?tag=${searchTextInput.value}&page=${page}`).then(res => {
+  if (searchText.value){
+    tags.page = page;
+    await api.get(`/story/search/tag?tag=${searchText.value}&page=${page}`).then(res => {
       if (append){
-        tagResults.value = tagResults.value.concat(res.data.results);
+        tags.results = tags.results.concat(res.data.results);
       }
       else{
-        tagResults.value = res.data.results;
+        tags.results = res.data.results;
       }
-      tagResultsCount.value = res.data.count;
+      tags.count = res.data.count;
     })
   }
 }
@@ -325,66 +287,27 @@ const advanceTagSearch = () => {
   authorSearch(tagPage.value+1, true);
 }
 
-const clearSearch = (clearInput) => {
-  storyResults.value = [];
-  storyResultsCount.value = 0;
-  authorResults.value = [];
-  authorResultsCount.value = 0;
-  tagResults.value = [];
-  tagResultsCount.value = 0;
-  storyPage.value = 1;
-  authorPage.value = 1;
-  tagPage.value = 1;
-  if (clearInput)
-    searchTextInput.value = '';
+const clearSearch = () => {
+  stories.results = [];
+  stories.count = 0;
+  stories.page = 1;
+  authors.results = [];
+  authors.count = 0;
+  authors.page = 1;
+  tags.results = [];
+  tags.count = 0;
+  tags.page = 1;
+  searchTextDisplay.value = "";
+  searchTextInput.value = '';
+  searchStore.setSearchText("");
 }
 
-const pushSearch = () => {
-  router.push( {
-    name: 'searchResults', 
-        params: {
-        search: searchTextInput.value
-    }
-  });
-}
-
-clearSearch(false);
-initialSearch();
 </script>
 
 <style scoped lang="scss">
-.search-result-page {
-  &-content {
-    &-story {
-      height: 570px;
-      overflow-y: auto;
-    }
-    &-author,
-    &-tag {
-      height: 300px;
-      overflow-y: auto;
-    }
+  .search-result-page {
+    padding-right: 5%;
+    padding-left: 5%;
+    padding-top: 2%;
   }
-}
-.card-user {
-  border-bottom: .8px solid #EFEFEF;
-  &:last-child {
-    border-bottom: none;
-  }
-
-  &-name {
-    font-size: .8em;
-  }
-  &-email {
-    font-size: .66em;
-    color: #A7A7A7;
-  }
-  &-action {
-    font-size: .6em;
-    color: #A7A7A7;
-    img {
-      width: 1.3vw;
-    }
-  }
-}
 </style>
