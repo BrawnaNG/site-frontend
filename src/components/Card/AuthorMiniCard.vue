@@ -50,7 +50,7 @@ const gotoAuthor = () => {
 
 <style scoped lang="scss">
 .author-card {
-  background-color: #F6F6F6;
+  background-color: #F6f0f0;
 
   &-title {
     font-weight: 600;

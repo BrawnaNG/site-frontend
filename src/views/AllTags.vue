@@ -23,12 +23,12 @@
       </div>
       <div
         v-if="results.length < resultsCount"
-        class="row mx-1"
+        class="row mx-auto justify-content-center pb-2"
       >
-        <div class="col-2">
+        <div class="col mx-auto pb-2">
           <button 
             type = "button"
-            class="btn btn-dark rounded"
+            class="btn btn-dark rounded text-center"
             @click="loadMore">
             Load More Tags
           </button>
@@ -60,12 +60,18 @@ const tagClass = (index,pos) => {
   return `${tagSizeClass(index)} ${tagColorClass(pos)}`;
 }
 
+const spanClass = () => {
+  //if (window.innerWidth > 768){
+    return "text-nowrap";
+  //}
+}
+
 const tagSizeClass = (index) => {
   if (index < 10 )
     return "tag-size-1";
-  else if (index < 20 * page)
+  else if (index < (20 * page.value))
     return "tag-size-2";
-  else if (index < 50 * page)
+  else if (index < (40 * page.value))
     return "tag-size-3";
   else 
     return "tag-size-4";
@@ -117,31 +123,53 @@ const loadMore = async () => {
 
 <style scoped lang="scss">
 .tag-cloud {
-  line-height: 30px;
+  line-height: 1em;
   a {
     text-decoration: none;
   }
 }
 .tag-size-1 {
-  font-size: 2.25em;
+  @media (max-width: 767.98px) {
+    font-size: 1.5em;
+  }
+  @media (min-width: 768px) {
+    font-size: 2.25em;
+  }
+
+  max-width: 100;
   a {
     color: 	#778da9;
   }
 }
 .tag-size-2 {
-  font-size: 1.75em;
+  @media (max-width: 767.98px) {
+    font-size: 1.25em;
+  }
+  @media (min-width: 768px) {
+    font-size: 1.75em;
+  }
   a {
     color: 		#415a77;
   }
 }
 .tag-size-3 {
-  font-size: 1.5em;
+  @media (max-width: 767.98px) {
+    font-size: 1em;
+  }
+  @media (min-width: 768px) {
+    font-size: 1.5em;
+  }
   a {
     color: 		#1b263b
   }
 }
 .tag-size-4 {
-  font-size: 1em;
+  @media (max-width: 767.98px) {
+    font-size: 0.75em;
+  }
+  @media (min-width: 768px) {
+    font-size: 1em;
+  }
   a {
     color: 		#0d1b2a
   }

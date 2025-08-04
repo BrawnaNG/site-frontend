@@ -12,15 +12,11 @@
           </h3>
         </div>
         <template v-if="resultsCount > 0">
-          <div 
-            v-for="(chunk, row) in chunks"
-            :key="`chunk_${row}`"
-            class="row p-2"
-          >
+          <div class="row p-2">
             <div
-              v-for="story in chunk"
+              v-for="story in results"
               :key="`story_${story.id}`"
-              class="col-4"
+              class="col-md-12 col-lg-4 pb-3"
             >
               <story-mini-card 
                 :story-card="story"
@@ -57,7 +53,6 @@ import { useRoute } from 'vue-router';
 const route = useRoute();
 const results = ref([]);
 const resultsCount = ref(0);
-const cols = 3;
 const currentPage = ref(1);
 const name = ref("");
 const id = ref(route.params.id);
@@ -94,13 +89,6 @@ const searchType = () => {
   }
 }
 
-const chunks = computed( () => {
-  if (resultsCount.value > 0){
-    return chunkResults(results.value);
-  }
-  return [];
-});
-
 const initialSearch = () => {
   search(1, false);
 }
@@ -112,14 +100,6 @@ const info = async () => {
         }
     });
 };
-
-const chunkResults = (results) => {
-  let chunks = [];
-  for (let i = 0; i < results.length; i+=cols){
-    chunks.push(results.slice(i, i + cols));
-  }
-  return chunks;
-}
 
 const search = async (page, append) => {
     const searchBase = searchType();
@@ -150,16 +130,5 @@ const advance = () =>
       .title {
         font-size: 2em;
       }
-    &-content {
-        &-story {
-        height: 570px;
-        overflow-y: auto;
-        }
-        &-author,
-        &-tag {
-        height: 300px;
-        overflow-y: auto;
-        }
-    }
     }
 </style>

@@ -43,7 +43,7 @@ const gotoTag = () => {
 
 <style scoped lang="scss">
 .tag-card {
-  background-color: #F6F6F6;
+  background-color: #f0f0F6;
 
   &-title {
     font-weight: 600;

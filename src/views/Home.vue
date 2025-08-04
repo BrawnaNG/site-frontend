@@ -27,15 +27,11 @@
           Recent Stories
       </div>
     </div>
-    <div 
-      v-for="(chunk, row) in recent_story_chunks"
-      :key="`recentStoriesRow_${row}`"
-      class="row pb-4"
-    >
+    <div class="row pb-4">
       <div 
-        v-for="storyCard in chunk"
+        v-for="storyCard in recentStories"
         :key="`recentStoryCard_${storyCard.id}`"
-        class="col-4"
+        class="col-md-12 col-lg-4 pb-3"
       >
         <story-mini-card 
           :story-card="storyCard"
@@ -54,24 +50,22 @@
   </div>
 </template>
 <script setup>
-import { ref, computed, onMounted, inject } from 'vue';
+import { ref, onMounted } from 'vue';
 import StoryMiniCard from "@/components/Card/StoryMiniCard.vue";
 import StoryLargeCard from "@/components/Card/StoryLargeCard.vue";
 import api from "@/services/api";
 
 const featuredStory = ref(null);
 const recentStories = ref([]);
-const cols = ref(3);
 const page = ref(1);
 
-const recent_story_chunks = computed(() => {
-  let chunks = [];
-  for (let i = 0; i < recentStories.value.length; i += cols.value) {
-    chunks.push(recentStories.value.slice(i, i + cols.value));
-  }
-  return chunks;
+// Lifecycle hooks
+onMounted(() => {
+  getFeaturedStory();
+  getRecentStories();
 });
 
+// Methods
 async function getFeaturedStory() {
   await api.get(`/story/featured/`).then( 
     (res) => {
@@ -98,11 +92,6 @@ async function loadMore() {
     }
   );
 }
-
-onMounted(() => {
-  getFeaturedStory();
-  getRecentStories();
-});
 
 </script>
 <style scoped lang="scss">

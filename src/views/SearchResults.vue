@@ -2,14 +2,14 @@
   <div class="search-result-page">
 
     <!-- Header -->
-    <div class="container-flex search-result-page-head border-bottom py-4">
+    <div class="container-flex search-result-page-head border-bottom pb-4">
       <div class="row my-0 mx-auto justify-content-start">
-        <div class="col-md-auto p-0">
+        <div class="col-md-auto p-2">
           <h2 class="m-0 pe-4 font-weight-bolder">
             Results for "{{ searchTextDisplay }}"
           </h2>
         </div>
-        <div class="col-6">
+        <div class="col-md-auto ps-1">
           <input
                 v-model="searchTextInput"
                 class="form-control"
@@ -17,9 +17,9 @@
                 @keydown.enter="updateSearch"
               >
         </div>
-        <div class="col-md-auto">
+        <div class="col-md-auto mt-2 ps-0">
           <button 
-            class="btn btn-dark mx-2" 
+            class="btn btn-dark mx-2 mt-1"
             type="button"
             aria-label="Search"
             @click="updateSearch"
@@ -27,7 +27,7 @@
           Search
           </button>
           <button 
-            class="btn btn-secondary" 
+            class="btn btn-secondary mx-2 mt-1"
             type="button"
             aria-label="Clear"
             @click="clearSearch"
@@ -40,22 +40,18 @@
     <!-- End header -->
 
     <!-- Story Results -->
-    <div class="container-fluid search-result-page-content mt-4">
+    <div class="container-fluid mt-4">
       <div class="row">
         <h3 class="mb-2">
-          Stories: {{storyResultsCount}} found
+          Stories: {{stories.count}} found
         </h3>
       </div>
-      <div v-if="storyResultsCount > 0">
-        <div 
-          v-for="(chunk, row) in storyChunks"
-          :key="`storySearch_${row}`"
-          class="row py-2"
-        >
+      <div v-if="stories.count > 0">
+        <div class="row py-2">
           <div
-            v-for="story in chunk"
+            v-for="story in stories.results"
             :key="`story_${story.id}`"
-            class="col-4"
+            class="col-md-12 col-lg-4 pb-3"
           >
             <story-mini-card 
               :story-card="story"
@@ -64,7 +60,7 @@
         </div>
         <div class="row p-2">
           <div 
-            v-if="storyResults.length < storyResultsCount"
+            v-if="stories.results.length < stories.count"
             class="col-xl-2 mx-auto">
             <button 
               class="px-4 py-2 rounded-pill story-default-btn"
@@ -83,23 +79,19 @@
     </div>
 
     <!-- Author Results -->
-    <div class="container-flex search-result-page-content mt-4">
+    <div class="container-flex mt-4">
       <div class="row mx-auto my-0">
         <div class="mb-2">
           <h3 class="m-0">
-            Authors: {{authorResultsCount}} found
+            Authors: {{authors.count}} found
           </h3>
         </div>
-        <div v-if="authorResultsCount > 0">
-          <div 
-            v-for="(chunk, row) in authorChunks"
-            :key="`authorSearch_${row}`"
-            class="row py-2"
-          >
+        <div v-if="authors.count > 0">
+          <div class="row py-2">
             <div
-              v-for="author in chunk"
+              v-for="author in authors.results"
               :key="`author_${author.id}`"
-              class="col-4"
+              class="col-md-12 col-lg-4 pb-3"
             >
               <author-mini-card 
                 :author-card="author"
@@ -107,7 +99,7 @@
             </div>
           </div>
           <div 
-            v-if="authorResults.length < authorResultsCount"
+            v-if="authors.results.length < authors.count"
             class="col-xl-2 mx-auto">
             <button 
               class="px-4 py-2 rounded-pill story-default-btn"
@@ -125,23 +117,19 @@
     </div>
     <!-- End Author results-->
 
-    <div class="container-flex search-result-page-content pt-4">
+    <div class="container-flex pt-4">
       <div class="row mx-auto my-0">
         <div class="mb-2">
           <h3 class="m-0">
-            Tags: {{ tagResultsCount }} found
+            Tags: {{ tags.count }} found
           </h3>
         </div>
-        <template v-if="tagResultsCount > 0">
-          <div 
-            v-for="(chunk, row) in tagChunks"
-            :key="`tagSearch_${row}`"
-            class="row py-2"
-          >
+        <template v-if="tags.count > 0">
+          <div class="row py-2">
             <div
-                v-for="tag in chunk"
+                v-for="tag in tags.results"
                 :key="`tag_${tag.id}`"
-                class="col-4"
+                class="col-md-12 col-lg-4 pb-3"
               >
                 <tag-mini-card 
                   :tag-card="tag"
@@ -149,7 +137,7 @@
             </div>
           </div>
           <div 
-            v-if="tagResults.length < tagResultsCount"
+            v-if="tags.results.length < tags.count"
             class="col-xl-2 mx-auto">
             <button 
               class="px-4 py-2 rounded-pill story-default-btn"
@@ -172,11 +160,12 @@
 import StoryMiniCard from "@/components/Card/StoryMiniCard.vue";
 import AuthorMiniCard from "@/components/Card/AuthorMiniCard.vue";
 import TagMiniCard from "@/components/Card/TagMiniCard.vue";
-import {ref, computed, watch, onMounted } from 'vue';
+import {ref, watch, onMounted, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '@/services/api';
 import { useSearchStore } from "@/stores/search";
 import { storeToRefs } from 'pinia';
+
 
 const route = useRoute();
 const router = useRouter();
@@ -185,41 +174,27 @@ const searchStore = useSearchStore();
 const searchTextDisplay = ref();
 const searchTextInput = ref();
 
-const storyResults = ref([]);
-const storyResultsCount = ref(0);
-const authorResults = ref([]);
-const authorResultsCount = ref(0);
-const tagResults = ref([]);
-const tagResultsCount = ref(0)
+const stories = reactive({
+  results: [],
+  count: 0,
+  page: 1
+});
+
+const authors = reactive({
+  results: [],
+  count: 0,
+  page: 1
+});
+
+const tags = reactive({
+  results: [],
+  count: 0,
+  page: 1
+});
+
 const searchTextProps = ref(route.params.search);
 
-const cols = 3;
-const storyPage = ref(1);
-const authorPage = ref(1);
-const tagPage = ref(1);
-
 const { searchText } = storeToRefs(searchStore);
-
-const storyChunks = computed( () => {
-  if (storyResultsCount.value > 0){
-    return chunkResults(storyResults.value);
-  }
-  return [];
-});
-
-const authorChunks = computed( () => {
-  if (authorResultsCount.value > 0){
-    return chunkResults(authorResults.value);
-  }
-  return [];
-});
-
-const tagChunks = computed( () => {
-  if (tagResultsCount.value > 0){
-    return chunkResults(tagResults.value);
-  }
-  return [];
-});
 
 watch(
   () => route.params.search,
@@ -237,7 +212,6 @@ onMounted( () => {
 });
 
 // Methods
-
 const updateSearch = () => {
   searchStore.setSearchText(searchTextInput.value);
   router.push({name: 'searchResults',
@@ -255,64 +229,56 @@ const initialSearch = () => {
   tagSearch(1, false);
 }
 
-const chunkResults = (results) => {
-  let chunks = [];
-  for (let i = 0; i < results.length; i+=cols){
-    chunks.push(results.slice(i, i + cols));
-  }
-  return chunks;
-}
-
 const storySearch = async (page, append) => {
   if (searchText.value){
-    storyPage.value = page;
+    stories.page = page;
     await api.get(`/story/search/story?q=${searchText.value}&page=${page}`).then(res => {
       if (append){
-        storyResults.value = storyResults.value.concat(res.data.results);
+        stories.results = stories.results.concat(res.data.results);
       }
       else{
-        storyResults.value = res.data.results;
+        stories.results = res.data.results;
       }
-      storyResultsCount.value = res.data.count;
+      stories.count = res.data.count;
     });
   }
 }
 
 const advanceStorySearch = () =>
 {
-  storySearch(storyPage.value + 1, true);
+  storySearch(stories.page + 1, true);
 }
 
 const authorSearch = async (page, append) => {
   if (searchText.value){
-    authorPage.value = page;
+    authors.page = page;
     await api.get(`/story/search/author?author=${searchText.value}&page=${page}`).then(res => {
       if (append){
-        authorResults.value = authorResults.value.concat(res.data.results);
+        authors.results = authors.results.concat(res.data.results);
       }
       else{
-        authorResults.value = res.data.results;
+        authors.results = res.data.results;
       }
-      authorResultsCount.value = res.data.count;
+      authors.count = res.data.count;
     });
   }
 }
 
 const advanceAuthorSearch = () => {
-  authorSearch(authorPage.value+1, true);
+  authorSearch(authors.page+1, true);
 }
 
 const tagSearch = async (page, append)  => {
   if (searchText.value){
-    tagPage.value = page;
+    tags.page = page;
     await api.get(`/story/search/tag?tag=${searchText.value}&page=${page}`).then(res => {
       if (append){
-        tagResults.value = tagResults.value.concat(res.data.results);
+        tags.results = tags.results.concat(res.data.results);
       }
       else{
-        tagResults.value = res.data.results;
+        tags.results = res.data.results;
       }
-      tagResultsCount.value = res.data.count;
+      tags.count = res.data.count;
     })
   }
 }
@@ -322,15 +288,15 @@ const advanceTagSearch = () => {
 }
 
 const clearSearch = () => {
-  storyResults.value = [];
-  storyResultsCount.value = 0;
-  authorResults.value = [];
-  authorResultsCount.value = 0;
-  tagResults.value = [];
-  tagResultsCount.value = 0;
-  storyPage.value = 1;
-  authorPage.value = 1;
-  tagPage.value = 1;
+  stories.results = [];
+  stories.count = 0;
+  stories.page = 1;
+  authors.results = [];
+  authors.count = 0;
+  authors.page = 1;
+  tags.results = [];
+  tags.count = 0;
+  tags.page = 1;
   searchTextDisplay.value = "";
   searchTextInput.value = '';
   searchStore.setSearchText("");
@@ -339,42 +305,9 @@ const clearSearch = () => {
 </script>
 
 <style scoped lang="scss">
-.search-result-page {
-  padding-right: 5%;
-  padding-left: 5%;
-  padding-top: 2%;
-
-  &-content {
-    &-story {
-      height: 570px;
-      overflow-y: auto;
-    }
-    &-author,
-    &-tag {
-      height: 300px;
-      overflow-y: auto;
-    }
+  .search-result-page {
+    padding-right: 5%;
+    padding-left: 5%;
+    padding-top: 2%;
   }
-}
-.card-author-card {
-  border-bottom: .8px solid #EFEFEF;
-  &:last-child {
-    border-bottom: none;
-  }
-
-  &-name {
-    font-size: .8em;
-  }
-  &-email {
-    font-size: .66em;
-    color: #A7A7A7;
-  }
-  &-action {
-    font-size: .6em;
-    color: #A7A7A7;
-    img {
-      width: 1.3vw;
-    }
-  }
-}
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div>
     <button
-      class="story-default-btn px-4 py-2 rounded-pill"
+      class="story-default-btn px-3 py-2 rounded-pill add-story-btn"
       data-bs-toggle="modal"
       data-bs-target="#storyModal"
     >
@@ -43,16 +43,17 @@
                 </div>
               </div>
             </div>
-            <div class="row justify-content-end pt-3">
-              <div class="col-md-auto">
+            <div class="row justify-content-end pt-3 float-end">
+              <div class="col-1"></div>
+              <div class="col">
                 <button
-                  class="btn btn-dark"
+                  class="btn btn-dark text-nowrap"
                   @click="createStory()"
                 >
                   Create Story
                 </button>
               </div>
-              <div class="col-md-auto">
+              <div class="col">
                 <button
                   id="storyModalClose"
                   class="btn btn-secondary"
@@ -61,6 +62,7 @@
                   Cancel
                 </button>
               </div>
+              
             </div>
           </div>
         </div>
@@ -96,8 +98,19 @@
 </script>
 
 <style scoped lang="scss">
+.add-story-btn {
+  @media (max-width: 767.8px){
+    text-wrap: nowrap;
+    font-size: 0.75em;
+  }
+}
 .add-story-icon {
   height: 2em;
   width: 2em;
+  @media (max-width: 767.8px){
+    height: 1.5em;
+    width: 1.5em;
+  }
+
 }
 </style>

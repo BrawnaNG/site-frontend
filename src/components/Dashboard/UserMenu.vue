@@ -1,30 +1,30 @@
 <template>
-  <div class="container-fluid py-3 menu-bar-wrapper px-0">
+  <div class="container-fluid py-2 py-md-4 menu-bar-wrapper px-0">
     <div class="row mx-auto my-0">
       <div class="col-9 .me-auto">
         <ul class="list-group list-group-horizontal">
-          <li class="list-group-item menu-bar-item cursor-pointer text-white text-center mr-3 px-4 pb-2">
+          <li class="list-group-item menu-bar-item cursor-pointer text-white text-center mr-3 pe-md-2 pe-lg-4 pb-2">
             <router-link
               :to="{name: 'dashboard'}"
             >
               Your Stories
             </router-link>
           </li>
-          <li class="list-group-item menu-bar-item cursor-pointer text-white text-center mr-3 px-4 pb-2">
+          <li class="list-group-item menu-bar-item cursor-pointer text-white text-center mr-3 px-2 pb-2">
             <router-link
               :to="{name: 'savedStories'}"
             >
               Saved Stories
             </router-link>
           </li>
-          <li class="list-group-item menu-bar-item cursor-pointer text-white text-center mr-3 px-4 pb-2">
+          <li class="list-group-item menu-bar-item cursor-pointer text-white text-center mr-3 px-2 pb-2">
             <router-link
               :to="{name: 'userComments'}"
             >
               Comments
             </router-link>
           </li>
-          <li class="list-group-item menu-bar-item cursor-pointer text-white text-center mr-3 px-4 pb-2">
+          <li class="list-group-item menu-bar-item cursor-pointer text-white text-center mr-3 px-2 pb-2">
             <router-link
               :to="{name: 'drafts'}"
             >
@@ -33,36 +33,11 @@
           </li>
         </ul>
       </div>
-      <div 
-        v-if="isAuthenticated"
-        class="col-3 menu-bar-item cursor-pointer text-white text-right mr-3 px-4 pb-2 py-2"
-      >
-        <span
-          class="float-end"
-          @click="logOut()"
-        >
-          Log out
-        </span>
-      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue';
-import { useRouter } from 'vue-router';
-import EventBus from "../../common/EventBus";
-import { useAuthStore } from '@/stores/auth';
-
-const router = useRouter();
-const authStore = useAuthStore();
-
-const isAuthenticated = computed(() => authStore.isAuthenticated);
-
-function logOut() {
-  EventBus.dispatch("logout");
-  router.push({name: 'home'});
-}
 </script>
 
 <style scoped lang="scss">
@@ -78,12 +53,19 @@ function logOut() {
     background-color: black !important;
     border: none;
     position: static;
+    line-height: 1em;
   }
 
   .menu-bar-item {
     a,span{
       color: white !important;
-      font-size: 1em;
+      line-height: 50%;
+      @media (max-width: 767.8px) {
+        font-size: 0.75em;
+      }
+      @media (min-width: 767.8px) {
+        font-size: 1em;
+      }
       text-decoration: none;
     }
   }

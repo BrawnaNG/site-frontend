@@ -45,7 +45,7 @@
             class="container-fluid pt-2"
             v-if="story.has_chapters"
           >
-            <div class="row">
+            <div class="row bold">
               <h6>Chapters</h6>
             </div>
             <div class="row">
