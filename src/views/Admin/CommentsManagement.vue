@@ -35,20 +35,14 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue';
 import CommentsCard from "@/components/Card/CommentsCard.vue";
 import AdminBreadCrumbs from "@/components/Admin/AdminBreadCrumbs.vue";
 import AdminMenu from "@/components/Admin/AdminMenu.vue";
-export default {
-  name: "CommentsManagement",
-  components: {CommentsCard, AdminBreadCrumbs, AdminMenu},
-  data() {
-    return {
-      currentPage: 1,
-      comments: []
-    }
-  },
-}
+
+const currentPage = ref(1);
+const comments = ref([]);
 </script>
 
 <style scoped lang="scss">

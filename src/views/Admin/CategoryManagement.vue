@@ -33,7 +33,7 @@
             >
               Add Category
               <img
-                src="../../assets/image/icon/add.svg"
+                src="@/assets/image/icon/add.svg"
                 class="mx-2 px-0"
               >
             </button>
@@ -120,164 +120,161 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, reactive, computed, onMounted, getCurrentInstance } from 'vue';
 import CategoryCard from "@/components/Card/CategoryCard.vue";
 import AdminBreadCrumbs from "@/components/Admin/AdminBreadCrumbs.vue";
 import AdminMenu from "@/components/Admin/AdminMenu.vue";
 import categorySort from "@/common/CategorySort";
 import { Modal } from "bootstrap";
-export default {
-  name: "CategoryManagement",
-  components: {
-    CategoryCard,
-    AdminBreadCrumbs,
-    AdminMenu
-  },
-  data() {
-    return {
-      categoryList: [],
-      categoryForm: {
-        type: 'add',
-        name: '',
-        id: null,
-        parent_name: null,
-        parent_id: null
-      }
-    }
-  },
-  mounted() {
-    this.getCategoryList();
-    this.categoryModal = new Modal('#categoryModal');
-  },
-  computed: {
-    modalTitle() {
-      switch(this.categoryForm.type){
-        case 'add':
-          return "New Category";
-        case 'edit':
-          return "Edit Category";
-        case 'sub':
-          return "New Sub-Category";
-        default:
-          return "Category";
-      }
-    },
-    modalSubmitLabel() {
-      switch(this.categoryForm.type){
-        case 'add':
-        case 'sub':
-          return "Add";
-        case 'edit':
-          return "Save";
-        default:
-          return "Submit";
-      }
-    }
-  },
-  methods: {
+import api from '@/services/api';
 
-    refreshCategories(){
-      this.getCategoryList();
-    },
+const { proxy } = getCurrentInstance();
 
-    getCategoryList() {
-      this.axios.get(`/category/list/`).then(res => {
-        let results = res.data;
-        let top = results.filter( cat => !cat.parent );
-        this.categoryList = top.map(cat => this.makeCategory(results, cat))
-          .sort(categorySort.sortByTitle);
-      })
-    },
+const categoryList = ref([]);
+const categoryForm = reactive({
+  type: 'add',
+  name: '',
+  id: null,
+  parent_name: null,
+  parent_id: null
+});
 
-    makeCategory(categories, root){
-      var children = categories.filter( (cat) => {
-        return cat.parent && cat.parent === root.id;;
-      });
-      root["depth"] = this.getDepth(categories, root);
-      root["title"] = this.getTitle(categories, root);
-      if (children && children.length > 0 ){
-        root["children"] = children.map(child => this.makeCategory(categories, child))
-          .sort(categorySort.sortByTitle);
-      }
-      return root;
-    },
+let categoryModal = null;
 
-    getDepth(categories, cat){
-      if (cat.parent){
-        let parent = categories.find( c => c.id === cat.parent );
-        if (parent){
-          return this.getDepth(categories, parent) + 1;
-        }
-      }
-      return 0;
-    },
+const modalTitle = computed(() => {
+  switch(categoryForm.type){
+    case 'add':
+      return "New Category";
+    case 'edit':
+      return "Edit Category";
+    case 'sub':
+      return "New Sub-Category";
+    default:
+      return "Category";
+  }
+});
 
-    getTitle(categories, cat){
-      if (cat.parent){
-        let parent = categories.find( c => c.id === cat.parent );
-        if (parent){
-          return `${this.getTitle(categories, parent)} ${"\\"} ${cat.name}`;
-        }
-      }
-      return cat.name;
-    },
+const modalSubmitLabel = computed(() => {
+  switch(categoryForm.type){
+    case 'add':
+    case 'sub':
+      return "Add";
+    case 'edit':
+      return "Save";
+    default:
+      return "Submit";
+  }
+});
 
-    categoryAction() {
-      let data = {
-        name: this.categoryForm.name
-      };
+function refreshCategories() {
+  getCategoryList();
+}
 
-      if (this.categoryForm.type === 'sub'){
-        data["parent"] = this.categoryForm.parent_id;
-      }
-
-      let method = (this.categoryForm.type === 'sub' || this.categoryForm.type  === 'add') ? this.axios.post : this.axios.patch;
-      let url = (this.categoryForm.type  === 'sub' || this.categoryForm.type  === 'add') ? 'category/add/' : `category/change/${this.categoryForm.id}/`;
-
-      method(url,data).then(
-        _ =>{
-          this.categoryModal.hide();
-          let message = (this.categoryForm.type  === 'sub' || this.categoryForm.type  === 'add') ? 'New Category Added' : 'Category Updated';
-          this.$toast.add({ severity: 'info', summary: 'Info', detail: message, life: 3000 });
-          this.getCategoryList()
-        },
-        _error => {
-          let message = (this.categoryForm.type  === 'sub' || this.categoryForm.type === 'add') ? 'Error Adding Category' : 'Error Updating Category';
-          this.$toast.add({ severity: 'error', summary: 'Error', detail: message, life: 3000 });
-        }
-      )
-    },
-    addCategory(){
-      this.categoryForm.name = '';
-      this.categoryForm.type = 'add';
-      this.categoryModal.show();
-    },
-    addSubCategory(parent_id, parent_name){
-      this.categoryForm.name = '';
-      this.categoryForm.type = 'sub';
-      this.categoryForm.parent_id = parent_id;
-      this.categoryForm.parent_name = parent_name;
-      this.categoryModal.show();
-    },
-    editCategory(id, name){
-      this.categoryForm.id = id;
-      this.categoryForm.name = name;
-      this.categoryForm.type = 'edit';
-      this.categoryModal.show();
-    },
-    deleteCategory(id){
-      this.axios.delete(`category/remove/${id}/`).then(
-        _ => {
-          this.$toast.add({ severity: 'info', summary: 'Info', detail: 'Category Deleted', life: 3000 });
-          this.refreshCategories();
-        },
-        _error => {
-          this.$toast.add({ severity: 'error', summary: 'Error', detail: 'Error Updating Category', life: 3000 });
-        }
-      );   
-    }
+async function getCategoryList() {
+  try {
+    const res = await api.get(`/category/list/`);
+    let results = res.data;
+    let top = results.filter( cat => !cat.parent );
+    categoryList.value = top.map(cat => makeCategory(results, cat))
+      .sort(categorySort.sortByTitle);
+  } catch (error) {
+    console.error('Error fetching category list:', error);
   }
 }
+
+function makeCategory(categories, root) {
+  var children = categories.filter( (cat) => {
+    return cat.parent && cat.parent === root.id;;
+  });
+  root["depth"] = getDepth(categories, root);
+  root["title"] = getTitle(categories, root);
+  if (children && children.length > 0 ){
+    root["children"] = children.map(child => makeCategory(categories, child))
+      .sort(categorySort.sortByTitle);
+  }
+  return root;
+}
+
+function getDepth(categories, cat) {
+  if (cat.parent){
+    let parent = categories.find( c => c.id === cat.parent );
+    if (parent){
+      return getDepth(categories, parent) + 1;
+    }
+  }
+  return 0;
+}
+
+function getTitle(categories, cat) {
+  if (cat.parent){
+    let parent = categories.find( c => c.id === cat.parent );
+    if (parent){
+      return `${getTitle(categories, parent)} ${"\\"} ${cat.name}`;
+    }
+  }
+  return cat.name;
+}
+
+async function categoryAction() {
+  let data = {
+    name: categoryForm.name
+  };
+
+  if (categoryForm.type === 'sub'){
+    data["parent"] = categoryForm.parent_id;
+  }
+
+  let method = (categoryForm.type === 'sub' || categoryForm.type === 'add') ? api.post : api.patch;
+  let url = (categoryForm.type === 'sub' || categoryForm.type === 'add') ? 'category/add/' : `category/change/${categoryForm.id}/`;
+
+  try {
+    await method(url, data);
+    categoryModal.hide();
+    let message = (categoryForm.type === 'sub' || categoryForm.type === 'add') ? 'New Category Added' : 'Category Updated';
+    proxy.$toast.add({ severity: 'info', summary: 'Info', detail: message, life: 3000 });
+    getCategoryList();
+  } catch (error) {
+    let message = (categoryForm.type === 'sub' || categoryForm.type === 'add') ? 'Error Adding Category' : 'Error Updating Category';
+    proxy.$toast.add({ severity: 'error', summary: 'Error', detail: message, life: 3000 });
+  }
+}
+
+function addCategory() {
+  categoryForm.name = '';
+  categoryForm.type = 'add';
+  categoryModal.show();
+}
+
+function addSubCategory(parent_id, parent_name) {
+  categoryForm.name = '';
+  categoryForm.type = 'sub';
+  categoryForm.parent_id = parent_id;
+  categoryForm.parent_name = parent_name;
+  categoryModal.show();
+}
+
+function editCategory(id, name) {
+  categoryForm.id = id;
+  categoryForm.name = name;
+  categoryForm.type = 'edit';
+  categoryModal.show();
+}
+
+async function deleteCategory(id) {
+  try {
+    await api.delete(`category/remove/${id}/`);
+    proxy.$toast.add({ severity: 'info', summary: 'Info', detail: 'Category Deleted', life: 3000 });
+    refreshCategories();
+  } catch (error) {
+    proxy.$toast.add({ severity: 'error', summary: 'Error', detail: 'Error Updating Category', life: 3000 });
+  }
+}
+
+onMounted(() => {
+  getCategoryList();
+  categoryModal = new Modal('#categoryModal');
+});
 </script>
 
 <style scoped lang="scss">

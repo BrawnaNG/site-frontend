@@ -2,9 +2,9 @@
   <div class="search-result-page">
       <div class="container-fluid search-result-page-content my-2 p-2">
           <div class="row my-2 pb-3 col-12 mx-auto justify-content-between">
-              <h2 class="m-0 font-weight-bolder">
-                  {{ displayType }}: {{name}}
-              </h2>
+              <div class="m-0 title">
+                  <span class="bold">{{ displayType }}:</span> {{name}}
+              </div>
           </div>
         <div class="row pb-4 px-3">
           <h3 class="m-0">
@@ -12,18 +12,13 @@
           </h3>
         </div>
         <template v-if="resultsCount > 0">
-          <div 
-            v-for="(chunk, row) in chunks"
-            :key="`chunk_${row}`"
-            class="row p-2"
-          >
+          <div class="row p-2">
             <div
-              v-for="story in chunk"
+              v-for="story in results"
               :key="`story_${story.id}`"
-              class="col-4"
+              class="col-md-12 col-lg-4 pb-3"
             >
               <story-mini-card 
-                :card-mode="'mini'"
                 :story-card="story"
               />
             </div>
@@ -33,7 +28,7 @@
             v-if="results.length < resultsCount"
             class="col-xl-2 mx-auto">
             <button 
-              class="px-2 py-1 font-weight-bold rounded-pill home-default-btn"
+              class="px-4 py-2 rounded-pill story-default-btn"
               @click="advance">
               Show More
             </button>
@@ -58,7 +53,6 @@ import { useRoute } from 'vue-router';
 const route = useRoute();
 const results = ref([]);
 const resultsCount = ref(0);
-const cols = 3;
 const currentPage = ref(1);
 const name = ref("");
 const id = ref(route.params.id);
@@ -95,13 +89,6 @@ const searchType = () => {
   }
 }
 
-const chunks = computed( () => {
-  if (resultsCount.value > 0){
-    return chunkResults(results.value);
-  }
-  return [];
-});
-
 const initialSearch = () => {
   search(1, false);
 }
@@ -113,14 +100,6 @@ const info = async () => {
         }
     });
 };
-
-const chunkResults = (results) => {
-  let chunks = [];
-  for (let i = 0; i < results.length; i+=cols){
-    chunks.push(results.slice(i, i + cols));
-  }
-  return chunks;
-}
 
 const search = async (page, append) => {
     const searchBase = searchType();
@@ -148,16 +127,8 @@ const advance = () =>
 
 <style scoped lang="scss">
     .search-result-page {
-    &-content {
-        &-story {
-        height: 570px;
-        overflow-y: auto;
-        }
-        &-author,
-        &-tag {
-        height: 300px;
-        overflow-y: auto;
-        }
-    }
+      .title {
+        font-size: 2em;
+      }
     }
 </style>

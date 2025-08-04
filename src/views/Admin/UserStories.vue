@@ -60,152 +60,147 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, reactive, watch, onMounted, getCurrentInstance } from 'vue';
+import { useRoute } from 'vue-router';
 import StoryLargeCard from "@/components/Card/StoryLargeCard.vue";
 import AdminBreadCrumbs from "@/components/Admin/AdminBreadCrumbs.vue";
 import AdminMenu from "@/components/Admin/AdminMenu.vue";
-export default {
-  name: "UserStories",
-  components: {
-    StoryLargeCard,
-    AdminBreadCrumbs,
-    AdminMenu
+import api from '@/services/api';
+
+const { proxy } = getCurrentInstance();
+const route = useRoute();
+
+const username = ref('');
+const breadcrumb = ref([
+  {
+    text: 'Home',
+    href: '/'
   },
-  data() {
-    return {
-      username: '',
-      breadcrumb: [
-        {
-          text: 'Home',
-          href: '/'
-        },
-        {
-          text: 'Admin',
-          href: '#/admin/recent-stories'
-        },
-        {
-          text: 'Users',
-          href: '#/admin/user-account'
-        },
-      ],
-      userStories: {
-        data: [],
-        page: 1,
-        total: 0
-      },
-      disabledUserModal: {
-        show: false,
-        data: null
-      },
-      changePasswordModal: {
-        show: false,
-        form: {
-          currentPassword: {
-            value: '',
-            show: false
-          },
-          newPassword:  {
-            value: '',
-            show: false
-          },
-          reNewPassword:  {
-            value: '',
-            show: false
-          },
-        }
-      }
-    }
+  {
+    text: 'Admin',
+    href: '#/admin/recent-stories'
   },
-  watch: {
-    'userStories.page'() {
-      this.getUserStories()
-    }
+  {
+    text: 'Users',
+    href: '#/admin/user-account'
   },
-  created() {
-    this.username = this.$route.params.username
-    this.breadcrumb.push({text: this.username})
-  },
-  mounted() {
-    this.getUserStories()
-  },
-  methods: {
-    getUserStories() {
-      this.axios.get(`/story/list-admin/?page=${this.userStories.page}&username=${this.username}`).then(res => {
-        this.userStories.total = res.data.count
-        this.userStories.data = res.data.results
-      })
+]);
+
+const userStories = reactive({
+  data: [],
+  page: 1,
+  total: 0
+});
+
+const disabledUserModal = reactive({
+  show: false,
+  data: null
+});
+
+const changePasswordModal = reactive({
+  show: false,
+  form: {
+    currentPassword: {
+      value: '',
+      show: false
     },
-
-    showDisabledUserModal() {
-      this.disabledUserModal = {
-        show: true,
-        data: {
-          email: this.username,
-          alias: this.username
-        }
-      }
+    newPassword: {
+      value: '',
+      show: false
     },
-
-    closeUserDisableDialog() {
-      this.disabledUserModal = {
-        show: false,
-        data: null
-      }
+    reNewPassword: {
+      value: '',
+      show: false
     },
+  }
+});
 
-    UserDisabled() {
-      this.UserDisabledSave(this.disabledUserModal.data.email, this.disabledUserModal.data.alias)
-      this.closeUserDisableDialog()
-    },
-
-    UserDisabledSave(email, alias) {
-
-      this.axios.get(`/accounts/disable-user-admin/${email}`).then( () => {
-        this.$toasted.show(`user ${alias} successfully disabled`, {
-          duration: 3000,
-          type: 'dark',
-        });
-        this.getAccountList()
-      }).catch(err => {
-        this.$toasted.show(`Failed`, {
-          duration: 3000,
-          type: 'error',
-        });
-        console.log(err);
-      })
-    },
-
-    closeChangePasswordModal() {
-      this.changePasswordModal =  {
-        show: false,
-        form: {
-          currentPassword: {
-            value: '',
-            show: false
-          },
-          newPassword:  {
-            value: '',
-            show: false
-          },
-          reNewPassword:  {
-            value: '',
-            show: false
-          },
-        }
-      }
-    },
-
-    saveChangePassword() {
-      this.axios.put(`/accounts/change-password-admin/${this.username}`, {
-        currentPassword: this.changePasswordModal.form.currentPassword.value,
-        newPassword: this.changePasswordModal.form.newPassword.value,
-      }).then(res => {
-        console.log(res.data);
-        this.closeChangePasswordModal()
-      })
-    }
+async function getUserStories() {
+  try {
+    const res = await api.get(`/story/list-admin/?page=${userStories.page}&username=${username.value}`);
+    userStories.total = res.data.count;
+    userStories.data = res.data.results;
+  } catch (error) {
+    console.error('Error fetching user stories:', error);
   }
 }
+
+function showDisabledUserModal() {
+  disabledUserModal.show = true;
+  disabledUserModal.data = {
+    email: username.value,
+    alias: username.value
+  };
+}
+
+function closeUserDisableDialog() {
+  disabledUserModal.show = false;
+  disabledUserModal.data = null;
+}
+
+function UserDisabled() {
+  UserDisabledSave(disabledUserModal.data.email, disabledUserModal.data.alias);
+  closeUserDisableDialog();
+}
+
+async function UserDisabledSave(email, alias) {
+  try {
+    await api.get(`/accounts/disable-user-admin/${email}`);
+    proxy.$toasted.show(`user ${alias} successfully disabled`, {
+      duration: 3000,
+      type: 'dark',
+    });
+    // Note: getAccountList() method doesn't exist in this component
+  } catch (err) {
+    proxy.$toasted.show(`Failed`, {
+      duration: 3000,
+      type: 'error',
+    });
+    console.log(err);
+  }
+}
+
+function closeChangePasswordModal() {
+  changePasswordModal.show = false;
+  changePasswordModal.form = {
+    currentPassword: {
+      value: '',
+      show: false
+    },
+    newPassword: {
+      value: '',
+      show: false
+    },
+    reNewPassword: {
+      value: '',
+      show: false
+    },
+  };
+}
+
+async function saveChangePassword() {
+  try {
+    const res = await api.put(`/accounts/change-password-admin/${username.value}`, {
+      currentPassword: changePasswordModal.form.currentPassword.value,
+      newPassword: changePasswordModal.form.newPassword.value,
+    });
+    console.log(res.data);
+    closeChangePasswordModal();
+  } catch (error) {
+    console.error('Error changing password:', error);
+  }
+}
+
+watch(() => userStories.page, () => {
+  getUserStories();
+});
+
+onMounted(() => {
+  username.value = route.params.username;
+  breadcrumb.value.push({text: username.value});
+  getUserStories();
+});
 </script>
 
 <style scoped lang="scss">

@@ -1,48 +1,40 @@
 <template>
   <div class="saved-stories-page">
     <div class="container-fluid saved-stories-page-head mx-auto py-3">
-      <div class="row h-100 m-0">
-        <div class="col-8 px-4 dashboard-page-head-title">
-          <h4 class="m-0 px-4 font-weight-bolder">
+      <div class="row h-100 m-0 justify-content-between">
+        <div class="col dashboard-page-head-title">
+          <h4 class="m-0 bold">
             Dashboard
           </h4>
           <bread-crumbs 
             label="Saved Stories"
-            class="px-4"
           />
         </div>
-        <div class="col-4 px-4 pt-2 mt-1 text-right">
+        <div class="col">
           <add-story class="float-end" />
         </div>
       </div>
     </div>
     <user-menu />
-    <div class="container-fluid saved-stories-page-content mx-auto py-5">
-      <div class="row pb-2">
-        <h2 class="mx-2 px-4">
+    <div class="container-fluid saved-stories-page-content mx-auto py-3">
+      <div class="row pb-2 ps-2">
+        <h2>
           Saved Stories
         </h2>
       </div>
       <div>
         <div class="saved-stories container-flex">
-          <template v-if="recentStories.data.length">
-            <div 
-              v-for="(chunk, row) in recent_story_chunks"
-              :key="`recentStoriesRow_${row}`"
-              class="row p-2"
-            >
+          <template v-if="stories.data.length">
+            <div class="row p-2">
               <div 
-                v-for="storyCard in chunk"
+                v-for="storyCard in stories.data"
                 :key="`recentStoryCard_${storyCard.id}`"
-                class="col-4"
+                class="col-md-12 col-lg-4 pb-3"
               >
                 <story-large-card
                   :story-card="storyCard"
                 />
               </div>
-            </div>
-            <div class="row">
-              TODO PAGINATION
             </div>
           </template>
           <template v-else>
@@ -58,57 +50,36 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { reactive, watch, onMounted } from 'vue';
 import StoryLargeCard from "@/components/Card/StoryLargeCard.vue";
 import BreadCrumbs from "@/components/Dashboard/BreadCrumbs.vue";
 import UserMenu from "@/components/Dashboard/UserMenu.vue";
 import AddStory from "@/components/Dashboard/AddStory.vue";
+import api from '@/services/api';
 
-export default {
-  name: "SavedStories",
-  components: {StoryLargeCard, BreadCrumbs, UserMenu, AddStory},
-  data() {
-    return {
-      breadcrumb: [
-        {
-          text: 'Home',
-          href: '/'
-        },
-        {
-          text: 'Dashboard',
-          href: '#/dashboard/your-stories'
-        },
-        {
-          text: 'Saved Stories',
-        }
-      ],
-      recentStories: {
-        data: [],
-        page: 1,
-        total: 0
-      }
-    }
-  },
-  watch: {
-    'recentStories.page'() {
-      this.getRecentStories()
-    }
-  },
-  mounted() {
-    this.getRecentStories()
-  },
-  methods: {
+const stories = reactive({
+  data: [],
+  page: 1,
+  total: 0
+});
 
-    getRecentStories() {
-      this.axios.get(`/story/save-story-list/?page=${this.recentStories.page}`).then(res => {
-        this.recentStories.total = res.data.count
-        this.recentStories.data = res.data.results
-      })
-    }
+async function getSavedStories() {
+  try {
+    const res = await api.get(`/story/save-story-list/?page=${stories.page}`);
+    stories.total = res.data.count;
+    stories.data = res.data.results;
+  } catch (error) {
+    console.error('Error fetching saved stories:', error);
   }
 }
+
+watch(() => stories.page, () => {
+  getSavedStories();
+});
+
+onMounted(() => {
+  getSavedStories();
+});
+
 </script>
-
-<style scoped>
-
-</style>

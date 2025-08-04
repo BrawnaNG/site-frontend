@@ -2,7 +2,7 @@
   <div class="categories-result-page">
     <div class="container-fluid categories-result-page-content my-2 p-2">
         <div class="row my-2 pb-3 col-12 mx-auto justify-content-between">
-            <h2 class="m-0 font-weight-bolder">
+            <h2 class="m-0 bold">
                 Categories
             </h2>
         </div>
@@ -110,7 +110,3 @@ const makeCategory = (categories, root) => {
 }
 
 </script>
-
-<style scoped lang="scss">
-
-</style>

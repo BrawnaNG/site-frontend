@@ -1,30 +1,30 @@
 <template>
-  <div class="container-fluid py-3 menu-bar-wrapper px-0">
+  <div class="container-fluid py-2 py-md-4 menu-bar-wrapper px-0">
     <div class="row mx-auto my-0">
-      <div class="col-6 .me-auto">
+      <div class="col-9 .me-auto">
         <ul class="list-group list-group-horizontal">
-          <li class="list-group-item menu-bar-item cursor-pointer text-white text-center mr-3 px-4 pb-2">
+          <li class="list-group-item menu-bar-item cursor-pointer text-white text-center mr-3 pe-md-2 pe-lg-4 pb-2">
             <router-link
               :to="{name: 'dashboard'}"
             >
               Your Stories
             </router-link>
           </li>
-          <li class="list-group-item menu-bar-item cursor-pointer text-white text-center mr-3 px-4 pb-2">
+          <li class="list-group-item menu-bar-item cursor-pointer text-white text-center mr-3 px-2 pb-2">
             <router-link
               :to="{name: 'savedStories'}"
             >
               Saved Stories
             </router-link>
           </li>
-          <li class="list-group-item menu-bar-item cursor-pointer text-white text-center mr-3 px-4 pb-2">
+          <li class="list-group-item menu-bar-item cursor-pointer text-white text-center mr-3 px-2 pb-2">
             <router-link
-              :to="{name: 'commentsStory'}"
+              :to="{name: 'userComments'}"
             >
               Comments
             </router-link>
           </li>
-          <li class="list-group-item menu-bar-item cursor-pointer text-white text-center mr-3 px-4 pb-2">
+          <li class="list-group-item menu-bar-item cursor-pointer text-white text-center mr-3 px-2 pb-2">
             <router-link
               :to="{name: 'drafts'}"
             >
@@ -33,40 +33,11 @@
           </li>
         </ul>
       </div>
-      <div 
-        v-if="isAuthenticated"
-        class="col-6 menu-bar-item cursor-pointer text-white text-right mr-3 px-4 pb-2 py-2"
-      >
-        <span
-          class="float-end"
-          @click="logOut()"
-        >
-          Log out
-        </span>
-      </div>
     </div>
   </div>
 </template>
 
-<script>
-import EventBus from "../../common/EventBus";
-import { useAuthStore } from '@/stores/auth';
-
-export default {
-  name: "UserMenu",
-  computed: {
-    isAuthenticated() {
-      const authStore = useAuthStore();
-      return authStore.isAuthenticated;
-    }
-  },
-  methods: {
-    logOut(){
-      EventBus.dispatch("logout");
-      this.$router.push({name: 'home'});
-    }
-  }
-}
+<script setup>
 </script>
 
 <style scoped lang="scss">
@@ -82,18 +53,20 @@ export default {
     background-color: black !important;
     border: none;
     position: static;
+    line-height: 1em;
   }
 
   .menu-bar-item {
     a,span{
       color: white !important;
-      font-size: 1.2em;
-      font-family: NotoSerif-Bold;
+      line-height: 50%;
+      @media (max-width: 767.8px) {
+        font-size: 0.75em;
+      }
+      @media (min-width: 767.8px) {
+        font-size: 1em;
+      }
       text-decoration: none;
-    }
-    .router-link-active 
-    {
-      text-decoration: underline;
     }
   }
 }

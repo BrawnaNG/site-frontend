@@ -2,7 +2,7 @@
   <div class="container-fluid about-wrapper">
     <div class="row">
       <div class="col">
-        <h1 class="about-head-title">
+        <h1 class="about-head-title bold">
           About
         </h1>
       </div>
@@ -31,11 +31,9 @@ export default {
   padding-right: 5%;
   padding-left: 5%;
   padding-top: 2%;
-  font-family: NotoSerif-Regular;
 
   .about-head {
     &-title {
-      font-family: NotoSerif-Bold;
       font-size: 6em;
     }
   }

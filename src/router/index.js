@@ -1,26 +1,26 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Home from '../views/Home.vue';
-import About from '../views/About.vue';
-import Dashboard from '../views/Dashboard/DashboardPage.vue';
-import Admin from '../views/Admin/AdminPage.vue';
+import Home from '@/views/Home.vue';
+import Dashboard from '@/views/Dashboard/DashboardPage.vue';
+import Admin from '@/views/Admin/AdminPage.vue';
 import UsersAccount from "@/views/Admin/UsersAccount.vue";
 import UserStories from "@/views/Admin/UserStories.vue";
 import CommentsManagement from "@/views/Admin/CommentsManagement.vue";
 import CategoryManagement from "@/views/Admin/CategoryManagement.vue";
 import SavedStories from "@/views/Dashboard/SavedStories.vue";
-import CommentsStory from "@/views/Dashboard/StoriesComment.vue";
+import Comments from "@/views/Dashboard/Comments.vue";
 import StoryDrafts from "@/views/Dashboard/StoryDrafts.vue";
 import ShowStory from "@/views/Story/ShowStory.vue";
 import AddEditStory from "@/views/Story/AddEditStory.vue";
 import SearchResults from "@/views/SearchResults.vue";
-import { useAuthStore } from '@/stores';
+import { useAuthStore } from '@/stores/auth';
 import AllCategories from '@/views/AllCategories.vue';
 import AllTags from '@/views/AllTags.vue';
 import SingleParent from '@/views/SingleParent.vue';
-import AuthService from '../services/auth.service';
+import AuthService from '@/services/auth.service';
 import ResetPassword from '@/views/Users/ResetPassword.vue';
 import Activation from '@/views/Users/Activation.vue';
-import api from "../services/api";
+import api from "@/services/api";
+import About from '@/views/About.vue';
 
 const routes = [
   {
@@ -79,12 +79,12 @@ const routes = [
     },
   },
   {
-    path: '/dashboard/story-comments',
-    name: 'commentsStory',
-    component: CommentsStory,
+    path: '/dashboard/comments',
+    name: 'userComments',
+    component: Comments,
     meta: {
       authRequired: 'true',
-      roles: ['admin','author']
+      roles: ['reader','admin','author']
     },
   },
   {

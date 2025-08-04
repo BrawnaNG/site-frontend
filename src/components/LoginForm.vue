@@ -31,16 +31,14 @@
         <img
           title="show password"
           class="cursor-pointer"
-          src="../assets/image/icon/Show.svg"
+          src="@/assets/image/icon/Show.svg"
           @click="showPassword = !showPassword"
         >
       </div>
     </div>
     <div class="row">
       <button
-        pill
-        variant="dark"
-        class="story-default-btn font-weight-bold w-50 py-2 my-3 mx-auto"
+        class="story-default-btn w-50 px-4 py-2 my-3 mx-auto"
         @click="loginUser"
       >
         Login
@@ -107,9 +105,7 @@
     </div>
     <div class="row">
       <button
-        pill
-        variant="dark"
-        class="story-default-btn font-weight-bold w-50 py-2 my-3 mx-auto"
+        class="story-default-btn w-50 px-4 py-2 my-3 mx-auto"
         @click="resetPassword"
       >
         Reset password
@@ -203,7 +199,7 @@
         <img
           title="show password"
           class="cursor-pointer"
-          src="../assets/image/icon/Show.svg"
+          src="@/assets/image/icon/Show.svg"
           @click="showPassword = !showPassword"
         >
       </div>
@@ -221,7 +217,7 @@
         <img
           title="show password"
           class="cursor-pointer"
-          src="../assets/image/icon/Show.svg"
+          src="@/assets/image/icon/Show.svg"
           @click="showRepeatPassword = !showRepeatPassword"
         >
       </div>
@@ -261,9 +257,7 @@
     </div>
     <div class="row">
       <button
-        pill
-        variant="dark"
-        class="story-default-btn font-weight-bold w-50 py-2 my-3 mx-auto"
+        class="story-default-btn w-50 px-4 py-2 my-3 mx-auto"
         @click="signUpUser"
       >
         Sign up
@@ -559,9 +553,6 @@ const cleanError = (originalError) => {
 </script>
 
 <style scoped lang="scss">
-  .cursor-pointer {
-    cursor: pointer;
-  }
   .login-form {
     &-title {
       font-size: .8em;
