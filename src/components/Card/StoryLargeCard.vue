@@ -89,7 +89,7 @@ const editStory = () => {
 
 <style scoped lang="scss">
 .story-large-card {
-  background-color: #F6F6F6;
+  background-color: #F0F6F0;
   &-title {
     font-size: 1.8em;
     font-weight: bolder;

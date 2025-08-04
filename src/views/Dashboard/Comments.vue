@@ -3,17 +3,16 @@
 
     <!-- header -->
     <div class="container-fluid stories-comment-page-head mx-auto py-3">
-      <div class="row h-100 m-0">
-        <div class="col-8 px-4 dashboard-page-head-title">
-          <h4 class="m-0 px-4 bold">
+      <div class="row h-100 m-0 justify-content-between">
+        <div class="col dashboard-page-head-title">
+          <h4 class="m-0 bold">
             Dashboard
           </h4>
           <bread-crumbs 
             label="Comments"
-            class="px-4"
           />
         </div>
-        <div class="col-4 px-4 pt-2 mt-1 text-right">
+        <div class="col">
           <add-story class="float-end" />
         </div>
       </div>
@@ -22,19 +21,17 @@
 
     <user-menu />
     <div class="container-fluid stories-comment-page-head mx-auto py-3">
-      <div class="row stories-comment-page-content mx-auto pt-4">
-        <div class="row pb-2">
-          <h2 class="mx-2 px-4">
-            Comments
-          </h2>
-        </div>
+      <div class="row pb-2 ps-2">
+        <h2>
+          Comments
+        </h2>
       </div>
       <div 
-        class="row comments-stories-content-card justify-content-left p-2 px-4"
+        class="row comments-stories-content-card justify-content-left p-2 px-2"
         v-for="comment in comments.data"
         :key="`comment_${comment.id}`"
       >
-        <div class="col-6 px-4">
+        <div class="col-md-12 col-lg-6 px-2">
           <comments-card 
             :comment-card="comment"
             :card-mode="'story'"

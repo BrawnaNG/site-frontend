@@ -2,23 +2,23 @@
   <div class="container-flex add-edit-story-page">
     <div class="container-fluid saved-stories-page-head mx-auto py-3">
       <div class="row h-100 m-0">
-        <div class="col-8 px-4 dashboard-page-head-title">
-          <h4 class="m-0 px-4 font-weight-bolder">
+        <div class="col dashboard-page-head-title">
+          <h4 class="m-0 font-weight-bold">
             Create Story
           </h4>
           <bread-crumbs 
             label="Create Story"
-            class="px-4"
           />
         </div>
-        <div class="col-4 px-4 pt-2 mt-1 text-right">
+        <div class="col">
           <add-story class="float-end" />
         </div>
       </div>
     </div>
     <user-menu />
-    <div class="row my-0 mx-auto py-5 h-100">
-      <div class="col-3 pl-0">
+    <div class="row my-0 mx-auto py-3 h-100">
+      <!-- CHAPTERS -->
+      <div class="col-md-12 col-lg-3 pl-0">
         <div 
           class="container-fluid saved-stories-tags pt-2"
           v-if="story.has_chapters"
@@ -44,6 +44,7 @@
             </TreeTable>
           </div>
         </div>
+        <!-- CHAPTER BUTTONS-->
         <div class="row justify-content-center pt-2 px-2">
           <div class="col-9">
             <button 
@@ -78,8 +79,12 @@
             </button>
           </div>
         </div>
+        <!-- END CHAPTER BUTTONS -->
       </div>
-      <div class="col-6">
+      <!-- END CHAPTERS -->
+
+      <!-- STORY EDIT-->
+      <div class="col-md-12 col-lg-6 pt-3">
         <div class="content-fluid">
           <div class="row pb-3">
             <div class="col-3">
@@ -211,8 +216,11 @@
           </div>
         </div>
       </div>
-      <div class="col-3 pr-0 pl-4">
-        <div class="container-fluid saved-stories-tags pt-2">
+      <!-- END STORY EDIT-->
+
+      <!-- TAGS AND CATEGORIES -->
+      <div class="col-md-12 col-lg-3 pr-0 pl-4 pt-3">
+        <div class="container-fluid saved-stories-tags">
           <div class="row">
             <h6>Tags</h6>
           </div>
@@ -248,6 +256,7 @@
           </div>
         </div>
       </div>
+      <!-- END TAGS AND CATEGORIES-->
     </div>
   </div>
 
@@ -337,7 +346,7 @@ const tag_validation = [
   },
 ];
 
-// Tag lookup
+// Tag lookup for autocomplete
 const handleTagInput = debounce( async() => {
   debounced_tag.value = new_tag.value;
   const res = await api.get(`/story/search/tag?tag=${debounced_tag.value}&page=1`);

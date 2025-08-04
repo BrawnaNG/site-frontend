@@ -1,7 +1,7 @@
 <template>
   <div class="col-6 dashboard-page-head-breadcrumb pt-2 px-0">
     <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
+      <ol class="breadcrumb text-nowrap">
         <li class="breadcrumb-item">
           <router-link
             class="pr-1"
@@ -12,7 +12,7 @@
         </li>
         <li class="breadcrumb-item">
           <router-link
-            class="px-1"
+            class="pr-1"
             :to="{name: 'dashboard'}"
           >
             Dashboard

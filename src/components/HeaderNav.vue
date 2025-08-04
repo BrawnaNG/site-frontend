@@ -1,7 +1,7 @@
 <template>
   <!-- Drop-down menu -->
   <div class="position-relative">
-    <div class="container position-absolute w-25">
+    <div class="container position-absolute navbar-container ps-lg-5">
       <div class="row justify-content-start">
         <div class="col-md-auto">
           <nav class="navbar navbar-expand-xs navbar-light">
@@ -109,46 +109,54 @@
   <!-- End drop-down menu -->
 
   <!-- Main header -->
-  <div class="story-header container-fluid bg-light">
-    <div class="row align-items-center">
+  <div class="story-header container-fluid bg-light pb-2">
+    <div class="row align-items-center justify-content-center">
       <div class="col-2">
         &nbsp;
       </div>
-      <div class="col-6 text-center site-title">
-        <div class="bold lh-1">Brawna</div>
+      <div class="col-md-auto text-center site-title">
+        <div class="bold lh-1 pt-3 pb-4">Brawna</div>
       </div>
-      <div class="col-2">
-        <input
-          v-model="searchForm.text"
-          class="form-control search-text"
-          placeholder="Search story, author or tags"
-          @keydown.enter="searchStories"
-        >
-      </div>
-      <div class="col-1">
-        <button 
-          class="px-4 py-2 rounded-pill btn-search"
-          aria-label="Search"
-          @click="searchStories"
-        >
-        Search
-        </button>
-      </div>
-      <div class="col-1">  
-        <div class="d-flex float-end"></div>
-          <div 
-            v-if="!isAuthenticated"
-            class="p-2"
-          >
-            <img
-              src="@/assets/image/icon/profile-circle.svg"
-              class="story-header-action"
-              data-bs-toggle="modal"
-              data-bs-target="#loginModal"
-              @click="setLoginView"
-              v-bind:title="TITLE_LOGIN"
-            >
-         </div>
+      <div class="col pe-4">
+        <div class="d-flex">
+          <div class="container-fluid">
+            <div class="row align-items-center justify-content-end">
+              <div class="col-md-auto search-text w-50">
+                <input
+                  v-model="searchForm.text"
+                  class="form-control"
+                  placeholder="Search story, author or tags"
+                  @keydown.enter="searchStories"
+                >
+              </div>
+              <div class="col-3">
+                <button 
+                  class="px-4 py-2 rounded-pill btn-search"
+                  aria-label="Search"
+                  @click="searchStories"
+                >
+                Search
+                </button>
+              </div>
+              <div class="col-2">
+                <div class=""></div>
+                  <div 
+                    v-if="!isAuthenticated"
+                    class="p-2"
+                  >
+                    <img
+                      src="@/assets/image/icon/profile-circle.svg"
+                      class="story-header-action"
+                      data-bs-toggle="modal"
+                      data-bs-target="#loginModal"
+                      @click="setLoginView"
+                      v-bind:title="TITLE_LOGIN"
+                    >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -318,7 +326,6 @@ function collapseNavbar() {
   }
 
   .story-header {
-    height: 6em;
     border-bottom: 1px solid #D6D6D6;
     padding-top: 5px;
     &-menu {
@@ -347,6 +354,11 @@ function collapseNavbar() {
     input {
       font-size: .8em;
     }
+  }
+
+  .navbar-container{
+    min-width: 25%;
+    max-width: 50%;
   }
 
   .navbar-collapse {

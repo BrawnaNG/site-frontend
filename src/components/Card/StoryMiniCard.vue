@@ -54,7 +54,7 @@ const gotoStory = () => {
 
 <style scoped lang="scss">
 .story-card {
-  background-color: #F6F6F6;
+  background-color: #F6F6f0;
 
   &-title {
     font-weight: 600;

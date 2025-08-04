@@ -110,7 +110,3 @@ const makeCategory = (categories, root) => {
 }
 
 </script>
-
-<style scoped lang="scss">
-
-</style>
