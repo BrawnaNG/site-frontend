@@ -1,13 +1,15 @@
 <template>
+
   <div
     v-if="view === 'login'"
     class="login-form container p-"
   >
     <div class="row">
-      <p class="login-form-title m-0 pb-3 p-1">
-        Enter your username and password.
+      <p class="login-form-title m-0 pb-3 p-1 bold">
+        Enter your username or email, and password.
       </p>
     </div>
+
     <div class="row">
       <div class="rounded border p-1">
         <input
@@ -15,6 +17,16 @@
           type="text"
           class="border-0 login-form-input form-control"      
           placeholder="Enter your username"
+        >
+      </div>
+    </div>
+    <div class="row">
+      <div class="rounded border mt-3 p-1">
+        <input
+          v-model="login.email"
+          type="text"
+          class="border-0 login-form-input form-control"      
+          placeholder="Enter your email"
         >
       </div>
     </div>
@@ -52,6 +64,7 @@
         {{ errorMessage }}
       </span>
     </div>
+
     <div class="row pb-2">
       <div class="login-form-sub-title text-center">
         Don't have an account?
@@ -304,6 +317,7 @@ const { executeRecaptcha, recaptchaLoaded } = useReCaptcha();
 // Reactive state
 const login = reactive({
   username: '',
+  email: '',
   password: '',
 });
 
@@ -359,12 +373,16 @@ const clearForms = () => {
   signUp.recaptcha = false
   signUp.success = null;
   login.username = '';
+  login.email = '';
   login.password = '';
   reset.email = '';
   reset.reEmail = '';
   reset.error = '';
   reset.mismatch = false;
   reset.success =  null;
+  showPassword.value = false;
+  showRepeatPassword.value = false;
+  errorMessage.value = '';
 }
 
 const checkPasswords = debounce(async (rePassword) => {
@@ -423,7 +441,8 @@ const loginUser = () => {
   errorMessage.value = null;
   const user = {
     username: login.username,
-    password: login.password
+    password: login.password,
+    email: login.email
   };
   AuthService.login(authStore, user).then(
     (_) => {
