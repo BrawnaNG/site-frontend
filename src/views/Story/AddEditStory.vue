@@ -599,8 +599,7 @@ const newChapter = async (before) => {
   await saveStory(story.is_published);
   const res = await api.post(`/story/${story.id}/chapter-add/`,{
       pos: before ? current_chapter.index : current_chapter.index+1,
-      title: "New Chapter",
-      body: ""
+      title: "New Chapter"
     });
   chapter_guard.value = true;
   await loadStory();
