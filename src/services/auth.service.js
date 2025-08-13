@@ -6,6 +6,7 @@ class AuthService {
   async login(authStore, user) {
     await axiosInstance.post( 'token/', {
       username: user.username,
+      email: user.email,
       password: user.password
     }).then(
       async (response) => {
