@@ -24,13 +24,13 @@ chapter.
 Yea, we know. We've imported the data from an old Wordpress backup, and this is what we've got. If you'd like to help clean things up, give us a shout on Discord, we'd love the help!
 
 #### How is this site built?
-The site is a Vite frontend SPA calling a Django REST backend. All of the source is available here. And if you understood everything in this paragraph, we'd love to have you help us! We've got a long list of features we want to implement, and could use the help! Give us a shout on Discord.
+The site is a Vite frontend SPA calling a Django REST backend. All of the source is available [on Github](https://github.com/BrawnaNG). And if you understood everything in this paragraph, we'd love to have you help us! We've got a long list of features we want to implement, and could use the help! Give us a shout on Discord.
 
 #### If I put a story up here, how will I know it won't disappear again some day?
-FfejL is committed to keeping everything available. To that end, the source for Brawna is available to anyone who wants it (See this question). Nightly backups of the database are available here.
+FfejL is committed to keeping everything available. To that end, the source for Brawna is available to anyone who wants it [on Github](https://github.com/BrawnaNG). . Nightly backups of the database will be made pubically available soon.
 
 #### I have a question I don't see here
-Please join our Discord and ask! Someone will be happy to help.
+Please join our Discord and ask! Someone will be happy to help. You can also email us at brawna2023@gmail.com.
 
 ####
 
