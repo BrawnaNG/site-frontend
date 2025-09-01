@@ -6,9 +6,6 @@
     <div class="row author-card-title ps-3">
         {{ authorCard.alias }}
     </div>
-    <div class="row author-card-content ps-3">
-        {{ authorCard.email }}
-    </div>
     <div class="row author-card-footer ps-3">  
         {{ authorCard.story_count }} stories
     </div>
@@ -25,7 +22,6 @@ const props = defineProps({
     type: Object,
     default: () => ({
       alias: "",
-      email: "",
       story_count: 0,
       id: null,
     })
