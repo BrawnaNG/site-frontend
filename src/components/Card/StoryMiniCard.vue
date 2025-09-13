@@ -14,9 +14,8 @@
       </p>
     </div>
     <div class="row story-card-footer ps-3 pt-2">
-      {{ storyCard.user }}
-      |
-      {{ moment(storyCard.created_at).format('MMM YY') }}
+      published by {{ storyCard.user }} on
+      {{ moment(storyCard.created_at).format('MMM DD, YYYY') }}
       |
       {{ storyCard.first_category }}
     </div>
