@@ -329,7 +329,7 @@ const current_chapter = reactive({
 
 const new_tag = ref('');
 const debounced_tag = ref('');
-const tags = ref([]);
+let tags = ref([]);
 const all_categories = ref([]);
 const expanded_categories = ref({});
 const selected_chapter = ref({});
