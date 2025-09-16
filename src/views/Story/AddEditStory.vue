@@ -329,7 +329,7 @@ const current_chapter = reactive({
 
 const new_tag = ref('');
 const debounced_tag = ref('');
-let tags = ref([]);
+const tags = ref([]);
 const all_categories = ref([]);
 const expanded_categories = ref({});
 const selected_chapter = ref({});
@@ -359,7 +359,7 @@ const handleTagInput = debounce( async() => {
 }, 500);
 
 const tagsChanged = (newTags) => {
-  newTags => tags = newTags;
+  newTags => tags.value = newTags;
   story.dirty = true;
 };
 
