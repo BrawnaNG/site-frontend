@@ -359,7 +359,7 @@ const handleTagInput = debounce( async() => {
 }, 500);
 
 const tagsChanged = (newTags) => {
-  newTags => tags = newTags;
+  newTags => tags.value = newTags;
   story.dirty = true;
 };
 
