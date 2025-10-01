@@ -2622,6 +2622,11 @@ quill@^1.3.7:
     parchment "^1.1.4"
     quill-delta "^3.6.2"
 
+readable-timespan@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/readable-timespan/-/readable-timespan-2.1.0.tgz#e6d22104269b68eaa57973b040cd631021b90ba7"
+  integrity sha512-s0tIQwvuml7aPFr4G8S7vh0iZqMmC8X19PY2phlKNIo6XTE4hqr7GS7VGQ+ok97b8ZR7pQm6STKKcZpzNLiYgg==
+
 readdirp@^4.0.1:
   version "4.1.2"
   resolved "https://registry.npmjs.org/readdirp/-/readdirp-4.1.2.tgz"

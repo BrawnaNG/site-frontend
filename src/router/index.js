@@ -15,6 +15,7 @@ import SearchResults from "@/views/SearchResults.vue";
 import { useAuthStore } from '@/stores/auth';
 import AllCategories from '@/views/AllCategories.vue';
 import AllTags from '@/views/AllTags.vue';
+import AllAuthors from '@/views/AllAuthors.vue';
 import SingleParent from '@/views/SingleParent.vue';
 import AuthService from '@/services/auth.service';
 import ResetPassword from '@/views/Users/ResetPassword.vue';
@@ -169,6 +170,14 @@ const routes = [
     path: '/tags',
     name: 'all-tags',
     component: AllTags,
+    meta: {
+      authRequired: 'false'
+    },
+  },
+  {
+    path: '/authors',
+    name: 'all-authors',
+    component: AllAuthors,
     meta: {
       authRequired: 'false'
     },
