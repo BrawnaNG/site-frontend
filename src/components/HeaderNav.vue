@@ -67,6 +67,15 @@
                     Tags
                   </router-link>
                 </li>
+                <li class="nav-item">
+                  <router-link
+                    class="navbar-menu-item-link nav-link"
+                    :to="{name: 'all-authors'}"
+                    @click="collapseNavbar"
+                  >
+                    Authors
+                  </router-link>
+                </li>
                 <li 
                   v-if="role.isAdmin"
                   class="nav-item"

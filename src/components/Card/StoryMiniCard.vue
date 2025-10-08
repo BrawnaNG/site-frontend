@@ -14,8 +14,8 @@
       </p>
     </div>
     <div class="row story-card-footer ps-3 pt-2">
-      published by {{ storyCard.user }} on
-      {{ moment(storyCard.created_at).format('MMM DD, YYYY') }}
+      published by {{ storyCard.user }} 
+      {{ formatToQuickReadTimespan(storyCard.created_at) }}
       |
       {{ storyCard.first_category }}
     </div>
@@ -25,6 +25,7 @@
 <script setup>
 import { inject } from 'vue';
 import { useRouter } from 'vue-router';
+import formatToQuickReadTimespan from '../../utilities/formatting'
 
 // Define props
 const props = defineProps({
@@ -42,7 +43,6 @@ const props = defineProps({
 });
 
 // Inject dependencies
-const moment = inject('moment');
 const router = useRouter();
 
 // Methods
