@@ -60,13 +60,13 @@
     a,span{
       color: white !important;
       line-height: 50%;
+      text-decoration: none;
       @media (max-width: 767.8px) {
         font-size: 0.75em;
       }
       @media (min-width: 767.8px) {
         font-size: 1em;
       }
-      text-decoration: none;
     }
   }
 }

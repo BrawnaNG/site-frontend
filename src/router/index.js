@@ -20,6 +20,8 @@ import SingleParent from '@/views/SingleParent.vue';
 import AuthService from '@/services/auth.service';
 import ResetPassword from '@/views/Users/ResetPassword.vue';
 import Activation from '@/views/Users/Activation.vue';
+import SubmitStories from '@/views/Users/SubmitStories.vue';
+import ApproveAuthor from '@/views/Admin/ApproveAuthor.vue';
 import api from "@/services/api";
 import About from '@/views/About.vue';
 
@@ -68,6 +70,24 @@ const routes = [
     meta: {
       authRequired: 'true',
       roles: ['admin','author']
+    },
+  },
+  {
+    path: '/submit-stories',
+    name: 'submit-stories',
+    component: SubmitStories,
+    meta: {
+      authRequired: 'true',
+      roles: ['reader'],
+    },
+  },
+  {
+    path: '/admin/approve-author/:token/:user_id',
+    name: 'approve-author',
+    component: ApproveAuthor,
+    meta: {
+      authRequired: 'true',
+      roles: ['admin']
     },
   },
   {
@@ -212,8 +232,12 @@ router.beforeEach(async (to, _from, next) => {
     if (!authStore.role.isInit){
       await AuthService.getRole(authStore);
     }
+    if (!authStore.isAuthenticated){
+      return next();
+    }
     const role = authStore.role;
-    let auth = (to.meta.roles.includes('admin') && role.isAdmin) || (to.meta.roles.includes('author') && role.isAuthor);
+
+    let auth = (to.meta.roles.includes('admin') && role.isAdmin) || (to.meta.roles.includes('author') && role.isAuthor) || (to.meta.roles.includes('reader') && role.isReader);
     if (auth && to.meta.isAuthor === 'true'){
       await api.get(`/story/check-author/${to.params.id}/`)
         .then( 

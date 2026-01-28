@@ -37,7 +37,7 @@ class AuthService {
   async getRole(authStore) {
     await axiosInstance.get("accounts/role/").then(
       (response) => {
-        authStore.setRole(response.data.role);
+        authStore.setRole(response.data.role, response.data.author_status_requested, response.data.author_status_denied);
         return Promise.resolve();
       },
       (_error) => {
