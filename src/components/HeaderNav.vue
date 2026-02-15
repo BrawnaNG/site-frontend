@@ -49,6 +49,18 @@
                     Dashboard
                   </router-link>
                 </li>
+                <li 
+                  v-if="isAuthenticated && role.isReader && !role.isAdmin && !role.isAuthor"
+                  class="nav-item"
+                >
+                  <router-link
+                    class="navbar-menu-item-link nav-link"
+                    :to="{name: 'submit-stories'}"
+                    @click="collapseNavbar"
+                  >
+                    Submit Stories
+                  </router-link>
+                </li>
                 <li class="nav-item">
                   <router-link
                     class="navbar-menu-item-link nav-link"

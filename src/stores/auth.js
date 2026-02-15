@@ -8,7 +8,10 @@ export const useAuthStore = defineStore('auth', {
     role: {
       isInit: false,
       isAdmin: false,
-      isAuthor: false
+      isAuthor: false,
+      isReader: false,
+      authorStatusRequested: false,
+      authorStatusDenied: false
     }
   }),
   
@@ -31,12 +34,19 @@ export const useAuthStore = defineStore('auth', {
       this.isAuthenticated = authenticated;
       return authenticated;
     },
+
+    setAuthorStatusRequested(author_status_requested){
+      this.role.authorStatusRequested = author_status_requested;
+    },
         
-    setRole(role) {
+    setRole(role, author_status_requested, author_status_denied) {
       this.role = {
         isInit: role ? true : false,
         isAdmin: (role === "administrator"),
-        isAuthor: (role === "author")
+        isAuthor: (role === "author"),
+        isReader: (role === "reader"),
+        authorStatusDenied: author_status_denied,
+        authorStatusRequested: author_status_requested
       };
       return role;
     },

@@ -129,14 +129,13 @@ const loadMore = async () => {
   }
 }
 .tag-size-1 {
+  max-width: 100;
   @media (max-width: 767.98px) {
     font-size: 1.5em;
   }
   @media (min-width: 768px) {
     font-size: 2.25em;
   }
-
-  max-width: 100;
   a {
     color: 	#778da9;
   }
